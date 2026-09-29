@@ -1,0 +1,40 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: var(--bg-0);
+  display: grid;
+  place-items: center;
+  clip-path: inset(0 0 0 0);
+  visibility: hidden;
+  will-change: clip-path;
+}
+.inner {
+  display: grid;
+  gap: 22px;
+  justify-items: center;
+  text-align: center;
+  padding-inline: var(--gutter);
+}
+.word {
+  font-size: clamp(1.6rem, 4.2vw, 3.4rem);
+  letter-spacing: 0.06em;
+  line-height: 1.02;
+  color: var(--ivory);
+}
+.word :global(.line) + :global(.line) span {
+  color: var(--gray);
+  font-size: 0.72em;
+  letter-spacing: 0.2em;
+}
+.rule {
+  width: min(52vw, 420px);
+  height: 1px;
+  background: var(--champagne);
+  transform-origin: left;
+  transform: scaleX(0);
+  opacity: 0.8;
+}
+.meta {
+  color: var(--gray);
+}

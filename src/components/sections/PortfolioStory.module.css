@@ -1,0 +1,82 @@
+.scene {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--bg-0);
+}
+.stack {
+  position: absolute;
+  inset: 0;
+}
+.frame {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}
+.veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 8, 8, 0.5) 0%, rgba(8, 8, 8, 0.05) 35%, rgba(8, 8, 8, 0.1) 65%, rgba(8, 8, 8, 0.7) 100%);
+  pointer-events: none;
+}
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: calc(var(--gutter) + 56px) var(--gutter) var(--gutter);
+}
+.top,
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: var(--warm-white);
+}
+.count {
+  color: var(--ivory);
+}
+.words {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.word {
+  position: absolute;
+  font-size: clamp(3.2rem, 11vw, 12rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--ivory);
+  text-align: center;
+  will-change: transform, opacity;
+  display: grid;
+  justify-items: center;
+}
+.the {
+  order: -1;
+  font-size: 0.32em;
+  font-style: italic;
+  color: var(--champagne);
+  letter-spacing: 0.02em;
+  margin-bottom: 0.1em;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene {
+    height: auto;
+  }
+  .stack {
+    position: relative;
+    display: grid;
+  }
+  .overlay {
+    position: relative;
+    padding-top: var(--gutter);
+  }
+  .words {
+    grid-auto-flow: row;
+    gap: 24px;
+    padding-block: 40px;
+  }
+}

@@ -1,0 +1,227 @@
+.wrap {
+  background: var(--bg-0);
+  overflow: hidden;
+}
+.head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 24px;
+  padding-bottom: clamp(40px, 6vw, 88px);
+}
+.title {
+  margin-top: 22px;
+  font-size: var(--fs-title);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+.italic {
+  font-style: italic;
+  color: var(--champagne);
+}
+.lede {
+  font-size: clamp(1.4rem, 2.4vw, 2.4rem);
+  color: var(--warm-white);
+  line-height: 1.1;
+  padding-bottom: 0.4em;
+}
+
+.stage {
+  padding-inline: 0;
+}
+.screen {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  max-height: 88vh;
+  overflow: hidden;
+  background: var(--bg-2);
+  will-change: clip-path, transform;
+  text-align: left;
+}
+.poster {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.screenShade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 60% at 50% 50%, rgba(8, 8, 8, 0) 0%, rgba(8, 8, 8, 0.35) 100%),
+    linear-gradient(180deg, rgba(8, 8, 8, 0.15), rgba(8, 8, 8, 0.75));
+  transition: opacity 1s var(--ease-out);
+}
+.screen:hover .screenShade {
+  opacity: 0.75;
+}
+.play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.playRing {
+  position: absolute;
+  width: clamp(96px, 12vw, 160px);
+  height: clamp(96px, 12vw, 160px);
+  border-radius: 50%;
+  border: 1px solid rgba(243, 237, 228, 0.5);
+  transition: transform 1s var(--ease-cine), border-color 0.6s;
+}
+.screen:hover .playRing {
+  transform: scale(1.12);
+  border-color: var(--champagne);
+}
+.playLabel {
+  position: relative;
+  color: var(--ivory);
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.caption {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: clamp(20px, 3vw, 40px);
+  display: grid;
+  gap: 8px;
+  color: var(--warm-white);
+}
+.captionTitle {
+  font-size: clamp(1.6rem, 3.4vw, 3.4rem);
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.list {
+  list-style: none;
+  margin: clamp(48px, 7vw, 100px) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+.row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 4ch 1fr auto auto;
+  align-items: center;
+  gap: clamp(16px, 3vw, 48px);
+  padding: clamp(16px, 2vw, 26px) 0;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  transition: padding-left 0.7s var(--ease-cine);
+}
+.row:hover {
+  padding-left: 12px;
+}
+.rowNum {
+  color: var(--champagne-2);
+}
+.rowTitle {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.rowMain {
+  font-size: clamp(1.3rem, 2.2vw, 2.1rem);
+  line-height: 1.05;
+  transition: color 0.5s;
+}
+.row:hover .rowMain {
+  color: var(--champagne);
+}
+.rowSub {
+  color: var(--gray-2);
+}
+.rowThumb {
+  position: relative;
+  width: 132px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateX(12px);
+  transition: opacity 0.6s, transform 0.8s var(--ease-out);
+}
+.row:hover .rowThumb {
+  opacity: 1;
+  transform: none;
+}
+.rowPlay {
+  color: var(--ivory);
+  display: inline-flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.after {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-top: clamp(28px, 4vw, 48px);
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  background: rgba(8, 8, 8, 0.96);
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 4vw, 64px);
+  animation: fade 0.5s var(--ease-out);
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.close {
+  position: absolute;
+  top: clamp(16px, 2.5vw, 32px);
+  right: var(--gutter);
+  color: var(--ivory);
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+}
+.player {
+  width: min(100%, 1600px);
+  aspect-ratio: 16 / 9;
+  max-height: 85vh;
+  background: #000;
+}
+.player iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+@media (max-width: 1023px) {
+  .head {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  .screen {
+    aspect-ratio: 16 / 9;
+  }
+}
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 3ch 1fr auto;
+  }
+  .rowThumb {
+    display: none;
+  }
+  .rowPlay span:first-child {
+    display: none;
+  }
+  .screen {
+    aspect-ratio: 4 / 5;
+  }
+}

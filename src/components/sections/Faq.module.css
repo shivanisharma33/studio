@@ -1,0 +1,131 @@
+.wrap {
+  background: var(--bg-0);
+}
+.grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: clamp(32px, 6vw, 120px);
+  align-items: start;
+}
+.aside {
+  display: grid;
+  gap: 18px;
+  position: sticky;
+  top: 120px;
+}
+.title {
+  font-size: clamp(2.4rem, 5vw, 5.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.italic {
+  font-style: italic;
+  color: var(--champagne);
+}
+.intro {
+  color: var(--gray);
+  max-width: 40ch;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+.item {
+  border-bottom: 1px solid var(--line);
+}
+.trigger {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 3ch 1fr auto;
+  gap: clamp(16px, 2.5vw, 36px);
+  align-items: center;
+  text-align: left;
+  padding: clamp(20px, 2.6vw, 34px) 0;
+  transition: padding-left 0.7s var(--ease-cine);
+}
+.trigger:hover {
+  padding-left: 10px;
+}
+.num {
+  color: var(--champagne-2);
+}
+.labels {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.label {
+  color: var(--gray);
+}
+.q {
+  font-size: clamp(1.4rem, 2.2vw, 2.2rem);
+  line-height: 1.1;
+  color: var(--ivory);
+  transition: color 0.5s;
+}
+.itemOpen .q,
+.trigger:hover .q {
+  color: var(--warm-white);
+}
+.plus {
+  position: relative;
+  width: 18px;
+  height: 18px;
+}
+.plus span {
+  position: absolute;
+  inset: 50% auto auto 0;
+  width: 100%;
+  height: 1px;
+  background: var(--ivory);
+  transition: transform 0.6s var(--ease-cine);
+}
+.plus span:last-child {
+  transform: rotate(90deg);
+}
+.itemOpen .plus span:last-child {
+  transform: rotate(0deg);
+}
+
+.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.8s var(--ease-cine);
+}
+.itemOpen .panel {
+  grid-template-rows: 1fr;
+}
+.panelInner {
+  overflow: hidden;
+}
+.a {
+  padding: 0 0 clamp(22px, 3vw, 36px) calc(3ch + clamp(16px, 2.5vw, 36px));
+  max-width: 62ch;
+  color: var(--gray);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.6s 0.15s, transform 0.8s 0.15s var(--ease-out);
+}
+.itemOpen .a {
+  opacity: 1;
+  transform: none;
+}
+.a strong {
+  color: var(--ivory);
+  font-weight: 600;
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .aside {
+    position: static;
+  }
+  .a {
+    padding-left: 0;
+  }
+}

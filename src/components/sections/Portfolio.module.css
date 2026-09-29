@@ -1,0 +1,232 @@
+.wrap {
+  position: relative;
+  background: var(--bg-0);
+  padding-top: var(--section);
+}
+.intro {
+  display: grid;
+  gap: 22px;
+  padding-bottom: clamp(48px, 7vw, 110px);
+}
+.title {
+  font-size: var(--fs-title);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+.titleItalic {
+  font-style: italic;
+  color: var(--champagne);
+}
+.lede {
+  max-width: 52ch;
+  color: var(--gray);
+}
+
+.pin {
+  position: relative;
+  overflow: hidden;
+}
+.track {
+  display: flex;
+  will-change: transform;
+}
+
+.chapter {
+  position: relative;
+  flex: 0 0 100vw;
+  height: 100vh;
+  height: 100svh;
+  display: grid;
+  grid-template-columns: 58vw 1fr;
+  align-items: center;
+  padding: 0 var(--gutter);
+  gap: clamp(24px, 4vw, 72px);
+}
+.chapter.flip {
+  grid-template-columns: 1fr 58vw;
+}
+.chapter.flip .img {
+  order: 2;
+}
+.chapter.flip .text {
+  order: 1;
+  text-align: right;
+  justify-items: end;
+}
+.chapter.flip .metaRow {
+  justify-content: flex-end;
+}
+.chapter.flip .small {
+  left: auto;
+  right: calc(58vw - 5vw);
+}
+
+.img {
+  position: relative;
+  display: block;
+  height: 76vh;
+  height: 76svh;
+  overflow: hidden;
+  background: var(--bg-2);
+  isolation: isolate;
+}
+.imgInner {
+  position: absolute;
+  inset: -8% 0;
+  will-change: transform;
+  transition: transform 1.6s var(--ease-out);
+}
+.shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8, 8, 8, 0) 60%, rgba(8, 8, 8, 0.45) 100%);
+  opacity: 0.4;
+  transition: opacity 1s var(--ease-out);
+}
+.img:hover .imgInner {
+  transform: scale(1.05);
+}
+.img:hover .shade {
+  opacity: 0.85;
+}
+
+.small {
+  position: absolute;
+  left: calc(58vw - 5vw);
+  bottom: 5vh;
+  width: 12vw;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  opacity: 0.85;
+  z-index: 1;
+  border: 1px solid var(--line);
+  will-change: transform;
+}
+
+.text {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  will-change: transform;
+  position: relative;
+  z-index: 2;
+  padding-bottom: 14vh;
+}
+.num {
+  font-size: clamp(3rem, 8vw, 8rem);
+  line-height: 0.8;
+  color: var(--gray-2);
+  font-style: italic;
+}
+.name {
+  font-size: clamp(2rem, 3.4vw, 3.8rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  transition: transform 0.9s var(--ease-out);
+  text-wrap: balance;
+  max-width: 18ch;
+}
+.chapter:hover .name {
+  transform: translateY(-8px);
+}
+.metaRow {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.progress {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.counter {
+  color: var(--ivory);
+  min-width: 6ch;
+}
+.barTrack {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.bar {
+  height: 100%;
+  background: var(--champagne);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+.after {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-block: clamp(48px, 7vw, 110px);
+  border-top: 1px solid var(--line);
+  margin-top: 0;
+}
+
+/* ── vertical storytelling for tablet / mobile ── */
+@media (max-width: 1023px) {
+  .pin {
+    overflow: visible;
+  }
+  .track {
+    display: grid;
+    gap: clamp(56px, 10vw, 96px);
+    will-change: auto;
+  }
+  .chapter,
+  .chapter.flip {
+    flex: none;
+    height: auto;
+    grid-template-columns: 1fr;
+    gap: 22px;
+    align-items: start;
+  }
+  .chapter.flip .img,
+  .chapter.flip .text {
+    order: initial;
+    text-align: left;
+    justify-items: start;
+  }
+  .text {
+    padding-bottom: 0;
+  }
+  .chapter.flip .metaRow {
+    justify-content: flex-start;
+  }
+  .img {
+    height: auto;
+    aspect-ratio: 4 / 5;
+    margin-inline: calc(var(--gutter) * -1);
+  }
+  .imgInner {
+    inset: 0;
+  }
+  .small {
+    display: none;
+  }
+  .num {
+    font-size: 3rem;
+  }
+  .name {
+    font-size: clamp(1.9rem, 7vw, 2.8rem);
+  }
+  .progress {
+    display: none;
+  }
+  .after {
+    margin-top: clamp(40px, 8vw, 80px);
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .img {
+    aspect-ratio: 3 / 2;
+  }
+}

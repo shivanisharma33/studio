@@ -1,0 +1,116 @@
+.wrap {
+  background: var(--bg-1);
+  overflow: hidden;
+}
+.title {
+  margin-top: 22px;
+  font-size: var(--fs-title);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+.italic {
+  font-style: italic;
+  color: var(--champagne);
+}
+
+.map {
+  position: relative;
+  margin-block: clamp(36px, 6vw, 80px);
+}
+.svg {
+  width: 100%;
+  height: clamp(160px, 26vw, 380px);
+  display: block;
+  overflow: visible;
+}
+.particle {
+  fill: var(--gray);
+  opacity: 0;
+}
+.arcGhost {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+}
+.arc {
+  fill: none;
+  stroke: var(--champagne);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+.node {
+  fill: var(--ivory);
+  transform-box: fill-box;
+}
+.traveller {
+  fill: var(--champagne);
+  filter: drop-shadow(0 0 6px rgba(201, 181, 143, 0.9));
+}
+.labelL,
+.labelR {
+  position: absolute;
+  bottom: -10px;
+  color: var(--ivory);
+}
+.labelL {
+  left: 10%;
+  transform: translateX(-50%);
+}
+.labelR {
+  right: 10%;
+  transform: translateX(50%);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(28px, 5vw, 96px);
+  align-items: center;
+  margin-top: clamp(40px, 6vw, 80px);
+}
+.copy {
+  display: grid;
+  gap: 28px;
+}
+.p {
+  color: var(--gray);
+  max-width: 48ch;
+}
+.pBig {
+  font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.8rem);
+  line-height: 1.2;
+  color: var(--ivory);
+  max-width: 30ch;
+}
+.photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--bg-2);
+}
+.photoInner {
+  position: absolute;
+  inset: -14% 0 0 0;
+  will-change: transform;
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .photo {
+    aspect-ratio: 3 / 4;
+  }
+  .labelL {
+    left: 12%;
+  }
+  .labelR {
+    right: 12%;
+  }
+}
+@media (max-width: 640px) {
+  .labelL,
+  .labelR {
+    font-size: 0.55rem;
+  }
+}

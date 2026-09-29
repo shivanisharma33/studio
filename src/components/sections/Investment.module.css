@@ -1,0 +1,96 @@
+.wrap {
+  background: var(--bg-1);
+  overflow: hidden;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: clamp(32px, 6vw, 120px);
+  align-items: start;
+  margin-top: 22px;
+}
+.copy {
+  display: grid;
+  gap: clamp(28px, 4vw, 48px);
+}
+.big {
+  font-size: var(--fs-title);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+.bigSecond {
+  font-size: clamp(1.9rem, 4vw, 4.2rem);
+  color: var(--warm-white);
+  line-height: 0.98;
+}
+.italic {
+  font-style: italic;
+  color: var(--champagne);
+}
+.body {
+  color: var(--gray);
+  max-width: 56ch;
+  font-size: var(--fs-body);
+}
+.factors {
+  display: grid;
+  gap: 14px;
+}
+.factors ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  border-top: 1px solid var(--line);
+}
+.factor {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.factorNum {
+  color: var(--champagne-2);
+  min-width: 2ch;
+}
+.factorText {
+  font-size: clamp(1.2rem, 1.8vw, 1.8rem);
+  letter-spacing: 0.02em;
+}
+.ctaRow {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+.photo {
+  position: sticky;
+  top: 110px;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--bg-2);
+}
+.photoInner {
+  position: absolute;
+  inset: -16% 0 0 0;
+  will-change: transform;
+}
+.photoCap {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  color: var(--ivory);
+  background: rgba(8, 8, 8, 0.45);
+  padding: 8px 12px;
+  backdrop-filter: blur(6px);
+}
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .photo {
+    position: relative;
+    top: auto;
+    aspect-ratio: 4 / 3;
+  }
+}

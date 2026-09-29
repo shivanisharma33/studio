@@ -1,0 +1,125 @@
+.wrap {
+  background: var(--bg-0);
+  overflow: hidden;
+  padding-bottom: 0;
+}
+.head {
+  display: grid;
+  gap: 18px;
+  padding-bottom: clamp(48px, 7vw, 110px);
+}
+.headTitle {
+  font-size: clamp(1.8rem, 3.6vw, 3.8rem);
+  line-height: 1.05;
+  color: var(--warm-white);
+  max-width: 22ch;
+}
+
+.rows {
+  display: grid;
+  gap: clamp(72px, 11vw, 180px);
+}
+.row {
+  display: grid;
+  grid-template-columns: 34vw 1fr;
+  gap: clamp(28px, 6vw, 120px);
+  align-items: center;
+}
+.row.flip {
+  grid-template-columns: 1fr 34vw;
+}
+.row.flip .img {
+  order: 2;
+}
+.img {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--bg-2);
+  will-change: clip-path;
+}
+.row:nth-child(2) .img {
+  aspect-ratio: 1 / 1;
+}
+.row:nth-child(3) .img {
+  aspect-ratio: 3 / 4;
+}
+.imgInner {
+  position: absolute;
+  inset: -12% 0 0 0;
+  will-change: transform;
+  transform-origin: center;
+}
+.text {
+  display: grid;
+  gap: 22px;
+  max-width: 44ch;
+}
+.num {
+  color: var(--champagne);
+}
+.title {
+  font-size: clamp(2.6rem, 6vw, 6.4rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+.italic {
+  font-style: italic;
+  color: var(--champagne);
+}
+.body {
+  color: var(--gray);
+  font-size: var(--fs-body);
+  max-width: 44ch;
+}
+
+.ticker {
+  margin-top: clamp(72px, 11vw, 180px);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding-block: 18px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.tickerTrack {
+  display: inline-flex;
+  animation: ticker 48s linear infinite;
+  will-change: transform;
+}
+.tickerItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 32px;
+  padding-right: 32px;
+  color: var(--warm-white);
+}
+.tickerDot {
+  color: var(--champagne);
+}
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tickerTrack {
+    animation: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .row,
+  .row.flip {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .row.flip .img {
+    order: initial;
+  }
+  .img,
+  .row:nth-child(2) .img,
+  .row:nth-child(3) .img {
+    aspect-ratio: 4 / 3;
+    max-height: 70vh;
+  }
+}

@@ -1,0 +1,134 @@
+.wrap {
+  background: var(--bg-1);
+}
+.title {
+  margin-top: 22px;
+  font-size: var(--fs-title);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+.italic {
+  font-style: italic;
+  color: var(--champagne);
+}
+.grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: clamp(36px, 6vw, 120px);
+  margin-top: clamp(40px, 6vw, 88px);
+  align-items: start;
+}
+.aside {
+  display: grid;
+  gap: 22px;
+}
+.intro {
+  color: var(--gray);
+  max-width: 46ch;
+}
+.direct {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
+}
+.email {
+  font-size: clamp(1.4rem, 2.2vw, 2.3rem);
+  color: var(--ivory);
+  word-break: break-all;
+  transition: color 0.5s;
+}
+.email:hover {
+  color: var(--champagne);
+}
+.social {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  gap: clamp(18px, 3vw, 40px);
+  flex-wrap: wrap;
+}
+
+.form {
+  display: grid;
+  gap: clamp(28px, 4vw, 48px);
+}
+.field {
+  display: grid;
+  gap: 10px;
+}
+.field label {
+  color: var(--gray);
+}
+.field input,
+.field textarea {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line-strong);
+  color: var(--ivory);
+  font-family: var(--serif);
+  font-size: clamp(1.4rem, 2.2vw, 2.2rem);
+  line-height: 1.2;
+  padding: 10px 0 14px;
+  border-radius: 0;
+  transition: border-color 0.5s;
+  resize: vertical;
+}
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--gray-2);
+  font-style: italic;
+}
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--champagne);
+}
+.hp {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.actions button[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+.error {
+  color: #d9a08c;
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+.success {
+  display: grid;
+  gap: 16px;
+  padding: clamp(28px, 4vw, 48px) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.successBig {
+  font-size: clamp(1.8rem, 3.2vw, 3.2rem);
+  line-height: 1.05;
+  color: var(--ivory);
+}
+.again {
+  justify-self: start;
+  color: var(--champagne);
+  padding: 8px 0;
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
