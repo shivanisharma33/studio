@@ -10,6 +10,7 @@ import {
   eventTypes,
   guestCounts,
   months,
+  preferences,
   services,
   steps,
   VENUE_UNDECIDED,
@@ -34,6 +35,8 @@ export type Inquiry = {
   /** Index into budgetRanges[currency], "unsure", or null when not chosen. */
   budget: number | "unsure" | null;
   currency: CurrencyCode;
+  /** "What matters most" — optional, multi-select. */
+  preferences: string[];
   story: string;
 };
 
@@ -54,6 +57,7 @@ export const emptyInquiry: Inquiry = {
   services: [],
   budget: null,
   currency: "INR",
+  preferences: [],
   story: "",
 };
 
@@ -74,6 +78,7 @@ const EVENT_IDS = ids(eventTypes);
 const DAY_IDS = ids(eventDays);
 const GUEST_IDS = ids(guestCounts);
 const SERVICE_IDS = ids(services);
+const PREFERENCE_IDS = ids(preferences);
 
 /** Validate the fields that belong to one step. */
 export function validateStep(step: StepKey, d: Inquiry): InquiryErrors {
@@ -105,6 +110,7 @@ export function validateStep(step: StepKey, d: Inquiry): InquiryErrors {
     case "budget":
       if (d.budget === null) e.budget = "Please choose an approximate range — or “I’m not sure yet”.";
       break;
+    case "matters":
     case "story":
       break;
   }
@@ -157,6 +163,7 @@ export function sanitizeInquiry(raw: unknown): Inquiry {
     services: list(r.services, SERVICE_IDS),
     budget,
     currency,
+    preferences: list(r.preferences, PREFERENCE_IDS),
     story: str(r.story, LIMITS.story),
   };
 }
@@ -188,26 +195,34 @@ export function formatGuests(d: Inquiry): string {
 export function formatServices(d: Inquiry): string {
   return d.services.map((id) => titleCase(labelOf(services, id))).join(", ");
 }
+export function formatPreferences(d: Inquiry): string {
+  return d.preferences.map((id) => titleCase(labelOf(preferences, id))).join(", ");
+}
 export function formatBudget(d: Inquiry): string {
   if (d.budget === "unsure") return "Not sure yet";
   if (d.budget === null) return "";
   return `${budgetRanges[d.currency][d.budget]} ${d.currency}`;
 }
 
+export type SummaryRow = { label: string; value: string; /** The step that edits this field. */ step: StepKey };
+
 /** Ordered label/value pairs — used by the review screen and the webhook payload. */
-export function summaryRows(d: Inquiry): { label: string; value: string }[] {
+export function summaryRows(d: Inquiry): SummaryRow[] {
   return [
-    { label: "Name", value: d.name.trim() },
-    { label: "Email", value: d.email.trim() },
-    { label: "Phone / WhatsApp", value: d.phone.trim() },
-    { label: "Wedding Date", value: formatDate(d) },
-    { label: "Location", value: formatLocation(d) },
-    { label: "Venue", value: formatVenue(d) },
-    { label: "Event Type", value: formatEventTypes(d) },
-    { label: "Events / Days", value: formatDays(d) },
-    { label: "Services", value: formatServices(d) },
-    { label: "Guest Count", value: formatGuests(d) },
-    { label: "Approx. Investment", value: formatBudget(d) },
-    { label: "Story", value: d.story.trim() },
+    { label: "Name", value: d.name.trim(), step: "you" },
+    { label: "Email", value: d.email.trim(), step: "reach" },
+    { label: "Phone / WhatsApp", value: d.phone.trim(), step: "reach" },
+    { label: "Month", value: d.month !== null ? titleCase(months[d.month]) : "", step: "date" },
+    { label: "Year", value: d.year !== null ? String(d.year) : "", step: "date" },
+    { label: "Country", value: d.country.trim(), step: "location" },
+    { label: "City / Region", value: d.city.trim(), step: "location" },
+    { label: "Venue", value: formatVenue(d), step: "location" },
+    { label: "Event", value: formatEventTypes(d), step: "event" },
+    { label: "Number of Days", value: formatDays(d), step: "event" },
+    { label: "Guest Count", value: formatGuests(d), step: "event" },
+    { label: "Services", value: formatServices(d), step: "services" },
+    { label: "Investment Range", value: formatBudget(d), step: "budget" },
+    { label: "Preferences", value: formatPreferences(d), step: "matters" },
+    { label: "Story", value: d.story.trim(), step: "story" },
   ];
 }

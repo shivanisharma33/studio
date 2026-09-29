@@ -1,14 +1,15 @@
 "use client";
 
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import { gsap, useGSAP, MQ } from "@/lib/gsap";
-import { investment, cta } from "@/content/site";
+import { investment } from "@/content/site";
 import { media } from "@/content/media";
 import Photo from "@/components/ui/Photo";
 import InquiryCta from "@/components/inquiry/InquiryCta";
 import styles from "./Investment.module.css";
 
-const FACTORS = ["NEEDS", "VISION", "EVENT DETAILS", "REQUIREMENTS", "LOCATION", "THE STORY YOU WANT US TO CAPTURE"];
+/** How a proposal takes shape — the factors the studio names on its Investment page. */
+const CHAIN = ["YOUR CELEBRATION", "YOUR REQUIREMENTS", "YOUR LOCATION", "YOUR VISION", "YOUR STORY", "YOUR CUSTOM PROPOSAL"];
 
 export default function Investment() {
   const root = useRef<HTMLElement>(null);
@@ -32,15 +33,15 @@ export default function Investment() {
           ease: "none",
           scrollTrigger: { trigger: q(`.${styles.photo}`)[0], start: "top bottom", end: "bottom top", scrub: true },
         });
+        // Each part of the chain lights up in turn as it is read — ending on the proposal.
         gsap.fromTo(
-          q(`.${styles.factor}`),
-          { autoAlpha: 0, x: -16 },
-          { autoAlpha: 1, x: 0, duration: 1, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: q(`.${styles.factors}`)[0], start: "top 85%", once: true } }
+          q(`.${styles.chainPart}`),
+          { opacity: 0.16 },
+          { opacity: 1, ease: "none", stagger: 0.5, scrollTrigger: { trigger: q(`.${styles.chain}`)[0], start: "top 80%", end: "bottom 50%", scrub: 0.6 } }
         );
       });
       mm.add(MQ.reduced, () => {
         gsap.set(q(".line > span"), { yPercent: 0 });
-        gsap.set(q(`.${styles.factor}`), { autoAlpha: 1 });
       });
     },
     { scope: root }
@@ -79,22 +80,26 @@ export default function Investment() {
               {investment.body}
             </p>
 
-            <div className={styles.factors} aria-label="Each quote is curated around">
-              <span className="meta-sm">EACH QUOTE IS CURATED AROUND</span>
-              <ul>
-                {FACTORS.map((f, i) => (
-                  <li key={f} className={`${styles.factor}`}>
-                    <span className={`meta-sm ${styles.factorNum}`}>{String(i + 1).padStart(2, "0")}</span>
-                    <span className={`serif ${styles.factorText}`}>{f}</span>
-                  </li>
+            <div className={styles.factors}>
+              <span className="meta-sm">HOW YOUR PROPOSAL TAKES SHAPE</span>
+              <p className={`serif ${styles.chain}`}>
+                {CHAIN.map((c, i) => (
+                  <Fragment key={c}>
+                    {i > 0 && (
+                      <span className={`${styles.chainPart} ${styles.chainArrow}`} aria-hidden="true">
+                        →
+                      </span>
+                    )}{" "}
+                    <span className={`${styles.chainPart} ${i === CHAIN.length - 1 ? styles.chainLast : ""}`}>{c}</span>{" "}
+                  </Fragment>
                 ))}
-              </ul>
+              </p>
             </div>
 
             <div className={styles.ctaRow} data-reveal>
               <span className="meta-sm">NO FIXED PACKAGES — TELL US ABOUT YOUR CELEBRATION</span>
-              <InquiryCta source="investment" primary>
-                {cta.discussYourStory}
+              <InquiryCta source="investment" primary boxed>
+                DISCUSS YOUR VISION
               </InquiryCta>
             </div>
           </div>

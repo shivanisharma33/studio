@@ -70,8 +70,8 @@ export default function FinalCta() {
             <span className="meta-sm">{brand.limitedDates.toUpperCase()}</span>
           </div>
           <div className={styles.ctas} data-cta-fade>
-            <InquiryCta source="final-cta" primary boxed>
-              {cta.letsConnect}
+            <InquiryCta source="final" primary boxed cursor="BEGIN">
+              LET’S CREATE SOMETHING TIMELESS
             </InquiryCta>
             <Link href="#portfolio" className="cta" data-cursor="EXPLORE" data-magnetic="">
               <span>{cta.seeOurMagic}</span>

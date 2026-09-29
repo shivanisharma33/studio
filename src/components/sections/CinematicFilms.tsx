@@ -77,6 +77,11 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
           { scale: 1.15 },
           { scale: 1, ease: "none", scrollTrigger: { trigger: q(`.${styles.screen}`)[0], start: "top bottom", end: "bottom top", scrub: true } }
         );
+        gsap.fromTo(
+          q(`.${styles.imagineTitle} .line > span`),
+          { yPercent: 110 },
+          { yPercent: 0, duration: 1.5, ease: "expo.out", stagger: 0.14, scrollTrigger: { trigger: q(`.${styles.imagine}`)[0], start: "top 78%", once: true } }
+        );
       });
       mm.add(MQ.reduced, () => {
         gsap.set(q(".line > span"), { yPercent: 0 });
@@ -180,8 +185,23 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
             <Cta href={contact.youtube} external cursor="EXPLORE">
               YOUTUBE
             </Cta>
-            <InquiryCta source="films" primary>
-              LET’S CREATE YOUR FILM
+          </div>
+        </div>
+
+        {/* After the films — invite the visitor into their own */}
+        <div className={styles.imagine}>
+          <h3 className={`serif ${styles.imagineTitle}`}>
+            <span className="line">
+              <span>IMAGINE</span>
+            </span>
+            <span className="line">
+              <span className={styles.imagineItalic}>YOUR STORY.</span>
+            </span>
+          </h3>
+          <div className={styles.imagineCopy} data-reveal>
+            <p>Every celebration has a rhythm, a feeling, a moment that deserves to be remembered.</p>
+            <InquiryCta source="film" primary boxed cursor="BEGIN">
+              TELL US ABOUT YOUR STORY
             </InquiryCta>
           </div>
         </div>

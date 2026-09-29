@@ -249,6 +249,17 @@ p {
   padding: 1.2em 2.2em;
   border: 1px solid var(--line-strong);
   border-radius: 999px;
+  max-width: 100%;
+}
+/* Long labels wrap instead of overflowing on the narrowest phones. */
+@media (max-width: 480px) {
+  .cta.cta--boxed {
+    white-space: normal;
+    text-align: center;
+    justify-content: center;
+    line-height: 1.5;
+    padding-inline: 1.6em;
+  }
 }
 .cta.cta--boxed::after {
   display: none;

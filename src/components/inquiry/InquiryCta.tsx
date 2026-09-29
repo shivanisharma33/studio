@@ -1,10 +1,11 @@
 "use client";
 
 import Arrow from "@/components/ui/Arrow";
+import { track } from "@/lib/inquiry/analytics";
 import { useInquiry } from "./InquiryProvider";
 
 type Props = {
-  /** Where on the page the CTA lives — sent with inquiry_opened. */
+  /** Where on the page the CTA lives — fires `${source}_cta_clicked` and is sent with inquiry_opened. */
   source: string;
   children: React.ReactNode;
   primary?: boolean;
@@ -33,6 +34,7 @@ export default function InquiryCta({ source, children, primary, boxed, className
       onClick={(e) => {
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
         e.preventDefault();
+        track(`${source}_cta_clicked`);
         open(source);
       }}
     >

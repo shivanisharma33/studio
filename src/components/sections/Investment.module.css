@@ -36,27 +36,27 @@
   display: grid;
   gap: 14px;
 }
-.factors ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  border-top: 1px solid var(--line);
+.chain {
+  font-size: clamp(1.55rem, 3.1vw, 3.2rem);
+  line-height: 1.12;
+  letter-spacing: -0.005em;
+  padding-block: 18px;
+  border-block: 1px solid var(--line);
+  color: var(--ivory);
 }
-.factor {
-  display: flex;
-  align-items: baseline;
-  gap: 18px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--line);
+.chainPart {
+  will-change: opacity;
 }
-.factorNum {
+.chainArrow {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 0.45em;
+  vertical-align: 0.35em;
   color: var(--champagne-2);
-  min-width: 2ch;
 }
-.factorText {
-  font-size: clamp(1.2rem, 1.8vw, 1.8rem);
-  letter-spacing: 0.02em;
+.chainLast {
+  font-style: italic;
+  color: var(--champagne);
 }
 .ctaRow {
   display: grid;

@@ -1,0 +1,18 @@
+.wrap {
+  display: grid;
+  gap: 12px;
+}
+.units {
+  display: flex;
+  gap: clamp(18px, 3vw, 40px);
+}
+.unit {
+  display: grid;
+  gap: 4px;
+}
+.num {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ivory);
+}

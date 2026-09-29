@@ -195,7 +195,7 @@ export default function Portfolio() {
           <Cta href={`${SITE_URL}/portfolio`} external cursor="EXPLORE" primary>
             {cta.viewFullStory}
           </Cta>
-          <InquiryCta source="portfolio">PLAN YOUR STORY</InquiryCta>
+          <InquiryCta source="portfolio" cursor="BEGIN">YOUR STORY COULD BE NEXT</InquiryCta>
         </div>
       </div>
     </section>

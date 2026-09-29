@@ -12,6 +12,7 @@ import {
   eventTypes,
   guestCounts,
   months,
+  preferences,
   promotedYears,
   services,
   steps,
@@ -20,13 +21,14 @@ import {
   type CurrencyCode,
 } from "@/content/inquiry";
 import { LIMITS, summaryRows, validateAll, validateStep, type Inquiry } from "@/lib/inquiry/model";
-import { whatsappUrl } from "@/lib/inquiry/whatsapp";
+import { buildWhatsAppMessage } from "@/lib/inquiry/whatsapp";
 import { submitInquiry } from "@/lib/inquiry/submit";
 import { track } from "@/lib/inquiry/analytics";
 import Photo from "@/components/ui/Photo";
 import Arrow from "@/components/ui/Arrow";
 import { ChoiceGroup, FieldError, TextField } from "./Fields";
 import BudgetSelector from "./BudgetSelector";
+import WhatsAppLink from "./WhatsAppLink";
 import { REVIEW, stepName, type FlowState, type Phase } from "./types";
 import styles from "./InquiryFlow.module.css";
 
@@ -43,23 +45,9 @@ type Props = {
 
 /** Background photograph per screen — soft, dark, blurred; changes gently between chapters. */
 const BACKDROPS: PhotoT[] = [media.hero, media.story[0], media.global, media.reveal, media.investment, media.finalCta];
-const BACKDROP_FOR_VIEW = [0, 0, 1, 2, 3, 3, 4, 5, 5];
+const BACKDROP_FOR_VIEW = [0, 0, 1, 2, 3, 3, 4, 4, 5, 5];
 
-/** Which step each review row edits. */
-const ROW_STEP: Record<string, number> = {
-  Name: 0,
-  Email: 1,
-  "Phone / WhatsApp": 1,
-  "Wedding Date": 2,
-  Location: 3,
-  Venue: 3,
-  "Event Type": 4,
-  "Events / Days": 4,
-  "Guest Count": 4,
-  Services: 5,
-  "Approx. Investment": 6,
-  Story: 7,
-};
+const stepIndex = (key: string) => steps.findIndex((s) => s.key === key);
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([tabindex="-1"]), textarea, select, [tabindex]:not([tabindex="-1"])';
 
@@ -89,7 +77,7 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
   const errors = useMemo(() => (stepKey ? validateStep(stepKey, data) : {}), [stepKey, data]);
   const err = (f: keyof Inquiry) => (showErrors || touched.has(f) ? errors[f] : undefined);
   const backdrop = screen === "steps" ? BACKDROP_FOR_VIEW[view] : BACKDROPS.length - 1;
-  const wa = whatsappUrl(data);
+  const waText = buildWhatsAppMessage(data);
 
   const update = useCallback(
     (patch: Partial<Inquiry>) => setState((s) => ({ ...s, data: { ...s.data, ...patch } })),
@@ -241,7 +229,8 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
     if (stepKey === "date") track("date_selected", { month: data.month !== null ? months[data.month] : "", year: data.year ?? "" });
     if (stepKey === "location") track("location_selected", { country: data.country.trim(), venue_known: data.venue.trim() !== "" && data.venue !== VENUE_UNDECIDED });
     if (stepKey === "event") track("event_type_selected", { types: data.eventType.join(","), days: data.eventDays, guests: data.guestCount });
-    if (stepKey === "services") track("service_selected", { services: data.services.join(",") });
+    if (stepKey === "services") track("services_selected", { services: data.services.join(",") });
+    if (stepKey === "matters") track("preferences_selected", { preferences: data.preferences.join(","), count: data.preferences.length });
     if (stepKey === "budget") track("budget_selected", { currency: data.currency, range: data.budget === null ? "" : String(data.budget) });
   };
 
@@ -298,7 +287,7 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
       setPhase(res.ok ? "success" : "error");
     };
     if (res.ok) {
-      track("inquiry_submitted", { currency: data.currency, services: data.services.join(",") });
+      track("inquiry_completed", { currency: data.currency, services: data.services.join(",") });
     } else {
       track("inquiry_failed");
       setErrorDetail(res.error);
@@ -313,7 +302,7 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
     void send();
   };
 
-  const onWhatsApp = (from: string) => () => track("whatsapp_clicked", { from, step: stepName(view), phase });
+  const waTrack = { step: stepName(view), phase };
 
   /* ── currency follows the country until the visitor picks one ─────── */
   const setCountry = (country: string) => {
@@ -405,7 +394,7 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
       case "date": {
         const thisYear = now.getFullYear();
         const pastMonth = (m: number) => data.year === thisYear && m < now.getMonth();
-        const promoted = data.year !== null && promotedYears.includes(data.year);
+        const dateChosen = data.month !== null && data.year !== null;
         return (
           <>
             {heading(s.heading, s.kicker)}
@@ -433,7 +422,7 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
 
               <fieldset className={styles.group} data-rise aria-describedby={err("year") ? "err-year" : undefined}>
                 <legend className={`meta-sm ${styles.label}`}>YEAR</legend>
-                <div className={`${styles.choices} ${styles.cols_four}`} role="radiogroup" aria-label="Year">
+                <div className={`${styles.choices} ${styles.cols_five}`} role="radiogroup" aria-label="Year">
                   {years.map((y) => {
                     const open = promotedYears.includes(y);
                     return (
@@ -455,9 +444,13 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
                   })}
                 </div>
                 <FieldError id="err-year" message={err("year")} />
-                <div className={`${styles.note} ${data.year !== null ? styles.noteOn : ""}`} aria-live="polite">
-                  <p className={`${styles.noteInner} ${promoted ? styles.noteMeta : ""}`}>
-                    {data.year === null ? "" : promoted ? copy.yearOpen : copy.yearCheck}
+                <div className={`${styles.note} ${dateChosen ? styles.noteOn : ""}`} aria-live="polite">
+                  <p className={`${styles.noteInner} ${styles.noteMeta}`}>
+                    {dateChosen && (
+                      <>
+                        <span className={styles.sentMark} aria-hidden="true" /> {copy.dateReceived}
+                      </>
+                    )}
                   </p>
                 </div>
               </fieldset>
@@ -607,6 +600,23 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
             </div>
           </>
         );
+      case "matters":
+        return (
+          <>
+            {heading(s.heading, s.kicker)}
+            <div className={styles.fields} data-rise>
+              <ChoiceGroup
+                legend="WHAT MATTERS MOST"
+                options={preferences}
+                multiple
+                value={data.preferences}
+                onChange={(v) => update({ preferences: v })}
+                optional
+                columns="three"
+              />
+            </div>
+          </>
+        );
       case "story":
         return (
           <>
@@ -645,7 +655,7 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
 
   const renderReview = () => (
     <>
-      {heading(["HERE’S WHAT", "WE KNOW SO FAR."], `${data.name.trim().split(/\s+/)[0]?.toUpperCase() || "YOUR"} — YOUR STORY, SO FAR`)}
+      {heading(["YOUR STORY", "SO FAR."], `${data.name.trim().split(/\s+/)[0]?.toUpperCase() || "WELCOME"} — REVIEW OR EDIT ANYTHING BEFORE YOU SEND`)}
       <dl className={styles.summary}>
         {rows.map((r) => (
           <div key={r.label} className={`${styles.row} ${r.label === "Story" ? styles.rowWide : ""}`} data-rise>
@@ -654,7 +664,7 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
             <button
               type="button"
               className={`meta-sm ${styles.edit}`}
-              onClick={() => edit(ROW_STEP[r.label])}
+              onClick={() => edit(stepIndex(r.step))}
               disabled={sending}
               aria-label={`Edit ${r.label}`}
             >
@@ -680,10 +690,10 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
         </div>
         <div className={styles.finalActions}>
           <SendButton sending={sending} onClick={send} />
-          <a href={wa} target="_blank" rel="noopener noreferrer" className="cta" onClick={onWhatsApp("review")} data-cursor="WHATSAPP">
-            <span>OR CONTINUE ON WHATSAPP</span>
+          <WhatsAppLink text={waText} from="review" trackProps={waTrack} className="cta">
+            <span>CONTINUE ON WHATSAPP</span>
             <Arrow />
-          </a>
+          </WhatsAppLink>
         </div>
         <button type="button" className={`meta-sm ${styles.textBtn}`} onClick={() => goTo(REVIEW - 1)} disabled={sending}>
           <Arrow dir="left" /> EDIT DETAILS
@@ -705,19 +715,18 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
           <span className={styles.qItalic}>IS ON ITS WAY.</span>
         </span>
       </h2>
-      <p className={styles.lede} data-rise>
-        Thank you for reaching out to {brand.name}. {copy.followUp}
-      </p>
-      <p className={`meta-sm ${styles.touch}`} data-rise>
-        WE’LL BE IN TOUCH.
-      </p>
+      <div className={styles.outcomeCopy} data-rise>
+        <p className={styles.lede}>Thank you for reaching out to {brand.name}.</p>
+        <p className={styles.lede}>We’re excited to learn more about your celebration.</p>
+        <p className={styles.lede}>{copy.followUp}</p>
+      </div>
       <div className={styles.outcomeActions} data-rise>
-        <a href={wa} target="_blank" rel="noopener noreferrer" className="cta cta--primary cta--boxed" onClick={onWhatsApp("success")}>
+        <WhatsAppLink text={waText} from="success" trackProps={waTrack} className="cta cta--primary cta--boxed">
           <span>CONTINUE ON WHATSAPP</span>
           <Arrow />
-        </a>
+        </WhatsAppLink>
         <button type="button" className="cta" onClick={requestClose}>
-          <span>RETURN TO THE WEBSITE</span>
+          <span>BACK TO THE EXPERIENCE</span>
           <Arrow />
         </button>
       </div>
@@ -743,10 +752,10 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
       </p>
       <div className={styles.outcomeActions} data-rise>
         <SendButton sending={sending} onClick={retry} label="TRY AGAIN" />
-        <a href={wa} target="_blank" rel="noopener noreferrer" className="cta cta--primary" onClick={onWhatsApp("error")}>
+        <WhatsAppLink text={waText} from="error" trackProps={waTrack} className="cta cta--primary">
           <span>CONTINUE ON WHATSAPP</span>
           <Arrow />
-        </a>
+        </WhatsAppLink>
       </div>
       <p className={`meta-sm ${styles.touch}`} data-rise>
         OR EMAIL US AT{" "}
@@ -789,7 +798,7 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
         {screen === "steps" && (
           <nav className={styles.progress} aria-label="Inquiry progress">
             <ol className={styles.rail}>
-              {[...steps.map((s) => s.label), "CONNECT"].map((label, i) => (
+              {[...steps.map((s) => s.label), "REVIEW"].map((label, i) => (
                 <li key={label}>
                   <button
                     type="button"
@@ -812,7 +821,7 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
                     {steps[view].label}
                   </>
                 ) : (
-                  <span className={styles.compactNow}>REVIEW — CONNECT</span>
+                  <span className={styles.compactNow}>REVIEW — YOUR STORY SO FAR</span>
                 )}
               </span>
             </div>

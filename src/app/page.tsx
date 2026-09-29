@@ -11,6 +11,7 @@ import GlobalPresence from "@/components/sections/GlobalPresence";
 import Approach from "@/components/sections/Approach";
 import Testimonials from "@/components/sections/Testimonials";
 import Investment from "@/components/sections/Investment";
+import NextSteps from "@/components/sections/NextSteps";
 import Faq from "@/components/sections/Faq";
 import Contact from "@/components/sections/Contact";
 import FinalCta from "@/components/sections/FinalCta";
@@ -36,6 +37,7 @@ export default async function Page() {
         <Approach />
         <Testimonials />
         <Investment />
+        <NextSteps />
         <Faq />
         <Contact />
         <FinalCta />

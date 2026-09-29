@@ -114,11 +114,13 @@ export default function Hero() {
               ))}
             </ul>
             <div className={styles.ctas}>
-              <Link href="#portfolio" className="cta cta--primary" data-cursor="EXPLORE" data-magnetic="">
+              <InquiryCta source="hero" primary cursor="BEGIN">
+                CHECK YOUR DATE
+              </InquiryCta>
+              <Link href="#portfolio" className="cta" data-cursor="EXPLORE" data-magnetic="">
                 <span>{cta.seeOurMagic}</span>
                 <Arrow />
               </Link>
-              <InquiryCta source="hero">{cta.letsConnect}</InquiryCta>
             </div>
           </div>
         </div>

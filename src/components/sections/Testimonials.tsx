@@ -3,50 +3,87 @@
 import { useCallback, useRef, useState } from "react";
 import { gsap, useGSAP, MQ } from "@/lib/gsap";
 import { testimonials, SITE_URL } from "@/content/site";
-import { galleries } from "@/content/media";
+import { galleries, home, type Photo as PhotoT } from "@/content/media";
 import Photo from "@/components/ui/Photo";
+import InquiryCta from "@/components/inquiry/InquiryCta";
 import styles from "./Testimonials.module.css";
 
-/**
- * Cinematic testimonial viewer — one real testimonial at a time, verbatim.
- * Background: the couple's own gallery where one exists; otherwise a quiet
- * dark stage (no borrowed photographs).
- */
+/** Curated photography pairings for each testimonial from the studio's real body of work */
+const couplePhotos: PhotoT[] = [
+  galleries["aman-mrinal"]?.[0] || home[3],
+  galleries["deep-payal"]?.[0] || home[2],
+  galleries["varinder-param-at-noor-mahal"]?.[0] || home[11],
+  galleries["nooreen-jugraj"]?.[0] || home[13],
+  galleries["akshita-rajat-a-lovestory-from-toronto-downtown"]?.[0] || home[7],
+  galleries["raman-akash-love-straight-outta-panjab"]?.[0] || home[15],
+  galleries["the-house-of-rituals-india"]?.[0] || home[16],
+  galleries["the-fashion-vault"]?.[0] || home[18],
+  galleries["aman-mrinal"]?.[1] || home[9],
+];
+
 export default function Testimonials() {
   const root = useRef<HTMLElement>(null);
-  const quoteRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [busy, setBusy] = useState(false);
   const total = testimonials.length;
   const t = testimonials[index];
   const [first, ...rest] = t.paragraphs;
+  const currentPhoto = couplePhotos[index] || galleries[t.gallerySlug || ""]?.[0] || home[index % home.length];
 
-  const go = useCallback(
-    (dir: 1 | -1) => {
+  const transitionTo = useCallback(
+    (next: number, dir: 1 | -1) => {
       if (busy) return;
-      const next = (index + dir + total) % total;
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const q = quoteRef.current;
-      if (!q || reduced) {
+      const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const card = cardRef.current;
+      if (!card || reduced) {
         setIndex(next);
         setExpanded(false);
         return;
       }
       setBusy(true);
-      gsap.to(q, {
+      gsap.to(card, {
         autoAlpha: 0,
-        x: dir * -48,
-        duration: 0.55,
-        ease: "power3.in",
+        x: dir * -20,
+        scale: 0.985,
+        duration: 0.3,
+        ease: "power2.in",
         onComplete: () => {
           setIndex(next);
           setExpanded(false);
-          gsap.fromTo(q, { autoAlpha: 0, x: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 1.1, ease: "expo.out", onComplete: () => setBusy(false) });
+          gsap.fromTo(
+            card,
+            { autoAlpha: 0, x: dir * 20, scale: 0.985 },
+            {
+              autoAlpha: 1,
+              x: 0,
+              scale: 1,
+              duration: 0.55,
+              ease: "expo.out",
+              onComplete: () => setBusy(false),
+            }
+          );
         },
       });
     },
-    [busy, index, total]
+    [busy]
+  );
+
+  const go = useCallback(
+    (dir: 1 | -1) => {
+      const next = (index + dir + total) % total;
+      transitionTo(next, dir);
+    },
+    [index, total, transitionTo]
+  );
+
+  const goTo = useCallback(
+    (target: number) => {
+      if (target === index) return;
+      transitionTo(target, target > index ? 1 : -1);
+    },
+    [index, transitionTo]
   );
 
   useGSAP(
@@ -57,12 +94,18 @@ export default function Testimonials() {
       const mm = gsap.matchMedia();
       mm.add(MQ.motion, () => {
         gsap.fromTo(
-          q(`.${styles.title} .line > span`),
-          { yPercent: 110 },
-          { yPercent: 0, duration: 1.5, ease: "expo.out", stagger: 0.12, scrollTrigger: { trigger: q(`.${styles.title}`)[0], start: "top 80%", once: true } }
+          q(`.${styles.headerLine}`),
+          { yPercent: 100, opacity: 0 },
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 1.2,
+            ease: "expo.out",
+            scrollTrigger: { trigger: q(`.${styles.head}`)[0], start: "top 85%", once: true },
+          }
         );
       });
-      mm.add(MQ.reduced, () => gsap.set(q(".line > span"), { yPercent: 0 }));
+      mm.add(MQ.reduced, () => gsap.set(q(`.${styles.headerLine}`), { yPercent: 0, opacity: 1 }));
     },
     { scope: root }
   );
@@ -77,89 +120,186 @@ export default function Testimonials() {
         if (e.key === "ArrowRight") go(1);
         if (e.key === "ArrowLeft") go(-1);
       }}
+      tabIndex={0}
+      aria-label="Client Testimonials"
     >
-      {/* Backgrounds — slow crossfade */}
+      {/* Subtle ambient crossfade background */}
       <div className={styles.bgs} aria-hidden="true">
-        {testimonials.map((item, i) =>
-          item.gallerySlug ? (
-            <div className={`${styles.bg} ${i === index ? styles.bgOn : ""}`} key={item.couple}>
-              <Photo photo={galleries[item.gallerySlug][1]} sizes="100vw" quality={70} />
-            </div>
-          ) : null
-        )}
+        {couplePhotos.map((photo, i) => (
+          <div className={`${styles.bg} ${i === index ? styles.bgOn : ""}`} key={i}>
+            <Photo photo={photo} sizes="100vw" quality={60} />
+          </div>
+        ))}
         <div className={styles.bgVeil} />
       </div>
 
       <div className={`container ${styles.inner}`}>
+        {/* Balanced, aligned header */}
         <div className={styles.head}>
-          <p className="meta-sm" data-reveal>
-            07 &nbsp;—&nbsp; TESTIMONIALS
-          </p>
-          <h2 id="testimonials-title" className={`serif ${styles.title}`}>
-            {["REAL EMOTIONS.", "REAL STORIES.", "REAL WORDS."].map((l, i) => (
-              <span className="line" key={l}>
-                <span className={i === 2 ? styles.italic : undefined}>{l}</span>
+          <div className={styles.headLeft}>
+            <p className="meta-sm" data-reveal>
+              07 &nbsp;—&nbsp; CLIENT STORIES
+            </p>
+            <h2 id="testimonials-title" className={`serif ${styles.title}`}>
+              <span className={styles.headerLine}>
+                Real Emotions. Real Stories. <em className={styles.italic}>Real Words.</em>
               </span>
-            ))}
-          </h2>
+            </h2>
+          </div>
+
+          <div className={styles.ratingBadge}>
+            <div className={styles.stars} aria-hidden="true">
+              ★★★★★
+            </div>
+            <div className={styles.badgeText}>
+              <span className={styles.badgeScore}>5.0 STAR RATING</span>
+              <span className={styles.badgeSub}>Across North America &amp; India</span>
+            </div>
+          </div>
         </div>
 
-        <figure className={styles.viewer}>
-          <span className={`serif ${styles.bigIndex}`} aria-hidden="true">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          <div ref={quoteRef} className={styles.quoteWrap}>
-            <blockquote className={styles.quote}>
-              <p className={`serif ${styles.q}`}>
-                <span className={styles.mark} aria-hidden="true">
-                  “
-                </span>
-                {first}
-              </p>
-              {rest.length > 0 && (
-                <>
-                  <div className={`${styles.more} ${expanded ? styles.moreOpen : ""}`} aria-hidden={!expanded}>
-                    <div className={styles.moreInner}>
-                      {rest.map((p, i) => (
-                        <p key={i} className={styles.p}>
-                          {p}
-                        </p>
-                      ))}
-                    </div>
+        {/* 2-Column Aligned Showcase Card */}
+        <div className={styles.showcase}>
+          <div ref={cardRef} className={styles.card}>
+            {/* Left: Couple Portrait & Details */}
+            <div className={styles.portraitCol}>
+              <div className={styles.portraitFrame}>
+                <Photo
+                  photo={currentPhoto}
+                  sizes="(min-width: 1024px) 410px, 100vw"
+                  quality={85}
+                  priority
+                />
+                <div className={styles.portraitOverlay} />
+                <div className={styles.portraitInfo}>
+                  <span className={`meta-sm ${styles.verifiedChip}`}>
+                    <span className={styles.goldDot} /> VERIFIED WEDDING
+                  </span>
+                  <h3 className={`serif ${styles.coupleName}`}>{t.couple}</h3>
+                  <div className={styles.linksRow}>
+                    {t.gallerySlug && (
+                      <a
+                        className={`meta-sm ${styles.mediaLink}`}
+                        href={`${SITE_URL}/${t.gallerySlug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-cursor="VIEW"
+                      >
+                        VIEW FULL GALLERY →
+                      </a>
+                    )}
+                    {t.link && (
+                      <a
+                        className={`meta-sm ${styles.mediaLink}`}
+                        href={t.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-cursor="VIEW"
+                      >
+                        ON INSTAGRAM →
+                      </a>
+                    )}
                   </div>
-                  <button type="button" className={`meta-sm ${styles.toggle}`} onClick={() => setExpanded((v) => !v)} aria-expanded={expanded}>
-                    {expanded ? "READ LESS" : "READ THE FULL NOTE"} <span aria-hidden="true">{expanded ? "−" : "+"}</span>
-                  </button>
-                </>
-              )}
-            </blockquote>
-            <figcaption className={styles.caption}>
-              <span className={`serif ${styles.couple}`}>{t.couple}</span>
-              {t.gallerySlug && (
-                <a className="meta-sm" href={`${SITE_URL}/${t.gallerySlug}`} target="_blank" rel="noopener noreferrer" data-cursor="VIEW">
-                  VIEW THE GALLERY →
-                </a>
-              )}
-              {t.link && (
-                <a className="meta-sm" href={t.link} target="_blank" rel="noopener noreferrer" data-cursor="VIEW">
-                  ON INSTAGRAM →
-                </a>
-              )}
-            </figcaption>
-          </div>
+                </div>
+              </div>
+            </div>
 
-          <div className={styles.controls}>
-            <button type="button" className={`meta-sm ${styles.navBtn}`} onClick={() => go(-1)} data-cursor="PREV" data-magnetic="">
-              <span aria-hidden="true">←</span> PREVIOUS
-            </button>
-            <span className={`meta-sm ${styles.counter}`} aria-live="polite">
-              {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-            </span>
-            <button type="button" className={`meta-sm ${styles.navBtn}`} onClick={() => go(1)} data-cursor="NEXT" data-magnetic="">
-              NEXT <span aria-hidden="true">→</span>
-            </button>
+            {/* Right: Testimonial & Controls */}
+            <div className={styles.narrativeCol}>
+              <div className={styles.quoteTop}>
+                <div className={styles.quoteHeaderRow}>
+                  <span className={styles.quoteGlyph} aria-hidden="true">
+                    “
+                  </span>
+                  <span className={`meta-sm ${styles.counter}`} aria-live="polite">
+                    {String(index + 1).padStart(2, "0")}
+                    <span className={styles.counterDivider}>/</span>
+                    {String(total).padStart(2, "0")}
+                  </span>
+                </div>
+
+                <blockquote className={styles.quoteBlock}>
+                  <p className={`serif ${styles.quoteLead}`}>{first}</p>
+                  {rest.length > 0 && (
+                    <div
+                      className={`${styles.accordion} ${expanded ? styles.accordionOpen : ""}`}
+                      aria-hidden={!expanded}
+                    >
+                      <div className={styles.accordionInner}>
+                        {rest.map((p, i) => (
+                          <p key={i} className={styles.quoteBody}>
+                            {p}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {rest.length > 0 && (
+                    <button
+                      type="button"
+                      className={`meta-sm ${styles.expandBtn}`}
+                      onClick={() => setExpanded((v) => !v)}
+                      aria-expanded={expanded}
+                    >
+                      {expanded ? "READ LESS" : "READ FULL STORY"} <span aria-hidden="true">{expanded ? "−" : "+"}</span>
+                    </button>
+                  )}
+                </blockquote>
+              </div>
+
+              {/* Integrated Navigation Footer */}
+              <div className={styles.cardFooter}>
+                <div className={styles.dotsTrack} aria-label="Select testimonial">
+                  {testimonials.map((item, i) => (
+                    <button
+                      key={item.couple}
+                      type="button"
+                      className={`${styles.dotBtn} ${i === index ? styles.dotActive : ""}`}
+                      onClick={() => goTo(i)}
+                      aria-label={`Go to testimonial by ${item.couple}`}
+                      title={item.couple}
+                    >
+                      <span className={styles.dotIndicator} />
+                    </button>
+                  ))}
+                </div>
+
+                <div className={styles.navActions}>
+                  <button
+                    type="button"
+                    className={styles.circleBtn}
+                    onClick={() => go(-1)}
+                    aria-label="Previous testimonial"
+                    data-cursor="PREV"
+                    data-magnetic=""
+                  >
+                    ←
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.circleBtn}
+                    onClick={() => go(1)}
+                    aria-label="Next testimonial"
+                    data-cursor="NEXT"
+                    data-magnetic=""
+                  >
+                    →
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </figure>
+        </div>
+
+        {/* Compact bottom invitation */}
+        <div className={styles.readyBar} data-reveal>
+          <p className={`serif ${styles.readyTitle}`}>
+            Ready to craft your <em>own story?</em>
+          </p>
+          <InquiryCta source="testimonials" primary cursor="BEGIN">
+            CHECK YOUR DATE
+          </InquiryCta>
+        </div>
       </div>
     </section>
   );

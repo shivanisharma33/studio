@@ -6,6 +6,7 @@ import { track } from "@/lib/inquiry/analytics";
 import { REVIEW, stepName, type FlowState, type Phase } from "./types";
 import InquiryFlow from "./InquiryFlow";
 import FloatingInquire from "./FloatingInquire";
+import ExitIntent from "./ExitIntent";
 
 /**
  * One inquiry flow for the whole page. Every CTA calls open(source); the flow's
@@ -28,7 +29,8 @@ export function useInquiry(): Ctx {
   return ctx;
 }
 
-const STORAGE_KEY = "sk-inquiry-v1";
+// v2: the "what matters most" step was added, so v1 step indices no longer line up.
+const STORAGE_KEY = "sk-inquiry-v2";
 const initial: FlowState = { data: emptyInquiry, view: 0, reached: 0, currencyTouched: false };
 
 const isStarted = (d: Inquiry) => JSON.stringify(d) !== JSON.stringify(emptyInquiry);
@@ -142,6 +144,7 @@ export default function InquiryProvider({ children }: { children: React.ReactNod
     <InquiryContext.Provider value={ctx}>
       {children}
       <FloatingInquire />
+      <ExitIntent />
       {isOpen && (
         <InquiryFlow
           state={state}

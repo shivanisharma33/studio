@@ -7,18 +7,24 @@
  * Never pass personal data (name, email, phone, story) as event properties.
  */
 export type InquiryEvent =
+  /** Every inquiry CTA fires `${source}_cta_clicked` — hero_cta_clicked, portfolio_cta_clicked, film_cta_clicked, investment_cta_clicked… */
+  | `${string}_cta_clicked`
   | "inquiry_opened"
   | "inquiry_started"
   | "step_completed"
   | "date_selected"
   | "location_selected"
   | "event_type_selected"
-  | "service_selected"
+  | "services_selected"
   | "budget_selected"
-  | "inquiry_submitted"
+  | "preferences_selected"
+  | "inquiry_completed"
   | "inquiry_failed"
   | "whatsapp_clicked"
-  | "inquiry_abandoned";
+  | "inquiry_abandoned"
+  | "exit_intent_shown"
+  | "exit_intent_accepted"
+  | "exit_intent_dismissed";
 
 type Props = Record<string, string | number | boolean | undefined>;
 

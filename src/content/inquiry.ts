@@ -59,16 +59,17 @@ export const months = [
 /** Years the live site promotes: "Bookings Open for 2026–2027". */
 export const promotedYears = [2026, 2027];
 
+/** This year plus the next four (2026 → 2030 today). */
 export function yearOptions(now = new Date()): number[] {
   const y = now.getFullYear();
-  return [y, y + 1, y + 2, y + 3];
+  return [y, y + 1, y + 2, y + 3, y + 4];
 }
 
 export const eventTypes: Option[] = [
   { id: "wedding", label: "WEDDING" },
-  { id: "pre-wedding", label: "PRE-WEDDING" },
   { id: "engagement", label: "ENGAGEMENT" },
-  { id: "elopement", label: "ELOPEMENT" },
+  { id: "pre-wedding", label: "PRE-WEDDING" },
+  { id: "reception", label: "RECEPTION" },
   { id: "destination-wedding", label: "DESTINATION WEDDING" },
   { id: "other", label: "OTHER" },
 ];
@@ -95,8 +96,19 @@ export const services: Option[] = [
   { id: "cinematography", label: "CINEMATOGRAPHY" },
   { id: "photo-cine", label: "PHOTOGRAPHY + CINEMATOGRAPHY" },
   { id: "pre-wedding", label: "PRE-WEDDING" },
-  { id: "engagement", label: "ENGAGEMENT" },
-  { id: "destination", label: "DESTINATION COVERAGE" },
+  { id: "other", label: "OTHER" },
+];
+
+/** "What matters most" — multi-select, optional. */
+export const preferences: Option[] = [
+  { id: "natural-moments", label: "NATURAL MOMENTS" },
+  { id: "cinematic-films", label: "CINEMATIC FILMS" },
+  { id: "editorial-portraits", label: "EDITORIAL PORTRAITS" },
+  { id: "emotional-storytelling", label: "EMOTIONAL STORYTELLING" },
+  { id: "traditional-moments", label: "TRADITIONAL MOMENTS" },
+  { id: "candid-photography", label: "CANDID PHOTOGRAPHY" },
+  { id: "destination-coverage", label: "DESTINATION COVERAGE" },
+  { id: "full-experience", label: "FULL WEDDING EXPERIENCE" },
   { id: "other", label: "OTHER" },
 ];
 
@@ -104,14 +116,15 @@ export const VENUE_UNDECIDED = "Not decided yet";
 
 /** Step chapters — label shown in the progress rail, heading lines shown large. */
 export const steps = [
-  { key: "you", label: "YOU", kicker: "LET’S UNDERSTAND YOUR STORY.", heading: ["LET’S START", "WITH YOU."] },
+  { key: "you", label: "YOU", kicker: "LET’S START WITH YOU.", heading: ["WHAT SHOULD WE", "CALL YOU?"] },
   { key: "reach", label: "REACH", kicker: "SO WE CAN CONTINUE THE CONVERSATION.", heading: ["WHERE CAN WE", "REACH YOU?"] },
-  { key: "date", label: "DATE", kicker: "WHEN IS YOUR CELEBRATION?", heading: ["WHEN IS YOUR", "STORY?"] },
+  { key: "date", label: "DATE", kicker: "LET’S CHECK YOUR DATE.", heading: ["WHEN IS YOUR STORY", "HAPPENING?"] },
   { key: "location", label: "LOCATION", kicker: "WHERE WILL IT TAKE PLACE?", heading: ["WHERE WILL", "IT HAPPEN?"] },
-  { key: "event", label: "EVENT", kicker: "WHAT MATTERS MOST TO YOU?", heading: ["TELL US ABOUT", "THE CELEBRATION."] },
-  { key: "services", label: "SERVICES", kicker: "DOCUMENTARY · EDITORIAL · CINEMATIC", heading: ["HOW WOULD YOU", "LIKE US TO TELL IT?"] },
-  { key: "budget", label: "INVESTMENT", kicker: "EVERY STORY IS DIFFERENT.", heading: ["WHAT ARE YOU", "PLANNING TO INVEST?"] },
-  { key: "story", label: "STORY", kicker: "TELL US WHAT YOU’RE IMAGINING.", heading: ["TELL US", "ABOUT YOUR STORY."] },
+  { key: "event", label: "EVENT", kicker: "THE SHAPE OF YOUR CELEBRATION.", heading: ["TELL US ABOUT", "THE CELEBRATION."] },
+  { key: "services", label: "SERVICES", kicker: "DOCUMENTARY · EDITORIAL · CINEMATIC", heading: ["WHAT WOULD YOU LIKE", "US TO CREATE?"] },
+  { key: "budget", label: "INVESTMENT", kicker: "EVERY STORY IS DIFFERENT.", heading: ["WHAT ARE YOU PLANNING", "TO INVEST IN YOUR STORY?"] },
+  { key: "matters", label: "PRIORITIES", kicker: "CHOOSE AS MANY AS FEEL RIGHT.", heading: ["WHAT MATTERS", "MOST TO YOU?"] },
+  { key: "story", label: "STORY", kicker: "IN YOUR OWN WORDS.", heading: ["TELL US A LITTLE", "ABOUT YOUR STORY."] },
 ] as const;
 
 export type StepKey = (typeof steps)[number]["key"];
@@ -121,12 +134,12 @@ export const copy = {
     "Every celebration is unique, which is why our pricing is customized around your needs, vision, event details, requirements, location and story.",
   budgetThanks: "Thank you — this helps us understand how to shape the right experience for you.",
   budgetUnsure: "That’s completely fine. We’ll discuss your vision and requirements during the consultation.",
-  yearOpen: "BOOKINGS OPEN 2026–2027 · LIMITED DATES AVAILABLE",
-  yearCheck: "Let’s check availability for your date.",
+  /** Shown once a month and year are chosen — acknowledges the request, never implies availability. */
+  dateReceived: "DATE REQUEST RECEIVED — WE’LL CHECK YOUR DATE.",
   regions: "NORTH AMERICA · INDIA · DESTINATION WEDDINGS",
-  storyPrompt:
-    "Tell us about your wedding, your vision, what you’re planning, or anything you’d love us to know.",
-  storyPlaceholder: "We’d love to hear about your celebration…",
+  storyPrompt: "Optional — but often our favourite part to read.",
+  storyPlaceholder:
+    "Tell us about your celebration, your vision, what you’re looking for, or anything you want us to know.",
   /** From the live site's Get In Touch page — no response-time promise. */
   followUp: "We’ll do our best to get back to you as soon as possible.",
 };

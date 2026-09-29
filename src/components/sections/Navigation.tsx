@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { onIntroDone } from "@/lib/intro";
-import { brand, cta, nav } from "@/content/site";
+import { brand, nav } from "@/content/site";
 import InquiryCta from "@/components/inquiry/InquiryCta";
 import styles from "./Navigation.module.css";
 
@@ -92,7 +92,6 @@ export default function Navigation() {
             {nav.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className={styles.link} data-cursor="EXPLORE" data-magnetic="">
-                  <span className={styles.num}>{item.n}</span>
                   <span className={styles.label}>{item.label}</span>
                 </Link>
               </li>
@@ -101,8 +100,8 @@ export default function Navigation() {
         </nav>
 
         <div className={styles.right}>
-          <InquiryCta source="nav" className={styles.connect}>
-            {cta.letsConnect}
+          <InquiryCta source="nav" className={styles.connect} cursor="BEGIN">
+            CHECK YOUR DATE
           </InquiryCta>
           <button
             type="button"
@@ -124,7 +123,6 @@ export default function Navigation() {
           {nav.map((item, i) => (
             <li key={item.href} style={{ transitionDelay: open ? `${0.08 + i * 0.06}s` : "0s" }}>
               <Link href={item.href} onClick={() => setOpen(false)} className={styles.menuLink}>
-                <span className={`meta-sm ${styles.menuNum}`}>{item.n}</span>
                 <span className={`serif ${styles.menuLabel}`}>{item.label}</span>
               </Link>
             </li>

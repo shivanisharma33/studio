@@ -25,7 +25,7 @@ export default function Faq() {
         <div className={styles.grid}>
           <div className={styles.aside}>
             <p className="meta-sm" data-reveal>
-              09 &nbsp;—&nbsp; FREQUENTLY ASKED
+              10 &nbsp;—&nbsp; FREQUENTLY ASKED
             </p>
             <h2 id="faq-title" className={`serif ${styles.title}`} data-reveal>
               {faq.heading.slice(0, 1)}
