@@ -80,7 +80,7 @@ export default function BrandStatement() {
     <section ref={root} className={`section ${styles.wrap}`} aria-labelledby="statement">
       <div className="container">
         <p className="meta-sm" data-reveal>
-          01 &nbsp;—&nbsp; THE PHILOSOPHY
+          02 &nbsp;—&nbsp; BRAND POSITIONING
         </p>
         <h2 id="statement" className={`serif ${styles.big}`}>
           {STATEMENT.map((l, i) => (

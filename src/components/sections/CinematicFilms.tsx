@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { gsap, useGSAP, MQ } from "@/lib/gsap";
+import { gsap, ScrollTrigger, useGSAP, MQ } from "@/lib/gsap";
 import { splitTitle } from "@/lib/films";
 import type { Film } from "@/content/site";
 import { cta, contact } from "@/content/site";
@@ -46,6 +46,17 @@ function FilmLightbox({ id, onClose }: { id: string; onClose: () => void }) {
 export default function CinematicFilms({ films }: { films: Film[] }) {
   const root = useRef<HTMLElement>(null);
   const [playing, setPlaying] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
+  const INITIAL_COUNT = 3;
+  const displayedFilms = showAll ? films : films.slice(0, INITIAL_COUNT);
+
+  const toggleShowMore = () => {
+    setShowAll((prev) => !prev);
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 120);
+  };
+
   const featured = films[0];
   const featuredTitle = featured.title ? splitTitle(featured.title) : null;
 
@@ -97,7 +108,7 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
         <div className={styles.head}>
           <div>
             <p className="meta-sm" data-reveal>
-              03 &nbsp;—&nbsp; CINEMATIC FILMS
+              04 &nbsp;—&nbsp; CINEMATIC FILMS
             </p>
             <h2 id="films-title" className={`serif ${styles.title}`}>
               <span className="line">
@@ -157,7 +168,7 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
       {/* Film index — the nine films embedded on the studio's Cinematic Films page */}
       <div className="container">
         <ol className={styles.list} aria-label="All films">
-          {films.map((f, i) => {
+          {displayedFilms.map((f, i) => {
             const t = f.title ? splitTitle(f.title) : null;
             return (
               <li key={f.id} data-reveal style={{ ["--d" as string]: `${(i % 4) * 0.06}s` }}>
@@ -178,6 +189,25 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
             );
           })}
         </ol>
+
+        {films.length > INITIAL_COUNT && (
+          <div className={styles.showMoreWrap}>
+            <button
+              type="button"
+              className={styles.showMoreBtn}
+              onClick={toggleShowMore}
+              data-cursor={showAll ? "COLLAPSE" : "EXPAND"}
+              aria-expanded={showAll}
+            >
+              <span className={styles.showMoreLine} />
+              <span className={styles.showMorePill}>
+                <span className={styles.showMoreIcon}>{showAll ? "−" : "+"}</span>
+                <span>{showAll ? "SHOW LESS" : `SHOW MORE FILMS (${films.length - INITIAL_COUNT} MORE)`}</span>
+              </span>
+              <span className={styles.showMoreLine} />
+            </button>
+          </div>
+        )}
 
         <div className={styles.after} data-reveal>
           <span className="meta-sm">MORE FILMS ON THE STUDIO&apos;S CHANNEL</span>

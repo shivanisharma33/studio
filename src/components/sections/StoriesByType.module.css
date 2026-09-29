@@ -1,0 +1,238 @@
+.wrap {
+  background: var(--bg-1);
+  overflow: hidden;
+  position: relative;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding-bottom: clamp(28px, 4vw, 48px);
+  border-bottom: 1px solid var(--line);
+}
+
+.title {
+  font-size: var(--fs-title);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+
+.italic {
+  font-style: italic;
+  color: var(--champagne);
+}
+
+.lede {
+  font-size: clamp(1.15rem, 1.8vw, 1.6rem);
+  color: var(--warm-white);
+  line-height: 1.2;
+  max-width: 32ch;
+  text-align: right;
+}
+
+/* Category Filter Pills */
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: clamp(32px, 4vw, 56px);
+  margin-bottom: clamp(32px, 4vw, 48px);
+}
+
+.filterBtn {
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(243, 237, 228, 0.03);
+  color: var(--gray);
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out);
+}
+
+.filterBtn:hover {
+  border-color: rgba(201, 181, 143, 0.4);
+  color: var(--ivory);
+}
+
+.filterActive {
+  background: var(--champagne);
+  color: var(--bg-0) !important;
+  border-color: var(--champagne);
+  box-shadow: 0 0 20px rgba(201, 181, 143, 0.35);
+}
+
+/* Stories Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 3vw, 36px);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(20, 20, 20, 0.6);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.45s var(--ease-out);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(201, 181, 143, 0.45);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.7), 0 0 25px rgba(201, 181, 143, 0.15);
+}
+
+.thumbWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--bg-2);
+}
+
+.thumb {
+  object-fit: cover;
+  transition: transform 0.8s var(--ease-out);
+}
+
+.card:hover .thumb {
+  transform: scale(1.08);
+}
+
+.thumbShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 8, 8, 0.55) 0%,
+    rgba(8, 8, 8, 0.05) 45%,
+    rgba(8, 8, 8, 0.7) 100%
+  );
+  z-index: 1;
+}
+
+.cardTop {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+.badgeCategory {
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  color: var(--champagne);
+  background: rgba(8, 8, 8, 0.75);
+  backdrop-filter: blur(6px);
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(201, 181, 143, 0.25);
+}
+
+.badgeLocation {
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  color: var(--gray);
+  background: rgba(8, 8, 8, 0.6);
+  backdrop-filter: blur(6px);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.cardContent {
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.cardNum {
+  color: var(--gray);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.7rem;
+}
+
+.cardTitle {
+  font-size: clamp(1.25rem, 1.6vw, 1.55rem);
+  line-height: 1.15;
+  color: var(--ivory);
+  transition: color 0.3s ease;
+}
+
+.card:hover .cardTitle {
+  color: var(--champagne);
+}
+
+.cardSub {
+  color: var(--gray);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 0;
+  flex: 1;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 6px;
+}
+
+.cardAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--champagne);
+  font-weight: 600;
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .cardAction {
+  transform: translateX(3px);
+}
+
+/* Responsive */
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .lede {
+    text-align: left;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

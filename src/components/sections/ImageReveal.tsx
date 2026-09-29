@@ -57,7 +57,7 @@ export default function ImageReveal() {
         </div>
         <div className={styles.veil} />
         <div className={`${styles.caption}`}>
-          <span className="meta-sm">{brand.name.toUpperCase()}</span>
+          <span className="meta-sm">03 &nbsp;—&nbsp; WHAT WE CAPTURE</span>
           <span className={`serif ${styles.captionBig}`}>Cinematic storytelling. Timeless memories.</span>
           <span className="meta-sm">{brand.positioning.join("  /  ")}</span>
         </div>

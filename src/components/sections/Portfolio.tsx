@@ -112,7 +112,7 @@ export default function Portfolio() {
     <section ref={root} id="portfolio" className={styles.wrap} aria-labelledby="portfolio-title">
       <div className={`container ${styles.intro}`}>
         <p className="meta-sm" data-reveal>
-          02 &nbsp;—&nbsp; PORTFOLIO
+          05 &nbsp;—&nbsp; PORTFOLIO / REAL STORIES
         </p>
         <h2 id="portfolio-title" className={`serif ${styles.title}`}>
           <span className="line">

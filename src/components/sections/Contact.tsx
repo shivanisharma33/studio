@@ -43,7 +43,7 @@ export default function Contact() {
     <section ref={root} id="get-in-touch" className={`section ${styles.wrap}`} aria-labelledby="contact-title" data-floating-cta-hide="">
       <div className="container">
         <p className="meta-sm" data-reveal>
-          11 &nbsp;—&nbsp; GET IN TOUCH
+          14 &nbsp;—&nbsp; CHECK YOUR DATE / INQUIRY
         </p>
         <h2 id="contact-title" className={`serif ${styles.title}`}>
           <span className="line">

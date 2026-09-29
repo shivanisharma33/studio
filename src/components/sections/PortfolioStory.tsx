@@ -80,7 +80,7 @@ export default function PortfolioStory() {
 
       <div className={styles.overlay}>
         <div className={styles.top}>
-          <span className="meta-sm">04 &nbsp;—&nbsp; STORY THROUGH PHOTOGRAPHY</span>
+          <span className="meta-sm">06 &nbsp;—&nbsp; THE WEDDING EXPERIENCE</span>
           <span className={`meta-sm ${styles.count}`}>
             <span ref={counter}>01</span> / {String(frames.length).padStart(2, "0")}
           </span>

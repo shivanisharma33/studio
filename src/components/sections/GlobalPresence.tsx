@@ -90,7 +90,7 @@ export default function GlobalPresence() {
     <section ref={root} className={`section ${styles.wrap}`} aria-labelledby="global-title">
       <div className="container">
         <p className="meta-sm" data-reveal>
-          05 &nbsp;—&nbsp; {brand.regions.join(" & ")}
+          10 &nbsp;—&nbsp; NORTH AMERICA · INDIA · DESTINATIONS
         </p>
         <h2 id="global-title" className={`serif ${styles.title}`}>
           <span className="line">

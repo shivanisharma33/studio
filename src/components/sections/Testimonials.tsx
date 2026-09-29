@@ -138,7 +138,7 @@ export default function Testimonials() {
         <div className={styles.head}>
           <div className={styles.headLeft}>
             <p className="meta-sm" data-reveal>
-              07 &nbsp;—&nbsp; CLIENT STORIES
+              09 &nbsp;—&nbsp; TESTIMONIALS
             </p>
             <h2 id="testimonials-title" className={`serif ${styles.title}`}>
               <span className={styles.headerLine}>

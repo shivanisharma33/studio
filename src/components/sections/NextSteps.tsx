@@ -103,7 +103,7 @@ export default function NextSteps() {
       <div className={`container ${styles.grid}`}>
         <div className={styles.aside}>
           <p className="meta-sm" data-reveal>
-            09 &nbsp;—&nbsp; THE PROCESS
+            12 &nbsp;—&nbsp; WHAT HAPPENS NEXT
           </p>
           <h2 id="next-title" className={`serif ${styles.title}`}>
             <span className="line">

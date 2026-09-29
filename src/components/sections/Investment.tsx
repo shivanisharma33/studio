@@ -1,18 +1,51 @@
 "use client";
 
-import { Fragment, useRef } from "react";
+import { Fragment, useRef, useState, useEffect } from "react";
 import { gsap, useGSAP, MQ } from "@/lib/gsap";
 import { investment } from "@/content/site";
 import { media } from "@/content/media";
 import Photo from "@/components/ui/Photo";
 import InquiryCta from "@/components/inquiry/InquiryCta";
+import Arrow from "@/components/ui/Arrow";
 import styles from "./Investment.module.css";
+
+function InvestmentLightbox({ id, onClose }: { id: string; onClose: () => void }) {
+  useEffect(() => {
+    const lenis = window.__lenis;
+    lenis?.stop();
+    document.documentElement.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      lenis?.start();
+      document.documentElement.style.overflow = "";
+    };
+  }, [onClose]);
+
+  return (
+    <div className={styles.lightbox} role="dialog" aria-modal="true" aria-label="Investment film viewer">
+      <button type="button" className={`meta-sm ${styles.close}`} onClick={onClose} data-cursor="CLOSE">
+        CLOSE <span aria-hidden="true">×</span>
+      </button>
+      <div className={styles.player}>
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&color=white`}
+          title="Studio Kunal Photography — Investment film"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    </div>
+  );
+}
 
 /** How a proposal takes shape — the factors the studio names on its Investment page. */
 const CHAIN = ["YOUR CELEBRATION", "YOUR REQUIREMENTS", "YOUR LOCATION", "YOUR VISION", "YOUR STORY", "YOUR CUSTOM PROPOSAL"];
 
 export default function Investment() {
   const root = useRef<HTMLElement>(null);
+  const [playing, setPlaying] = useState(false);
 
   useGSAP(
     () => {
@@ -51,7 +84,7 @@ export default function Investment() {
     <section ref={root} id="investment" className={`section ${styles.wrap}`} aria-labelledby="investment-title">
       <div className="container">
         <p className="meta-sm" data-reveal>
-          08 &nbsp;—&nbsp; INVESTMENT
+          11 &nbsp;—&nbsp; INVESTMENT / CUSTOM EXPERIENCE
         </p>
 
         <div className={styles.grid}>
@@ -105,13 +138,31 @@ export default function Investment() {
           </div>
 
           <div className={styles.photo} data-reveal>
-            <div className={styles.photoInner}>
-              <Photo photo={media.investment} sizes="(min-width: 1024px) 38vw, 100vw" />
-            </div>
+            <button
+              type="button"
+              className={styles.photoBtn}
+              onClick={() => setPlaying(true)}
+              data-cursor="PLAY FILM"
+              aria-label="Play investment film"
+            >
+              <div className={styles.photoInner}>
+                <Photo photo={media.investment} sizes="(min-width: 1024px) 38vw, 100vw" />
+              </div>
+              <div className={styles.playOverlay}>
+                <span className={styles.playCircle}>
+                  <span className={styles.playTriangle} />
+                </span>
+                <span className={`meta-sm ${styles.playLabel}`}>WATCH FILM</span>
+              </div>
+            </button>
             <span className={`meta-sm ${styles.photoCap}`}>NO FIXED PACKAGES — CUSTOMIZED PRICING</span>
           </div>
         </div>
       </div>
+
+      {playing && investment.filmId && (
+        <InvestmentLightbox id={investment.filmId} onClose={() => setPlaying(false)} />
+      )}
     </section>
   );
 }

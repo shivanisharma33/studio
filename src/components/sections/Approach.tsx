@@ -62,7 +62,7 @@ export default function Approach() {
       <div className="container">
         <div className={styles.head}>
           <p className="meta-sm" data-reveal>
-            06 &nbsp;—&nbsp; OUR APPROACH
+            07 &nbsp;—&nbsp; OUR APPROACH — 01 / 02 / 03
           </p>
           <h2 id="approach-title" className={`serif-i ${styles.headTitle}`} data-reveal>
             Our approach will always inclined towards —

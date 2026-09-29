@@ -53,7 +53,7 @@ export default function FinalCta() {
 
       <div className={`container ${styles.content}`}>
         <span className="meta-sm" data-cta-fade>
-          {brand.regions.join("  ·  ")}
+          15 &nbsp;—&nbsp; FINAL CINEMATIC CTA &nbsp;·&nbsp; {brand.regions.join("  ·  ")}
         </span>
         <h2 id="final-title" className={`serif ${styles.title}`}>
           {["YOUR STORY", "DESERVES", "TO BE REMEMBERED."].map((l, i) => (
