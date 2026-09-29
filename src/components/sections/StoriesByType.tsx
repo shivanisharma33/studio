@@ -6,6 +6,7 @@ import { gsap, useGSAP, MQ } from "@/lib/gsap";
 import { SITE_URL } from "@/content/site";
 import { galleries } from "@/content/media";
 import Arrow from "@/components/ui/Arrow";
+import StoryModal from "@/components/portfolio/StoryModal";
 import styles from "./StoriesByType.module.css";
 
 const CATEGORIES = [
@@ -114,6 +115,7 @@ const STORIES: StoryItem[] = [
 export default function StoriesByType() {
   const root = useRef<HTMLElement>(null);
   const [activeTab, setActiveTab] = useState<CategoryId>("all");
+  const [activeStory, setActiveStory] = useState<string | null>(null);
 
   const filtered =
     activeTab === "all" ? STORIES : STORIES.filter((s) => s.category === activeTab);
@@ -191,15 +193,14 @@ export default function StoriesByType() {
         {/* Grid of Stories */}
         <div className={styles.grid}>
           {filtered.map((item, i) => (
-            <a
+            <button
+              type="button"
               key={item.id}
-              href={`${SITE_URL}/${item.slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => setActiveStory(item.slug)}
               className={styles.card}
               data-cursor="VIEW STORY"
               data-reveal
-              style={{ ["--d" as string]: `${(i % 3) * 0.08}s` }}
+              style={{ ["--d" as string]: `${(i % 3) * 0.08}s`, textAlign: "left", cursor: "pointer" }}
             >
               <div className={styles.thumbWrap}>
                 <Image
@@ -228,10 +229,18 @@ export default function StoriesByType() {
                   </span>
                 </div>
               </div>
-            </a>
+            </button>
           ))}
         </div>
       </div>
+
+      {activeStory && (
+        <StoryModal
+          slug={activeStory}
+          onClose={() => setActiveStory(null)}
+          onSelectStory={(s) => setActiveStory(s)}
+        />
+      )}
     </section>
   );
 }

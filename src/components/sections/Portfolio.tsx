@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { gsap, useGSAP, MQ, ScrollTrigger } from "@/lib/gsap";
 import { portfolio, cta, SITE_URL, brand } from "@/content/site";
 import { galleries } from "@/content/media";
@@ -8,6 +8,7 @@ import Photo from "@/components/ui/Photo";
 import Cta from "@/components/ui/Cta";
 import Arrow from "@/components/ui/Arrow";
 import InquiryCta from "@/components/inquiry/InquiryCta";
+import StoryModal from "@/components/portfolio/StoryModal";
 import styles from "./Portfolio.module.css";
 
 /**
@@ -21,6 +22,7 @@ export default function Portfolio() {
   const trackRef = useRef<HTMLDivElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
+  const [activeStory, setActiveStory] = useState<string | null>(null);
 
   useGSAP(
     () => {
@@ -134,10 +136,9 @@ export default function Portfolio() {
             const flip = i % 2 === 1;
             return (
               <article className={`${styles.chapter} ${flip ? styles.flip : ""}`} key={p.slug}>
-                <a
-                  href={`${SITE_URL}/${p.slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() => setActiveStory(p.slug)}
                   className={styles.img}
                   data-cursor="VIEW STORY"
                   aria-label={`${p.title} — view story`}
@@ -146,10 +147,10 @@ export default function Portfolio() {
                     <Photo photo={photos[0]} sizes="(min-width: 1024px) 58vw, 100vw" />
                   </div>
                   <div className={styles.shade} />
-                </a>
+                </button>
 
                 {photos[1] && (
-                  <div className={styles.small} aria-hidden="true">
+                  <div className={styles.small} aria-hidden="true" onClick={() => setActiveStory(p.slug)} style={{ cursor: "pointer" }}>
                     <Photo photo={photos[1]} sizes="(min-width: 1024px) 18vw, 40vw" />
                   </div>
                 )}
@@ -161,17 +162,17 @@ export default function Portfolio() {
                     <span className="meta-sm">STUDIO KUNAL PHOTOGRAPHY</span>
                     <span className="meta-sm champagne">CHAPTER {p.n} / {String(portfolio.length).padStart(2, "0")}</span>
                   </div>
-                  <a
-                    href={`${SITE_URL}/${p.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => setActiveStory(p.slug)}
                     className="cta"
                     data-cursor="VIEW STORY"
                     data-magnetic=""
+                    style={{ background: "transparent", border: "none", padding: 0, textAlign: "left" }}
                   >
                     <span>{cta.viewStory}</span>
                     <Arrow />
-                  </a>
+                  </button>
                 </div>
               </article>
             );
@@ -192,12 +193,26 @@ export default function Portfolio() {
       <div className={`container ${styles.after}`} data-reveal>
         <span className="meta-sm">THE FULL PORTFOLIO</span>
         <div className={styles.afterCtas}>
-          <Cta href={`${SITE_URL}/portfolio`} external cursor="EXPLORE" primary>
-            {cta.viewFullStory}
-          </Cta>
+          <button
+            type="button"
+            onClick={() => setActiveStory(portfolio[0].slug)}
+            className="cta cta-primary"
+            data-cursor="EXPLORE"
+          >
+            <span>{cta.viewFullStory}</span>
+            <Arrow />
+          </button>
           <InquiryCta source="portfolio" cursor="BEGIN">YOUR STORY COULD BE NEXT</InquiryCta>
         </div>
       </div>
+
+      {activeStory && (
+        <StoryModal
+          slug={activeStory}
+          onClose={() => setActiveStory(null)}
+          onSelectStory={(s) => setActiveStory(s)}
+        />
+      )}
     </section>
   );
 }

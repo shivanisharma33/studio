@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     // when convenient — nothing else changes.
     remotePatterns: [
       new URL("https://i.wfolio.com/**"),
+      new URL("https://vp.wfolio.com/**"),
       new URL("https://i.ytimg.com/**"),
     ],
     // Set NEXT_PUBLIC_UNOPTIMIZED_IMAGES=1 only for offline layout testing.
