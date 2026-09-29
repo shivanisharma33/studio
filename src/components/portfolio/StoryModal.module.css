@@ -1,39 +1,20 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
   height: 100vh;
   height: 100dvh;
-  max-height: 100dvh;
   z-index: 120;
   background: rgba(8, 8, 8, 0.98);
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
-  overscroll-behavior: contain;
-  overscroll-behavior-y: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(201, 181, 143, 0.3) rgba(8, 8, 8, 0.8);
-  animation: fadeIn 0.35s var(--ease-out);
-  outline: none;
-}
-
-.backdrop::-webkit-scrollbar {
-  width: 6px;
-}
-
-.backdrop::-webkit-scrollbar-track {
-  background: rgba(8, 8, 8, 0.8);
-}
-
-.backdrop::-webkit-scrollbar-thumb {
-  background: rgba(201, 181, 143, 0.3);
-  border-radius: 3px;
-}
-
-.backdrop::-webkit-scrollbar-thumb:hover {
-  background: rgba(201, 181, 143, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+  animation: fadeIn 0.25s ease;
 }
 
 @keyframes fadeIn {
@@ -43,18 +24,16 @@
 
 /* Top Sticky Navigation Bar */
 .topBar {
-  position: sticky;
-  top: 0;
-  z-index: 30;
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px clamp(16px, 3.5vw, 40px);
-  background: rgba(10, 10, 10, 0.92);
+  padding: 14px clamp(16px, 3.5vw, 40px);
+  background: rgba(10, 10, 10, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--line);
-  touch-action: pan-y;
+  z-index: 10;
 }
 
 .storyMeta {
@@ -94,7 +73,7 @@
 .topActions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .navArrows {
@@ -147,20 +126,45 @@
   background: rgba(201, 181, 143, 0.12);
 }
 
-/* Scrollable Content Container */
+/* Scrollable Gallery Content Area */
 .scrollArea {
-  width: 100%;
-  max-width: 1500px;
-  margin: 0 auto;
-  padding: clamp(24px, 4vw, 56px) clamp(16px, 3.5vw, 40px);
+  flex: 1 1 0%;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
+  overscroll-behavior: contain;
+  overscroll-behavior-y: contain;
+  padding: clamp(24px, 4vw, 56px) clamp(16px, 3.5vw, 40px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 181, 143, 0.3) rgba(8, 8, 8, 0.8);
+  outline: none;
+}
+
+.scrollArea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollArea::-webkit-scrollbar-track {
+  background: rgba(8, 8, 8, 0.8);
+}
+
+.scrollArea::-webkit-scrollbar-thumb {
+  background: rgba(201, 181, 143, 0.35);
+  border-radius: 3px;
+}
+
+.scrollArea::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 181, 143, 0.6);
 }
 
 /* Hero Title */
 .storyHero {
   text-align: center;
   max-width: 800px;
-  margin: 0 auto clamp(36px, 5vw, 64px);
+  margin: 0 auto clamp(32px, 5vw, 56px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -290,7 +294,7 @@
 /* Footer Section */
 .modalFooter {
   max-width: 900px;
-  margin: clamp(60px, 8vw, 100px) auto 20px;
+  margin: clamp(48px, 7vw, 90px) auto 20px;
   padding: clamp(32px, 5vw, 64px) clamp(24px, 4vw, 48px);
   background: rgba(243, 237, 228, 0.03);
   border: 1px solid var(--line);
@@ -389,16 +393,51 @@
 }
 
 @media (max-width: 768px) {
-  .galleryGrid {
-    grid-template-columns: 1fr;
-  }
   .topBar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    padding: 10px 14px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .storyMeta {
+    gap: 6px;
+  }
+  .chapterBadge {
+    font-size: 0.55rem;
+    padding: 3px 8px;
+  }
+  .locationBadge {
+    font-size: 0.55rem;
+    padding: 3px 8px;
+  }
+  .countBadge {
+    display: none;
   }
   .topActions {
-    width: 100%;
-    justify-content: space-between;
+    margin-left: auto;
+    gap: 8px;
+  }
+  .arrowBtn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.95rem;
+  }
+  .closeBtn {
+    padding: 6px 14px;
+    font-size: 0.62rem;
+  }
+  .galleryGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .storyHero {
+    margin-bottom: 24px;
+    gap: 8px;
+  }
+  .storyTitle {
+    font-size: clamp(2rem, 9vw, 3.2rem);
+  }
+  .modalFooter {
+    margin-top: 40px;
+    padding: 24px 16px;
   }
 }

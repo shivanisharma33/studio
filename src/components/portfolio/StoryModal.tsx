@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import Image from "next/image";
 import { getStoryGallery, storySlugs } from "@/content/stories";
 import { portfolio } from "@/content/site";
@@ -16,13 +15,8 @@ interface StoryModalProps {
 }
 
 export default function StoryModal({ slug, onClose, onSelectStory }: StoryModalProps) {
-  const [mounted, setMounted] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const gallery = slug ? getStoryGallery(slug) : undefined;
   const portfolioItem = slug ? portfolio.find((p) => p.slug === slug) : undefined;
@@ -31,25 +25,21 @@ export default function StoryModal({ slug, onClose, onSelectStory }: StoryModalP
   const prevSlug = currentIndex > 0 ? storySlugs[currentIndex - 1] : storySlugs[storySlugs.length - 1];
   const nextSlug = currentIndex < storySlugs.length - 1 ? storySlugs[currentIndex + 1] : storySlugs[0];
 
-  // Lock body scroll and stop Lenis when story modal is open
+  // Lock document scroll and stop Lenis when story modal is open
   useEffect(() => {
     if (!slug) return;
     const lenis = window.__lenis;
     lenis?.stop();
     const prevHtmlOverflow = document.documentElement.style.overflow;
-    const prevBodyOverflow = document.body.style.overflow;
     document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
 
     if (scrollRef.current) {
       scrollRef.current.scrollTop = 0;
-      scrollRef.current.focus();
     }
 
     return () => {
       lenis?.start();
       document.documentElement.style.overflow = prevHtmlOverflow;
-      document.body.style.overflow = prevBodyOverflow;
     };
   }, [slug]);
 
@@ -72,19 +62,17 @@ export default function StoryModal({ slug, onClose, onSelectStory }: StoryModalP
     };
   }, [slug, selectedPhoto, onClose]);
 
-  if (!mounted || !slug || !gallery) return null;
+  if (!slug || !gallery) return null;
 
-  return createPortal(
+  return (
     <div
-      ref={scrollRef}
       className={styles.backdrop}
       role="dialog"
       aria-modal="true"
       aria-label={gallery.title}
       data-lenis-prevent
-      tabIndex={-1}
     >
-      {/* Top Header Bar - Sticky inside backdrop */}
+      {/* Top Header Bar */}
       <div className={styles.topBar} data-lenis-prevent>
         <div className={styles.storyMeta}>
           <span className={styles.chapterBadge}>
@@ -131,7 +119,7 @@ export default function StoryModal({ slug, onClose, onSelectStory }: StoryModalP
       </div>
 
       {/* Scrollable Gallery Content Area */}
-      <div className={styles.scrollArea} data-lenis-prevent>
+      <div ref={scrollRef} className={styles.scrollArea} data-lenis-prevent tabIndex={-1}>
         {/* Story Title Hero */}
         <div className={styles.storyHero}>
           <p className="meta-sm champagne">
@@ -243,7 +231,6 @@ export default function StoryModal({ slug, onClose, onSelectStory }: StoryModalP
           </div>
         </div>
       )}
-    </div>,
-    document.body
+    </div>
   );
 }

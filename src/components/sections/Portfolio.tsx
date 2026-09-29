@@ -8,7 +8,7 @@ import Photo from "@/components/ui/Photo";
 import Cta from "@/components/ui/Cta";
 import Arrow from "@/components/ui/Arrow";
 import InquiryCta from "@/components/inquiry/InquiryCta";
-import StoryModal from "@/components/portfolio/StoryModal";
+import { useStory } from "@/components/portfolio/StoryProvider";
 import styles from "./Portfolio.module.css";
 
 /**
@@ -22,7 +22,7 @@ export default function Portfolio() {
   const trackRef = useRef<HTMLDivElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
-  const [activeStory, setActiveStory] = useState<string | null>(null);
+  const { openStory } = useStory();
 
   useGSAP(
     () => {
@@ -138,7 +138,7 @@ export default function Portfolio() {
               <article className={`${styles.chapter} ${flip ? styles.flip : ""}`} key={p.slug}>
                 <button
                   type="button"
-                  onClick={() => setActiveStory(p.slug)}
+                  onClick={() => openStory(p.slug)}
                   className={styles.img}
                   data-cursor="VIEW STORY"
                   aria-label={`${p.title} — view story`}
@@ -150,7 +150,7 @@ export default function Portfolio() {
                 </button>
 
                 {photos[1] && (
-                  <div className={styles.small} aria-hidden="true" onClick={() => setActiveStory(p.slug)} style={{ cursor: "pointer" }}>
+                  <div className={styles.small} aria-hidden="true" onClick={() => openStory(p.slug)} style={{ cursor: "pointer" }}>
                     <Photo photo={photos[1]} sizes="(min-width: 1024px) 18vw, 40vw" />
                   </div>
                 )}
@@ -164,7 +164,7 @@ export default function Portfolio() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setActiveStory(p.slug)}
+                    onClick={() => openStory(p.slug)}
                     className="cta"
                     data-cursor="VIEW STORY"
                     data-magnetic=""
@@ -195,7 +195,7 @@ export default function Portfolio() {
         <div className={styles.afterCtas}>
           <button
             type="button"
-            onClick={() => setActiveStory(portfolio[0].slug)}
+            onClick={() => openStory(portfolio[0].slug)}
             className="cta cta-primary"
             data-cursor="EXPLORE"
           >
@@ -205,14 +205,6 @@ export default function Portfolio() {
           <InquiryCta source="portfolio" cursor="BEGIN">YOUR STORY COULD BE NEXT</InquiryCta>
         </div>
       </div>
-
-      {activeStory && (
-        <StoryModal
-          slug={activeStory}
-          onClose={() => setActiveStory(null)}
-          onSelectStory={(s) => setActiveStory(s)}
-        />
-      )}
     </section>
   );
 }

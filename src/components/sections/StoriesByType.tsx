@@ -6,7 +6,7 @@ import { gsap, useGSAP, MQ } from "@/lib/gsap";
 import { SITE_URL } from "@/content/site";
 import { galleries } from "@/content/media";
 import Arrow from "@/components/ui/Arrow";
-import StoryModal from "@/components/portfolio/StoryModal";
+import { useStory } from "@/components/portfolio/StoryProvider";
 import styles from "./StoriesByType.module.css";
 
 const CATEGORIES = [
@@ -115,7 +115,7 @@ const STORIES: StoryItem[] = [
 export default function StoriesByType() {
   const root = useRef<HTMLElement>(null);
   const [activeTab, setActiveTab] = useState<CategoryId>("all");
-  const [activeStory, setActiveStory] = useState<string | null>(null);
+  const { openStory } = useStory();
 
   const filtered =
     activeTab === "all" ? STORIES : STORIES.filter((s) => s.category === activeTab);
@@ -196,7 +196,7 @@ export default function StoriesByType() {
             <button
               type="button"
               key={item.id}
-              onClick={() => setActiveStory(item.slug)}
+              onClick={() => openStory(item.slug)}
               className={styles.card}
               data-cursor="VIEW STORY"
               data-reveal
@@ -233,14 +233,6 @@ export default function StoriesByType() {
           ))}
         </div>
       </div>
-
-      {activeStory && (
-        <StoryModal
-          slug={activeStory}
-          onClose={() => setActiveStory(null)}
-          onSelectStory={(s) => setActiveStory(s)}
-        />
-      )}
     </section>
   );
 }
