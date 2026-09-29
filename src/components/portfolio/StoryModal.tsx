@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { getStoryGallery, storySlugs } from "@/content/stories";
 import { portfolio } from "@/content/site";
@@ -15,7 +16,13 @@ interface StoryModalProps {
 }
 
 export default function StoryModal({ slug, onClose, onSelectStory }: StoryModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const gallery = slug ? getStoryGallery(slug) : undefined;
   const portfolioItem = slug ? portfolio.find((p) => p.slug === slug) : undefined;
@@ -24,12 +31,31 @@ export default function StoryModal({ slug, onClose, onSelectStory }: StoryModalP
   const prevSlug = currentIndex > 0 ? storySlugs[currentIndex - 1] : storySlugs[storySlugs.length - 1];
   const nextSlug = currentIndex < storySlugs.length - 1 ? storySlugs[currentIndex + 1] : storySlugs[0];
 
+  // Lock body scroll and stop Lenis when story modal is open
   useEffect(() => {
     if (!slug) return;
     const lenis = window.__lenis;
     lenis?.stop();
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
     document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
 
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+      scrollRef.current.focus();
+    }
+
+    return () => {
+      lenis?.start();
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+    };
+  }, [slug]);
+
+  // Handle keyboard navigation (Escape to close)
+  useEffect(() => {
+    if (!slug) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         if (selectedPhoto) {
@@ -43,17 +69,23 @@ export default function StoryModal({ slug, onClose, onSelectStory }: StoryModalP
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("keydown", onKey);
-      lenis?.start();
-      document.documentElement.style.overflow = "";
     };
   }, [slug, selectedPhoto, onClose]);
 
-  if (!slug || !gallery) return null;
+  if (!mounted || !slug || !gallery) return null;
 
-  return (
-    <div className={styles.backdrop} role="dialog" aria-modal="true" aria-label={gallery.title}>
-      {/* Top Header Bar */}
-      <div className={styles.topBar}>
+  return createPortal(
+    <div
+      ref={scrollRef}
+      className={styles.backdrop}
+      role="dialog"
+      aria-modal="true"
+      aria-label={gallery.title}
+      data-lenis-prevent
+      tabIndex={-1}
+    >
+      {/* Top Header Bar - Sticky inside backdrop */}
+      <div className={styles.topBar} data-lenis-prevent>
         <div className={styles.storyMeta}>
           <span className={styles.chapterBadge}>
             CHAPTER {portfolioItem?.n || String(currentIndex + 1).padStart(2, "0")} / {String(storySlugs.length).padStart(2, "0")}
@@ -98,8 +130,8 @@ export default function StoryModal({ slug, onClose, onSelectStory }: StoryModalP
         </div>
       </div>
 
-      {/* Scrollable Gallery Content */}
-      <div className={styles.scrollArea}>
+      {/* Scrollable Gallery Content Area */}
+      <div className={styles.scrollArea} data-lenis-prevent>
         {/* Story Title Hero */}
         <div className={styles.storyHero}>
           <p className="meta-sm champagne">
@@ -190,6 +222,7 @@ export default function StoryModal({ slug, onClose, onSelectStory }: StoryModalP
           onClick={() => setSelectedPhoto(null)}
           role="dialog"
           aria-label="Enlarged photo"
+          data-lenis-prevent
         >
           <button
             type="button"
@@ -210,6 +243,7 @@ export default function StoryModal({ slug, onClose, onSelectStory }: StoryModalP
           </div>
         </div>
       )}
-    </div>
+    </div>,
+    document.body
   );
 }
