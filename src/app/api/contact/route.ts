@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
+import { sanitizeInquiry, summaryRows, validateAll } from "@/lib/inquiry/model";
 
 /**
- * Inquiry endpoint. Validates, then forwards to CONTACT_WEBHOOK_URL when set
- * (Formspree / Make / Zapier / your own mailer). Without it, the inquiry is
- * logged server-side so the form still completes during development.
+ * Inquiry endpoint. Re-validates the structured inquiry with the same rules as
+ * the client, then forwards it to CONTACT_WEBHOOK_URL (Formspree / Make / Zapier /
+ * your own mailer). Without a webhook the inquiry is only logged in development;
+ * in production it returns 503 so the visitor is never told a message was sent
+ * when it was not — the flow then offers WhatsApp with their details pre-filled.
  */
 export async function POST(req: Request) {
-  let body: { name?: string; email?: string; message?: string; website?: string };
+  let body: Record<string, unknown>;
   try {
     body = await req.json();
   } catch {
@@ -14,32 +17,50 @@ export async function POST(req: Request) {
   }
 
   // Honeypot — bots fill hidden fields.
-  if (body.website) return NextResponse.json({ ok: true });
+  if (typeof body.website === "string" && body.website) return NextResponse.json({ ok: true });
 
-  const name = (body.name ?? "").trim();
-  const email = (body.email ?? "").trim();
-  const message = (body.message ?? "").trim();
-
-  if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || message.length < 10) {
-    return NextResponse.json({ ok: false, error: "Please complete every field." }, { status: 422 });
+  const inquiry = sanitizeInquiry(body);
+  const { errors } = validateAll(inquiry);
+  if (Object.keys(errors).length) {
+    return NextResponse.json({ ok: false, error: "Please complete every required field.", fields: errors }, { status: 422 });
   }
+
+  const rows = summaryRows(inquiry);
+  const payload = {
+    ...inquiry,
+    // Readable fields for mailers that just print the JSON body.
+    summary: rows.map((r) => `${r.label}: ${r.value || "—"}`).join("\n"),
+    _subject: `Wedding inquiry — ${inquiry.name.trim()}`,
+    _replyto: inquiry.email.trim(),
+    source: "studiokunalphotography.com",
+    submittedAt: new Date().toISOString(),
+  };
 
   const webhook = process.env.CONTACT_WEBHOOK_URL;
-  if (webhook) {
-    try {
-      const res = await fetch(webhook, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ name, email, message, source: "studiokunalphotography.com" }),
-      });
-      if (!res.ok) throw new Error(`Webhook ${res.status}`);
-    } catch (err) {
-      console.error("[contact] webhook failed", err);
-      return NextResponse.json({ ok: false, error: "We couldn’t send your message. Please email us directly." }, { status: 502 });
+  if (!webhook) {
+    if (process.env.NODE_ENV !== "production") {
+      console.info("[contact] inquiry (no CONTACT_WEBHOOK_URL — dev log only)\n" + payload.summary);
+      return NextResponse.json({ ok: true, delivered: false });
     }
-  } else {
-    console.info("[contact] inquiry", { name, email, message });
+    console.error("[contact] CONTACT_WEBHOOK_URL is not configured — inquiry not delivered.");
+    return NextResponse.json(
+      { ok: false, error: "Our inquiry form is temporarily unavailable. Please continue on WhatsApp or email us directly." },
+      { status: 503 }
+    );
   }
 
-  return NextResponse.json({ ok: true });
+  try {
+    const res = await fetch(webhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) throw new Error(`Webhook ${res.status}`);
+  } catch (err) {
+    console.error("[contact] webhook failed", err);
+    return NextResponse.json({ ok: false, error: "Please try again, or continue on WhatsApp." }, { status: 502 });
+  }
+
+  return NextResponse.json({ ok: true, delivered: true });
 }

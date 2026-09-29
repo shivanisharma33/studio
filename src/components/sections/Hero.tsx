@@ -9,6 +9,7 @@ import { media } from "@/content/media";
 import Photo from "@/components/ui/Photo";
 import Lines from "@/components/ui/Lines";
 import Arrow from "@/components/ui/Arrow";
+import InquiryCta from "@/components/inquiry/InquiryCta";
 import styles from "./Hero.module.css";
 
 const HEADLINE = ["FROM NORTH AMERICA", "TO INDIA,", "WE CAPTURE STORIES", "THAT LAST FOREVER."];
@@ -117,10 +118,7 @@ export default function Hero() {
                 <span>{cta.seeOurMagic}</span>
                 <Arrow />
               </Link>
-              <Link href="#get-in-touch" className="cta" data-cursor="EXPLORE" data-magnetic="">
-                <span>{cta.letsConnect}</span>
-                <Arrow />
-              </Link>
+              <InquiryCta source="hero">{cta.letsConnect}</InquiryCta>
             </div>
           </div>
         </div>

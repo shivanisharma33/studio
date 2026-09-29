@@ -5,7 +5,7 @@ import Link from "next/link";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { onIntroDone } from "@/lib/intro";
 import { brand, cta, nav } from "@/content/site";
-import Arrow from "@/components/ui/Arrow";
+import InquiryCta from "@/components/inquiry/InquiryCta";
 import styles from "./Navigation.module.css";
 
 export default function Navigation() {
@@ -101,10 +101,9 @@ export default function Navigation() {
         </nav>
 
         <div className={styles.right}>
-          <Link href="#get-in-touch" className={`cta ${styles.connect}`} data-cursor="EXPLORE" data-magnetic="">
-            <span>{cta.letsConnect}</span>
-            <Arrow />
-          </Link>
+          <InquiryCta source="nav" className={styles.connect}>
+            {cta.letsConnect}
+          </InquiryCta>
           <button
             type="button"
             className={styles.burger}

@@ -1,17 +1,17 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { gsap, useGSAP, MQ } from "@/lib/gsap";
 import { contact } from "@/content/site";
+import { steps } from "@/content/inquiry";
 import Arrow from "@/components/ui/Arrow";
+import InquiryCta from "@/components/inquiry/InquiryCta";
+import { useInquiry } from "@/components/inquiry/InquiryProvider";
 import styles from "./Contact.module.css";
-
-type Status = "idle" | "sending" | "sent" | "error";
 
 export default function Contact() {
   const root = useRef<HTMLElement>(null);
-  const [status, setStatus] = useState<Status>("idle");
-  const [error, setError] = useState<string | null>(null);
+  const { hasProgress } = useInquiry();
 
   useGSAP(
     () => {
@@ -26,44 +26,21 @@ export default function Contact() {
           { yPercent: 0, duration: 1.5, ease: "expo.out", stagger: 0.12, scrollTrigger: { trigger: q(`.${styles.title}`)[0], start: "top 80%", once: true } }
         );
         gsap.fromTo(
-          q(`.${styles.field}`),
+          q(`.${styles.chapter}`),
           { autoAlpha: 0, y: 24 },
-          { autoAlpha: 1, y: 0, duration: 1.2, ease: "expo.out", stagger: 0.1, scrollTrigger: { trigger: q(`.${styles.form}`)[0], start: "top 80%", once: true } }
+          { autoAlpha: 1, y: 0, duration: 1.2, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: q(`.${styles.launch}`)[0], start: "top 80%", once: true } }
         );
       });
       mm.add(MQ.reduced, () => {
         gsap.set(q(".line > span"), { yPercent: 0 });
-        gsap.set(q(`.${styles.field}`), { autoAlpha: 1 });
+        gsap.set(q(`.${styles.chapter}`), { autoAlpha: 1 });
       });
     },
     { scope: root }
   );
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (status === "sending") return;
-    const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
-    setStatus("sending");
-    setError(null);
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      const json = (await res.json()) as { ok: boolean; error?: string };
-      if (!res.ok || !json.ok) throw new Error(json.error || "Something went wrong.");
-      setStatus("sent");
-      form.reset();
-    } catch (err) {
-      setStatus("error");
-      setError(err instanceof Error ? err.message : "Something went wrong.");
-    }
-  }
-
   return (
-    <section ref={root} id="get-in-touch" className={`section ${styles.wrap}`} aria-labelledby="contact-title">
+    <section ref={root} id="get-in-touch" className={`section ${styles.wrap}`} aria-labelledby="contact-title" data-floating-cta-hide="">
       <div className="container">
         <p className="meta-sm" data-reveal>
           10 &nbsp;—&nbsp; GET IN TOUCH
@@ -114,62 +91,28 @@ export default function Contact() {
             </div>
           </div>
 
-          <form className={styles.form} onSubmit={onSubmit} noValidate={false}>
-            {status === "sent" ? (
-              <div className={styles.success} role="status" aria-live="polite">
-                <span className={`serif ${styles.successBig}`}>{contact.success}</span>
-                <span className="meta-sm">WE’LL DO OUR BEST TO GET BACK TO YOU AS SOON AS POSSIBLE.</span>
-                <button type="button" className={`meta-sm ${styles.again}`} onClick={() => setStatus("idle")}>
-                  SEND ANOTHER MESSAGE <span aria-hidden="true">→</span>
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className={styles.field}>
-                  <label htmlFor="c-name" className="meta-sm">
-                    NAME
-                  </label>
-                  <input id="c-name" name="name" type="text" autoComplete="name" required minLength={2} placeholder="Your name" />
-                </div>
-                <div className={styles.field}>
-                  <label htmlFor="c-email" className="meta-sm">
-                    EMAIL
-                  </label>
-                  <input id="c-email" name="email" type="email" autoComplete="email" required placeholder="you@example.com" />
-                </div>
-                <div className={styles.field}>
-                  <label htmlFor="c-message" className="meta-sm">
-                    EVENT DETAILS / MESSAGE
-                  </label>
-                  <textarea
-                    id="c-message"
-                    name="message"
-                    rows={5}
-                    required
-                    minLength={10}
-                    placeholder="Dates, locations, celebrations, and the story you’d like us to capture"
-                  />
-                </div>
-                {/* honeypot */}
-                <div className={styles.hp} aria-hidden="true">
-                  <label htmlFor="c-website">Website</label>
-                  <input id="c-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
-                </div>
-
-                <div className={styles.actions}>
-                  <button type="submit" className="cta cta--primary" disabled={status === "sending"} data-cursor="SEND" data-magnetic="">
-                    <span>{status === "sending" ? "SENDING" : `${contact.submit.toUpperCase()}`}</span>
-                    <Arrow />
-                  </button>
-                  {status === "error" && (
-                    <p className={`meta-sm ${styles.error}`} role="alert">
-                      {error}
-                    </p>
-                  )}
-                </div>
-              </>
-            )}
-          </form>
+          <div className={styles.launch}>
+            <p className="meta-sm champagne" data-reveal>
+              LET’S UNDERSTAND YOUR STORY.
+            </p>
+            <p className={`serif ${styles.launchTitle}`} data-reveal style={{ ["--d" as string]: "0.06s" }}>
+              Tell us about your celebration — <em>one chapter at a time.</em>
+            </p>
+            <ol className={styles.chapters} aria-label="What we’ll ask">
+              {steps.map((s, i) => (
+                <li key={s.key} className={styles.chapter}>
+                  <span className={`meta-sm ${styles.chapterNum}`}>{String(i + 1).padStart(2, "0")}</span>
+                  <span className={`meta-sm ${styles.chapterLabel}`}>{s.label}</span>
+                </li>
+              ))}
+            </ol>
+            <div className={styles.actions} data-reveal style={{ ["--d" as string]: "0.1s" }}>
+              <InquiryCta source="contact" primary boxed cursor="BEGIN">
+                {hasProgress ? "CONTINUE YOUR INQUIRY" : "BEGIN YOUR INQUIRY"}
+              </InquiryCta>
+              <span className="meta-sm">{steps.length} SHORT CHAPTERS · REVIEW EVERYTHING BEFORE YOU SEND</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

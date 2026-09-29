@@ -9,6 +9,7 @@ import { cta, contact } from "@/content/site";
 import { youtubePoster } from "@/content/media";
 import Arrow from "@/components/ui/Arrow";
 import Cta from "@/components/ui/Cta";
+import InquiryCta from "@/components/inquiry/InquiryCta";
 import styles from "./CinematicFilms.module.css";
 
 function FilmLightbox({ id, onClose }: { id: string; onClose: () => void }) {
@@ -175,9 +176,14 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
 
         <div className={styles.after} data-reveal>
           <span className="meta-sm">MORE FILMS ON THE STUDIO&apos;S CHANNEL</span>
-          <Cta href={contact.youtube} external cursor="EXPLORE">
-            YOUTUBE
-          </Cta>
+          <div className={styles.afterCtas}>
+            <Cta href={contact.youtube} external cursor="EXPLORE">
+              YOUTUBE
+            </Cta>
+            <InquiryCta source="films" primary>
+              LET’S CREATE YOUR FILM
+            </InquiryCta>
+          </div>
         </div>
       </div>
 

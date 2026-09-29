@@ -5,7 +5,7 @@ import { gsap, useGSAP, MQ } from "@/lib/gsap";
 import { investment, cta } from "@/content/site";
 import { media } from "@/content/media";
 import Photo from "@/components/ui/Photo";
-import Cta from "@/components/ui/Cta";
+import InquiryCta from "@/components/inquiry/InquiryCta";
 import styles from "./Investment.module.css";
 
 const FACTORS = ["NEEDS", "VISION", "EVENT DETAILS", "REQUIREMENTS", "LOCATION", "THE STORY YOU WANT US TO CAPTURE"];
@@ -92,10 +92,10 @@ export default function Investment() {
             </div>
 
             <div className={styles.ctaRow} data-reveal>
-              <span className="meta-sm">{cta.discussYourStory}</span>
-              <Cta href="#get-in-touch" primary>
-                {cta.getInTouch}
-              </Cta>
+              <span className="meta-sm">NO FIXED PACKAGES — TELL US ABOUT YOUR CELEBRATION</span>
+              <InquiryCta source="investment" primary>
+                {cta.discussYourStory}
+              </InquiryCta>
             </div>
           </div>
 

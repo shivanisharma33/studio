@@ -7,6 +7,7 @@ import { galleries } from "@/content/media";
 import Photo from "@/components/ui/Photo";
 import Cta from "@/components/ui/Cta";
 import Arrow from "@/components/ui/Arrow";
+import InquiryCta from "@/components/inquiry/InquiryCta";
 import styles from "./Portfolio.module.css";
 
 /**
@@ -190,9 +191,12 @@ export default function Portfolio() {
 
       <div className={`container ${styles.after}`} data-reveal>
         <span className="meta-sm">THE FULL PORTFOLIO</span>
-        <Cta href={`${SITE_URL}/portfolio`} external cursor="EXPLORE" primary>
-          {cta.viewFullStory}
-        </Cta>
+        <div className={styles.afterCtas}>
+          <Cta href={`${SITE_URL}/portfolio`} external cursor="EXPLORE" primary>
+            {cta.viewFullStory}
+          </Cta>
+          <InquiryCta source="portfolio">PLAN YOUR STORY</InquiryCta>
+        </div>
       </div>
     </section>
   );

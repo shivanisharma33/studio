@@ -7,6 +7,7 @@ import { brand, cta } from "@/content/site";
 import { media } from "@/content/media";
 import Photo from "@/components/ui/Photo";
 import Arrow from "@/components/ui/Arrow";
+import InquiryCta from "@/components/inquiry/InquiryCta";
 import styles from "./FinalCta.module.css";
 
 export default function FinalCta() {
@@ -44,7 +45,7 @@ export default function FinalCta() {
   );
 
   return (
-    <section ref={root} className={styles.wrap} aria-labelledby="final-title">
+    <section ref={root} className={styles.wrap} aria-labelledby="final-title" data-floating-cta-hide="">
       <div className={styles.media}>
         <Photo photo={media.finalCta} sizes="100vw" quality={80} />
       </div>
@@ -69,10 +70,9 @@ export default function FinalCta() {
             <span className="meta-sm">{brand.limitedDates.toUpperCase()}</span>
           </div>
           <div className={styles.ctas} data-cta-fade>
-            <Link href="#get-in-touch" className="cta cta--primary cta--boxed" data-cursor="EXPLORE" data-magnetic="">
-              <span>{cta.letsConnect}</span>
-              <Arrow />
-            </Link>
+            <InquiryCta source="final-cta" primary boxed>
+              {cta.letsConnect}
+            </InquiryCta>
             <Link href="#portfolio" className="cta" data-cursor="EXPLORE" data-magnetic="">
               <span>{cta.seeOurMagic}</span>
               <Arrow />

@@ -4,7 +4,7 @@ import styles from "./Footer.module.css";
 
 export default function Footer() {
   return (
-    <footer className={styles.footer}>
+    <footer className={styles.footer} data-floating-cta-hide="">
       <div className={`container ${styles.grid}`}>
         <div className={styles.brand}>
           <span className={`serif ${styles.wordmark}`}>

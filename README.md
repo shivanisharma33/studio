@@ -8,7 +8,7 @@ npm run dev      # http://localhost:3000
 npm run build && npm start
 ```
 
-Optional: copy `.env.example` → `.env.local` and set `CONTACT_WEBHOOK_URL` (Formspree / Make / Zapier / your mailer). Without it the inquiry endpoint validates and logs the message server-side; the page always offers direct email as well.
+Optional: copy `.env.example` → `.env.local` and set `CONTACT_WEBHOOK_URL` (Formspree / Make / Zapier / your mailer). Without it the endpoint only logs inquiries in development and returns 503 in production, so the flow shows its error state with the WhatsApp and email fallbacks instead of claiming the inquiry was sent.
 
 ## Where things live
 
@@ -21,7 +21,10 @@ Optional: copy `.env.example` → `.env.local` and set `CONTACT_WEBHOOK_URL` (Fo
 | `src/lib/intro.ts` | Tiny event bus so the hero starts exactly when the preloader curtain lifts. |
 | `src/components/motion/` | `Preloader`, `SmoothScroll` (Lenis ↔ ScrollTrigger), `Reveal` (one IntersectionObserver for `[data-reveal]`), `Cursor` (fine-pointer only). |
 | `src/components/sections/` | `Navigation, Hero, BrandStatement, ImageReveal, Portfolio, CinematicFilms, PortfolioStory, GlobalPresence, Approach, Testimonials, Investment, Faq, Contact, FinalCta, Footer` — one component + one CSS module each. |
-| `src/app/api/contact/route.ts` | Inquiry endpoint (validation, honeypot, optional webhook forward). |
+| `src/content/inquiry.ts` | Inquiry flow copy, step list, option lists and budget brackets (per currency — qualification ranges, **not** prices; tune with the studio). |
+| `src/lib/inquiry/` | `model.ts` (single inquiry object, validation shared by client + server, formatting), `whatsapp.ts` (pre-filled wa.me message), `submit.ts` (configurable submission), `analytics.ts` (event hooks). |
+| `src/components/inquiry/` | `InquiryProvider` (state, sessionStorage resume, open/close), `InquiryFlow` (full-screen 8-step flow + review / success / error), `InquiryCta` (every "let's connect" CTA), `FloatingInquire`, `BudgetSelector`, `Fields`. |
+| `src/app/api/contact/route.ts` | Inquiry endpoint: re-validates the structured inquiry, honeypot, forwards to `CONTACT_WEBHOOK_URL` (503 in production when unset). |
 | `src/app/globals.css` | Design tokens (colour, type scale, tracking, easings), CTA + line-mask primitives, reduced-motion fallbacks. |
 
 ## Page sequence
@@ -46,7 +49,7 @@ Anchors: `#main #portfolio #cinematic-films #investment #testimonials #get-in-to
 
 1. **Curate the photographs.** The picks in `media.ts` use each gallery's opening frame (and homepage frames 1–24). They were chosen by position, not by eye — spend ten minutes with the photographer choosing the hero, the reveal frame, the six "story" frames and the closing frame. Composition is `object-fit: cover`, so any orientation works.
 2. **Host the images yourself.** Images are hot-linked from the current wfolio CDN so the build is faithful today; download the originals into `/public/images` and update `media.ts` before the old site is switched off. `next/image` will generate AVIF/WebP + responsive sizes from either source.
-3. **Wire the form.** Set `CONTACT_WEBHOOK_URL`, or replace the fetch in `route.ts` with your mailer (Resend, SES, etc.).
+3. **Wire the form.** Set `CONTACT_WEBHOOK_URL` (required in production — without it inquiries are not delivered and the flow falls back to WhatsApp), or replace the fetch in `route.ts` with your mailer (Resend, SES, etc.).
 4. `next/image` remote patterns are limited to `i.wfolio.com` and `i.ytimg.com` (`next.config.ts`).
 
 ## Motion system
@@ -60,3 +63,12 @@ Anchors: `#main #portfolio #cinematic-films #investment #testimonials #get-in-to
 ## Tested
 
 Production build, zero console errors, no horizontal overflow at 1920 / 1440 / 1280 / 1024 / 768 / 430 / 390 / 375; preloader → hero handoff; anchor navigation; mobile menu; testimonial viewer; FAQ; film lightbox (Esc closes); form submit → success state; reduced-motion variant; single `<h1>`, semantic `<h2>`s; JSON-LD `ProfessionalService`.
+
+## Inquiry flow
+
+Every inquiry CTA (nav, hero, portfolio "Plan your story", films "Let's create your film", investment "Discuss your story", Get in touch, final CTA, floating "Inquire" / mobile "Let's connect") opens the same full-screen flow; `/#inquire` deep-links to it.
+
+You → Reach (email + WhatsApp/phone) → Date (month + year; 2026–2027 flagged "bookings open", past months disabled) → Location (country, city, venue / not decided) → Event (types, days, guests) → Services → Investment (slider, INR / USD / CAD, "not sure yet") → Story → Review (edit any row) → Send → Success or Error. Both outcomes offer **Continue on WhatsApp** to the studio's real number (`contact.whatsapp`) with every answer pre-filled and `encodeURIComponent`-encoded.
+
+- Progress is kept in `sessionStorage` for the current tab only and cleared after a successful send.
+- Analytics: listen for `window` `"sk:analytics"` events, or add GTM / gtag — events are pushed to `dataLayer` / `gtag` automatically when present. No personal data is ever included in event properties.

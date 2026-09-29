@@ -35,7 +35,7 @@ export default function SmoothScroll() {
     // In-page anchors glide instead of jumping.
     const onClick = (e: MouseEvent) => {
       const a = (e.target as HTMLElement).closest?.('a[href^="#"]') as HTMLAnchorElement | null;
-      if (!a) return;
+      if (!a || a.hasAttribute("data-inquiry") || e.defaultPrevented) return;
       const id = a.getAttribute("href");
       if (!id || id === "#") return;
       const el = document.querySelector(id);

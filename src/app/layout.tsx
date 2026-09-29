@@ -9,6 +9,7 @@ import { brand, contact, SITE_URL } from "@/content/site";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import Reveal from "@/components/motion/Reveal";
 import Cursor from "@/components/motion/Cursor";
+import InquiryProvider from "@/components/inquiry/InquiryProvider";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -71,7 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SmoothScroll />
         <Reveal />
         <Cursor />
-        {children}
+        <InquiryProvider>{children}</InquiryProvider>
         <div className="grain" aria-hidden="true" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </body>

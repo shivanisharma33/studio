@@ -230,3 +230,9 @@
     aspect-ratio: 3 / 2;
   }
 }
+.afterCtas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px clamp(24px, 3vw, 44px);
+}
