@@ -15,6 +15,8 @@ type Props = {
   onCurrency: (c: CurrencyCode) => void;
 };
 
+
+
 /**
  * Approximate investment — an inquiry qualification range, never a package.
  * Slider + clickable range labels; the displayed range rolls softly on change.
