@@ -20,20 +20,21 @@ export default function FinalCta() {
       const q = gsap.utils.selector(el);
       const mm = gsap.matchMedia();
       mm.add(MQ.motion, () => {
+        const content = q(`.${styles.content}`)[0];
         gsap.fromTo(
           q(`.${styles.media}`),
           { scale: 1.05 },
-          { scale: 1, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "top top", scrub: true } }
+          { scale: 1, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } }
         );
         gsap.fromTo(
           q(`.${styles.title} .line > span`),
           { yPercent: 110 },
-          { yPercent: 0, duration: 1.6, ease: "expo.out", stagger: 0.14, scrollTrigger: { trigger: el, start: "top 55%", once: true } }
+          { yPercent: 0, duration: 1.5, ease: "expo.out", stagger: 0.12, scrollTrigger: { trigger: content || el, start: "top 85%", once: true } }
         );
         gsap.fromTo(
           q("[data-cta-fade]"),
-          { autoAlpha: 0, y: 20 },
-          { autoAlpha: 1, y: 0, duration: 1.2, ease: "expo.out", stagger: 0.1, scrollTrigger: { trigger: el, start: "top 45%", once: true } }
+          { autoAlpha: 0, y: 16 },
+          { autoAlpha: 1, y: 0, duration: 1.2, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: content || el, start: "top 85%", once: true } }
         );
       });
       mm.add(MQ.reduced, () => {
@@ -47,21 +48,26 @@ export default function FinalCta() {
   return (
     <section ref={root} className={styles.wrap} aria-labelledby="final-title" data-floating-cta-hide="">
       <div className={styles.media}>
-        <Photo photo={media.finalCta} sizes="100vw" quality={80} />
+        <Photo photo={media.finalCta} sizes="100vw" quality={85} style={{ objectPosition: "center 50%" }} />
       </div>
       <div className={styles.shade} />
 
       <div className={`container ${styles.content}`}>
-        <span className="meta-sm" data-cta-fade>
+        <span className={styles.eyebrow} data-cta-fade>
           15 &nbsp;—&nbsp; FINAL CINEMATIC CTA &nbsp;·&nbsp; {brand.regions.join("  ·  ")}
         </span>
         <h2 id="final-title" className={`serif ${styles.title}`}>
-          {["YOUR STORY", "DESERVES", "TO BE REMEMBERED."].map((l, i) => (
-            <span className="line" key={l}>
-              <span className={i === 2 ? styles.italic : undefined}>{l}</span>
-            </span>
-          ))}
+          <span className="line">
+            <span>YOUR STORY DESERVES</span>
+          </span>
+          <span className="line">
+            <span className={styles.italic}>TO BE REMEMBERED.</span>
+          </span>
         </h2>
+
+        <p className={styles.lead} data-cta-fade>
+          With a cinematic approach and an eye for genuine moments, we transform real emotions into lasting memories — preserving every chapter of your celebration with timeless artistry across North America, India, and worldwide.
+        </p>
 
         <div className={styles.row}>
           <div className={styles.meta} data-cta-fade>
@@ -73,7 +79,7 @@ export default function FinalCta() {
             <InquiryCta source="final" primary boxed cursor="BEGIN">
               LET’S CREATE SOMETHING TIMELESS
             </InquiryCta>
-            <Link href="#portfolio" className="cta" data-cursor="EXPLORE" data-magnetic="">
+            <Link href="#portfolio" className="cta cta--secondary" data-cursor="EXPLORE" data-magnetic="">
               <span>{cta.seeOurMagic}</span>
               <Arrow />
             </Link>

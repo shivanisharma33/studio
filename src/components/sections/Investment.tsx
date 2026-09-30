@@ -97,17 +97,6 @@ export default function Investment() {
                 <span className={styles.italic}>IS DIFFERENT.</span>
               </span>
             </h2>
-            <p className={`serif ${styles.big} ${styles.bigSecond}`} aria-hidden="false">
-              <span className="line">
-                <span>EVERY CELEBRATION</span>
-              </span>
-              <span className="line">
-                <span>DESERVES A</span>
-              </span>
-              <span className="line">
-                <span className={styles.italic}>PERSONAL APPROACH.</span>
-              </span>
-            </p>
 
             <p className={styles.body} data-reveal>
               {investment.body}
@@ -130,7 +119,6 @@ export default function Investment() {
             </div>
 
             <div className={styles.ctaRow} data-reveal>
-              <span className="meta-sm">NO FIXED PACKAGES — TELL US ABOUT YOUR CELEBRATION</span>
               <InquiryCta source="investment" primary boxed>
                 DISCUSS YOUR VISION
               </InquiryCta>
@@ -146,7 +134,7 @@ export default function Investment() {
               aria-label="Play investment film"
             >
               <div className={styles.photoInner}>
-                <Photo photo={media.investment} sizes="(min-width: 1024px) 38vw, 100vw" />
+                <Photo photo={media.investment} sizes="(min-width: 1024px) 26vw, 100vw" />
               </div>
               <div className={styles.playOverlay}>
                 <span className={styles.playCircle}>
@@ -155,7 +143,7 @@ export default function Investment() {
                 <span className={`meta-sm ${styles.playLabel}`}>WATCH FILM</span>
               </div>
             </button>
-            <span className={`meta-sm ${styles.photoCap}`}>NO FIXED PACKAGES — CUSTOMIZED PRICING</span>
+            <span className={`meta-sm ${styles.photoCap}`}>CUSTOMIZED PRICING · BESPOKE EXPERIENCE</span>
           </div>
         </div>
       </div>

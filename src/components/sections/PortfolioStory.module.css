@@ -25,7 +25,7 @@
   inset: 0;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  padding: calc(var(--gutter) + 56px) var(--gutter) var(--gutter);
+  padding: calc(var(--gutter) + 24px) var(--gutter) var(--gutter);
 }
 .top,
 .bottom {
@@ -35,24 +35,55 @@
   flex-wrap: wrap;
   color: var(--warm-white);
 }
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.headline {
+  font-size: clamp(1.15rem, 2.2vw, 1.85rem);
+  letter-spacing: 0.06em;
+  color: var(--ivory);
+  margin: 0;
+  line-height: 1.15;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+.headlineItalic {
+  font-style: italic;
+  color: var(--champagne);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
 .count {
   color: var(--ivory);
+  align-self: flex-start;
 }
-.words {
+.cards {
   position: relative;
   display: grid;
   place-items: center;
+  pointer-events: none;
+}
+.card {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  will-change: transform, opacity;
+  max-width: min(90vw, 840px);
+  padding-inline: 16px;
 }
 .word {
-  position: absolute;
-  font-size: clamp(3.2rem, 11vw, 12rem);
+  font-size: clamp(3.2rem, 10.5vw, 11rem);
   line-height: 0.9;
   letter-spacing: -0.02em;
   color: var(--ivory);
   text-align: center;
-  will-change: transform, opacity;
   display: grid;
   justify-items: center;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
 }
 .the {
   order: -1;
@@ -61,6 +92,15 @@
   color: var(--champagne);
   letter-spacing: 0.02em;
   margin-bottom: 0.1em;
+}
+.tagline {
+  margin-top: 18px;
+  font-size: clamp(0.95rem, 1.5vw, 1.3rem);
+  line-height: 1.45;
+  color: var(--warm-white);
+  letter-spacing: 0.03em;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
+  max-width: 580px;
 }
 @media (prefers-reduced-motion: reduce) {
   .scene {
@@ -74,9 +114,13 @@
     position: relative;
     padding-top: var(--gutter);
   }
-  .words {
+  .cards {
     grid-auto-flow: row;
-    gap: 24px;
+    gap: 36px;
     padding-block: 40px;
+  }
+  .card {
+    position: relative;
+    max-width: 100%;
   }
 }

@@ -10,7 +10,7 @@
   align-items: flex-end;
   flex-wrap: wrap;
   gap: 24px;
-  padding-bottom: clamp(28px, 4vw, 48px);
+  padding-bottom: clamp(18px, 2.5vw, 28px);
   border-bottom: 1px solid var(--line);
 }
 
@@ -39,8 +39,8 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  margin-top: clamp(32px, 4vw, 56px);
-  margin-bottom: clamp(32px, 4vw, 48px);
+  margin-top: clamp(20px, 2.5vw, 32px);
+  margin-bottom: clamp(20px, 2.5vw, 32px);
 }
 
 .filterBtn {

@@ -6,7 +6,7 @@
 .grid {
   display: grid;
   grid-template-columns: 0.85fr 1.15fr;
-  gap: clamp(40px, 7vw, 140px);
+  gap: clamp(32px, 5vw, 80px);
   align-items: start;
 }
 .aside {

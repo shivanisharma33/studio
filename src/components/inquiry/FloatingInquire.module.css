@@ -13,6 +13,7 @@
   transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out), visibility 0s linear 0.8s;
   pointer-events: none;
 }
+
 .shown {
   opacity: 1;
   visibility: visible;
@@ -20,103 +21,191 @@
   transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out), visibility 0s;
   pointer-events: auto;
 }
+
+/* Highlighted Primary CTA Button */
 .btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  min-height: 48px;
-  padding: 0 24px;
-  border: 1px solid var(--line-strong);
+  min-height: 50px;
+  padding: 0 26px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 999px;
-  background: rgba(8, 8, 8, 0.72);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: linear-gradient(135deg, #ecd4b2 0%, var(--champagne) 50%, #b89f72 100%);
+  color: var(--bg-0);
   font-family: var(--sans);
   font-size: var(--fs-meta-sm);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: var(--track-lg);
-  color: var(--ivory);
   white-space: nowrap;
-  transition: border-color 0.5s, color 0.5s, background 0.5s;
-}
-.btn .arrow,
-.wa .arrow {
-  display: inline-block;
-  transition: transform 0.6s var(--ease-out);
-}
-.btn:hover {
-  border-color: var(--champagne);
-  color: var(--champagne);
-}
-.btn:hover .arrow,
-.wa:hover .arrow {
-  transform: translateX(5px);
-}
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--champagne);
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.45), 0 0 24px rgba(226, 196, 153, 0.42);
+  overflow: hidden;
+  transition: all 0.35s var(--ease-out);
 }
 
-/* WhatsApp companion — deliberately quieter than the main CTA */
+/* Subtle luxury shimmer across the highlighted button */
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 75%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.42) 50%,
+    transparent 100%
+  );
+  transform: skewX(-22deg);
+  animation: btnShimmer 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes btnShimmer {
+  0% {
+    left: -120%;
+  }
+  28%, 100% {
+    left: 200%;
+  }
+}
+
+.btn .arrow {
+  color: var(--bg-0);
+  display: inline-block;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, #f5e2c8 0%, #d8c39e 50%, #c4ab7e 100%);
+  color: var(--bg-0);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.5), 0 0 32px rgba(226, 196, 153, 0.6);
+  transform: translateY(-2px);
+}
+
+.btn:hover .arrow {
+  transform: translateX(4px);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--bg-0);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  animation: dotPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+}
+
+/* WhatsApp companion */
 .wa {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 36px;
-  padding: 0 14px;
+  min-height: 38px;
+  padding: 0 16px;
   border-radius: 999px;
-  background: rgba(8, 8, 8, 0.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(14, 14, 14, 0.72);
+  border: 1px solid rgba(243, 237, 228, 0.16);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   font-family: var(--sans);
   font-size: 0.58rem;
   font-weight: 600;
   letter-spacing: var(--track-lg);
   color: var(--gray);
   white-space: nowrap;
-  transition: color 0.5s;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  transition: all 0.35s ease;
 }
+
 .wa:hover {
-  color: var(--ivory);
+  color: #25d366;
+  border-color: rgba(37, 211, 102, 0.4);
+  background: rgba(18, 18, 18, 0.9);
+  transform: translateY(-1px);
 }
+
+.wa .arrow {
+  display: inline-block;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.wa:hover .arrow {
+  transform: translateX(4px);
+}
+
 .waIcon {
   width: 15px;
   height: 15px;
   flex: none;
 }
 
+/* Mobile View: High-contrast prominent highlighted bar */
 @media (max-width: 767px) {
   .wrap {
     left: 16px;
     right: 16px;
-    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
     flex-direction: row-reverse;
     align-items: stretch;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.65));
   }
+
   .btn {
     flex: 1;
     min-width: 0;
     min-height: 52px;
-    padding: 0 18px;
-    background: rgba(8, 8, 8, 0.86);
+    padding: 0 20px;
+    background: linear-gradient(135deg, #ecd4b2 0%, var(--champagne) 50%, #b89f72 100%);
+    color: var(--bg-0);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.55), 0 0 24px rgba(226, 196, 153, 0.45);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
   }
+
+  .btn .arrow {
+    color: var(--bg-0);
+  }
+
   .wa {
     flex: none;
     width: 52px;
     min-height: 52px;
     padding: 0;
     justify-content: center;
-    border: 1px solid var(--line);
-    background: rgba(8, 8, 8, 0.86);
-    color: var(--ivory);
+    border: 1px solid rgba(201, 181, 143, 0.35);
+    background: rgba(14, 14, 14, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #25d366;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+    transition: all 0.25s ease;
   }
+
+  .wa:active {
+    transform: scale(0.96);
+  }
+
   .waIcon {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
   }
+
   .waText {
     display: none;
   }

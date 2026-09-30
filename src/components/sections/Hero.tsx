@@ -86,10 +86,11 @@ export default function Hero() {
 
       <div className={`container ${styles.content}`}>
         <div className={styles.top}>
-          <span className="meta-sm" data-hero-fade>
+          <span className={styles.region} data-hero-fade>
             {brand.regions.join("  ·  ")}
           </span>
-          <span className={`meta-sm ${styles.booking}`} data-hero-fade>
+          <span className={styles.booking} data-hero-fade>
+            <span className={styles.bookingDot} aria-hidden="true" />
             {brand.booking.toUpperCase()}
           </span>
         </div>
@@ -106,18 +107,11 @@ export default function Hero() {
           </p>
 
           <div className={styles.meta} data-hero-fade>
-            <ul className={styles.tags} aria-label="Style">
-              {brand.positioning.map((t) => (
-                <li key={t} className="meta-sm">
-                  {t}
-                </li>
-              ))}
-            </ul>
             <div className={styles.ctas}>
-              <InquiryCta source="hero" primary cursor="BEGIN">
+              <InquiryCta source="hero" primary boxed cursor="BEGIN" className={styles.primaryCta}>
                 CHECK YOUR DATE
               </InquiryCta>
-              <Link href="#portfolio" className="cta" data-cursor="EXPLORE" data-magnetic="">
+              <Link href="#portfolio" className={`cta cta--secondary ${styles.secondaryCta}`} data-cursor="EXPLORE" data-magnetic="">
                 <span>{cta.seeOurMagic}</span>
                 <Arrow />
               </Link>

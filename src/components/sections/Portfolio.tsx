@@ -191,7 +191,6 @@ export default function Portfolio() {
       </div>
 
       <div className={`container ${styles.after}`} data-reveal>
-        <span className="meta-sm">THE FULL PORTFOLIO</span>
         <div className={styles.afterCtas}>
           <button
             type="button"

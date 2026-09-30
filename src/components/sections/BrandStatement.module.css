@@ -3,7 +3,7 @@
   overflow: hidden;
 }
 .big {
-  margin-top: 28px;
+  margin-top: 16px;
   font-size: var(--fs-title);
   line-height: 0.92;
   letter-spacing: -0.02em;
@@ -20,7 +20,7 @@
   height: 1px;
   background: var(--line-strong);
   transform-origin: left;
-  margin-block: clamp(40px, 6vw, 88px) clamp(36px, 5vw, 72px);
+  margin-block: clamp(24px, 3.5vw, 44px) clamp(22px, 3vw, 36px);
 }
 .grid {
   display: grid;

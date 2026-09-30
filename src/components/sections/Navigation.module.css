@@ -100,6 +100,10 @@
 }
 .connect {
   font-size: var(--fs-meta-sm);
+  padding: 8px 18px !important;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  box-shadow: 0 2px 14px rgba(226, 196, 153, 0.28);
 }
 
 .burger {

@@ -10,18 +10,35 @@ import WhatsAppLink from "./WhatsAppLink";
 import styles from "./FloatingInquire.module.css";
 
 /**
- * Persistent, quiet "CHECK YOUR DATE" CTA with a smaller WhatsApp companion.
- * Appears once the hero has scrolled away, hides while the inquiry is open, and
- * steps aside wherever the page already has its own inquiry prompt
- * ([data-floating-cta-hide]: Get in touch, the final CTA, the footer).
+ * Persistent "CHECK YOUR DATE" CTA with a WhatsApp companion.
+ * In mobile view: CONSTANT and always visible (never invisible on scroll or in hero/footer).
+ * On desktop: Appears once the hero has scrolled away and steps aside in contact zones.
+ * Both hide while the inquiry modal is actively open.
  */
 export default function FloatingInquire() {
   const { open, isOpen, hasProgress } = useInquiry();
   const [pastHero, setPastHero] = useState(false);
   const [blocked, setBlocked] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(() => typeof window !== "undefined" && !!window.__skIntroDone);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" && window.innerWidth <= 767);
 
-  useEffect(() => onIntroDone(() => setReady(true)), []);
+  useEffect(() => {
+    const off = onIntroDone(() => setReady(true));
+    const timer = setTimeout(() => setReady(true), 1000);
+    return () => {
+      off?.();
+      clearTimeout(timer);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => {
+      setIsMobile(window.innerWidth <= 767);
+    };
+    onResize();
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   useEffect(() => {
     let ticking = false;
@@ -53,7 +70,9 @@ export default function FloatingInquire() {
     return () => io.disconnect();
   }, []);
 
-  const shown = ready && pastHero && !blocked && !isOpen;
+  // In mobile view: constant (always visible once ready, never invisible on scroll or blocked by zones).
+  // On desktop: requires pastHero and !blocked.
+  const shown = !isOpen && (isMobile ? ready : (ready && pastHero && !blocked));
 
   return (
     <div className={`${styles.wrap} ${shown ? styles.shown : ""}`} aria-hidden={!shown}>

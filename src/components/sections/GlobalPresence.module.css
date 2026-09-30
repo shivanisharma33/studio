@@ -3,7 +3,7 @@
   overflow: hidden;
 }
 .title {
-  margin-top: 22px;
+  margin-top: 14px;
   font-size: var(--fs-title);
   line-height: 0.92;
   letter-spacing: -0.02em;
@@ -15,7 +15,7 @@
 
 .map {
   position: relative;
-  margin-block: clamp(36px, 6vw, 80px);
+  margin-block: clamp(24px, 3.5vw, 44px);
 }
 .svg {
   width: 100%;

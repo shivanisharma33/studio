@@ -85,10 +85,17 @@ export const galleries: Record<string, Photo[]> = {
 export const media = {
   hero: home[0],
   reveal: home[1],
-  story: [home[2], home[4], home[5], home[6], home[7], home[8]],
+  story: [
+    { ...home[2], alt: "Joyful bride and groom walking down the aisle with arms raised in laughter" },
+    { ...home[4], alt: "Intimate black and white portrait of bride and groom beneath historic cathedral stone arches" },
+    { ...home[5], alt: "Couple dancing and laughing barefoot by the open beach and water" },
+    { ...home[6], alt: "Bride and groom in ornate Indian wedding attire resting foreheads together in gentle devotion" },
+    { ...home[7], alt: "Regal portrait of bride in voluminous white gown cascading down stone stairs with groom" },
+    { ...home[8], alt: "Couple standing in golden hour sunset warmth by tranquil waters and sandstone cliffs" },
+  ],
   approach: [home[12], home[14], home[17]],
   global: home[20],
-  finalCta: home[23],
+  finalCta: galleries["varinder-param-at-noor-mahal"][0],
   investment: home[10],
 };
 

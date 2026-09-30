@@ -37,7 +37,7 @@
 
   /* layout */
   --gutter: clamp(20px, 4vw, 64px);
-  --section: clamp(96px, 14vw, 200px);
+  --section: clamp(48px, 6vw, 84px);
   --max: 1680px;
 
   /* motion */
@@ -246,27 +246,67 @@ p {
   --cta-c: var(--champagne);
 }
 .cta.cta--boxed {
-  padding: 1.2em 2.2em;
-  border: 1px solid var(--line-strong);
+  padding: 1.1em 2.2em;
   border-radius: 999px;
   max-width: 100%;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  transition: all 0.35s var(--ease-out);
+}
+.cta.cta--primary.cta--boxed {
+  background: var(--champagne);
+  color: var(--bg-0);
+  border: 1px solid var(--champagne);
+  font-weight: 700;
+  box-shadow: 0 4px 22px rgba(226, 196, 153, 0.32);
+}
+.cta.cta--primary.cta--boxed .arrow {
+  color: var(--bg-0);
+}
+.cta.cta--primary.cta--boxed:hover {
+  background: #ecd4b2;
+  border-color: #ecd4b2;
+  color: var(--bg-0);
+  box-shadow: 0 6px 28px rgba(226, 196, 153, 0.52);
+  transform: translateY(-2px);
+}
+.cta.cta--secondary,
+.cta.cta--boxed:not(.cta--primary) {
+  background: rgba(243, 237, 228, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(243, 237, 228, 0.35);
+  color: var(--ivory);
+  padding: 1.1em 2.2em;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.cta.cta--secondary::after,
+.cta.cta--boxed:not(.cta--primary)::after {
+  display: none;
+}
+.cta.cta--secondary:hover,
+.cta.cta--boxed:not(.cta--primary):hover {
+  border-color: var(--champagne);
+  color: var(--champagne);
+  background: rgba(226, 196, 153, 0.16);
+  box-shadow: 0 4px 20px rgba(226, 196, 153, 0.25);
+  transform: translateY(-2px);
 }
 /* Long labels wrap instead of overflowing on the narrowest phones. */
 @media (max-width: 480px) {
-  .cta.cta--boxed {
+  .cta.cta--boxed,
+  .cta.cta--secondary {
     white-space: normal;
     text-align: center;
     justify-content: center;
     line-height: 1.5;
-    padding-inline: 1.6em;
+    padding-inline: 1.5em;
   }
 }
 .cta.cta--boxed::after {
   display: none;
-}
-.cta.cta--boxed:hover {
-  border-color: var(--champagne);
-  color: var(--champagne);
 }
 
 /* ── hairline rules ── */

@@ -37,15 +37,22 @@ export default function Faq() {
             </p>
           </div>
 
-          <ol className={styles.list}>
+          <ol className={styles.list} data-reveal>
             {faq.items.map((item, i) => {
               const isOpen = open === i;
               return (
-                <li key={item.n} className={`${styles.item} ${isOpen ? styles.itemOpen : ""}`} data-reveal style={{ ["--d" as string]: `${i * 0.05}s` }}>
+                <li
+                  key={item.n}
+                  className={`${styles.item} ${isOpen ? styles.itemOpen : ""}`}
+                  onMouseEnter={() => setOpen(i)}
+                >
                   <button
                     type="button"
                     className={styles.trigger}
-                    onClick={() => setOpen(isOpen ? null : i)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpen(isOpen ? null : i);
+                    }}
                     aria-expanded={isOpen}
                     aria-controls={`faq-${item.n}`}
                     data-cursor={isOpen ? "CLOSE" : "OPEN"}

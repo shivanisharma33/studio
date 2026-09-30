@@ -6,13 +6,13 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import { onIntroDone } from "@/lib/intro";
 import { brand, nav } from "@/content/site";
 import InquiryCta from "@/components/inquiry/InquiryCta";
+import AnnouncementBar from "@/components/ui/AnnouncementBar";
 import styles from "./Navigation.module.css";
 
 export default function Navigation() {
   const root = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
 
   // Enter after the preloader lifts.
   useGSAP(
@@ -28,24 +28,20 @@ export default function Navigation() {
     { scope: root }
   );
 
-  // Hide on scroll down, reveal on scroll up; frost after leaving the hero.
+  // Frost after leaving the hero; stay constantly visible on scroll.
   useEffect(() => {
-    let last = window.scrollY;
     let ticking = false;
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        const y = window.scrollY;
-        setScrolled(y > 40);
-        setHidden(y > last && y > 160 && !open);
-        last = y;
+        setScrolled(window.scrollY > 40);
         ticking = false;
       });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [open]);
+  }, []);
 
   // Lock scroll while the mobile menu is open.
   useEffect(() => {
@@ -75,12 +71,12 @@ export default function Navigation() {
       className={[
         styles.header,
         scrolled && styles.scrolled,
-        hidden && styles.hidden,
         open && styles.open,
       ]
         .filter(Boolean)
         .join(" ")}
     >
+      <AnnouncementBar />
       <div className={styles.bar}>
         <Link href="#main" className={styles.brand} aria-label={`${brand.name} — back to top`} data-cursor="EXPLORE">
           <span className={`serif ${styles.brandTop}`}>{brand.wordmark[0]}</span>
@@ -100,7 +96,7 @@ export default function Navigation() {
         </nav>
 
         <div className={styles.right}>
-          <InquiryCta source="nav" className={styles.connect} cursor="BEGIN">
+          <InquiryCta source="nav" primary boxed className={styles.connect} cursor="BEGIN">
             CHECK YOUR DATE
           </InquiryCta>
           <button
