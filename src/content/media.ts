@@ -97,6 +97,7 @@ export const media = {
   global: home[20],
   finalCta: galleries["varinder-param-at-noor-mahal"][0],
   investment: home[10],
+  contact: { src: "/images/contact-couple.jpg", alt: "Studio Kunal Photography bride and groom" },
 };
 
 /** YouTube poster frames are real frames from the studio's own films. */

@@ -19,22 +19,50 @@ export async function POST(req: Request) {
   // Honeypot — bots fill hidden fields.
   if (typeof body.website === "string" && body.website) return NextResponse.json({ ok: true });
 
-  const inquiry = sanitizeInquiry(body);
-  const { errors } = validateAll(inquiry);
-  if (Object.keys(errors).length) {
-    return NextResponse.json({ ok: false, error: "Please complete every required field.", fields: errors }, { status: 422 });
-  }
+  let payload: Record<string, unknown>;
 
-  const rows = summaryRows(inquiry);
-  const payload = {
-    ...inquiry,
-    // Readable fields for mailers that just print the JSON body.
-    summary: rows.map((r) => `${r.label}: ${r.value || "—"}`).join("\n"),
-    _subject: `Wedding inquiry — ${inquiry.name.trim()}`,
-    _replyto: inquiry.email.trim(),
-    source: "studiokunalphotography.com",
-    submittedAt: new Date().toISOString(),
-  };
+  if (body.direct === true || (typeof body.details === "string" && !body.eventType)) {
+    const name = String(body.name || "").trim();
+    const contactInfo = String(body.contact || body.emailOrPhone || body.email || "").trim();
+    const details = String(body.details || body.eventDetails || "").trim();
+
+    const errors: Record<string, string> = {};
+    if (!name) errors.name = "Please enter your name.";
+    if (!contactInfo) errors.contact = "Please enter your email or phone number.";
+    if (!details) errors.details = "Please share your event details or requirements.";
+
+    if (Object.keys(errors).length > 0) {
+      return NextResponse.json({ ok: false, error: "Please fill in all required fields.", fields: errors }, { status: 422 });
+    }
+
+    payload = {
+      name,
+      contact: contactInfo,
+      details,
+      summary: `Name: ${name}\nContact: ${contactInfo}\nEvent Details: ${details}`,
+      _subject: `New Wedding Inquiry — ${name}`,
+      _replyto: contactInfo.includes("@") ? contactInfo : undefined,
+      source: "studiokunalphotography.com/contact-form",
+      submittedAt: new Date().toISOString(),
+    };
+  } else {
+    const inquiry = sanitizeInquiry(body);
+    const { errors } = validateAll(inquiry);
+    if (Object.keys(errors).length) {
+      return NextResponse.json({ ok: false, error: "Please complete every required field.", fields: errors }, { status: 422 });
+    }
+
+    const rows = summaryRows(inquiry);
+    payload = {
+      ...inquiry,
+      // Readable fields for mailers that just print the JSON body.
+      summary: rows.map((r) => `${r.label}: ${r.value || "—"}`).join("\n"),
+      _subject: `Wedding inquiry — ${inquiry.name.trim()}`,
+      _replyto: inquiry.email.trim(),
+      source: "studiokunalphotography.com",
+      submittedAt: new Date().toISOString(),
+    };
+  }
 
   const webhook = process.env.CONTACT_WEBHOOK_URL;
   if (!webhook) {
