@@ -15,11 +15,11 @@
 }
 .big {
   font-size: var(--fs-title);
-  line-height: 0.92;
-  letter-spacing: -0.02em;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
 }
 .italic {
-  font-style: italic;
+  font-style: normal;
   color: var(--champagne);
 }
 .body {
@@ -52,7 +52,7 @@
   color: var(--champagne-2);
 }
 .chainLast {
-  font-style: italic;
+  font-style: normal;
   color: var(--champagne);
 }
 .ctaRow {

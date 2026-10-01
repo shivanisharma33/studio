@@ -79,11 +79,34 @@ export const galleries: Record<string, Photo[]> = {
     "fD0t61tekyl-AP1T3f_LUZRJM_a0bwEk/fdZX0cvPbGNZ669UL1pjeAqaN1IQwejk/Rmwwbg1RwZsKU1Y0Iyc80A.jpg",
     "OcpAFpijtZI_bulbOQFgDoKh4I3XMBwl/V2dy-QePa_AA1ZBPBoEHw75KpDKqhn51/m7hi41uQlC34AudQm5lTbQ.jpg",
   ].map((p) => ({ src: img(p), alt: "Raman & Akash- Love Straight Outta Panjab — Studio Kunal Photography" })),
+  "forest-anand-karaj": [
+    { src: "/images/curated-forest-wedding.jpg", alt: "Whispering Pines Anand Karaj — Studio Kunal Photography" },
+    { src: "/images/curated-royal-bride.jpg", alt: "The Royal Bride — Studio Kunal Photography" },
+  ],
+  "cathedral-grandeur": [
+    { src: "/images/curated-cathedral-steps.jpg", alt: "Cathedral Grandeur — Studio Kunal Photography" },
+    { src: "/images/curated-noir-archway.jpg", alt: "Noir & Stone Archway — Studio Kunal Photography" },
+  ],
+  "noir-archway-embrace": [
+    { src: "/images/curated-noir-archway.jpg", alt: "Noir & Stone Archway — Studio Kunal Photography" },
+    { src: "/images/curated-cathedral-steps.jpg", alt: "Cathedral Grandeur — Studio Kunal Photography" },
+  ],
+  "royal-heritage-bride": [
+    { src: "/images/curated-royal-bride.jpg", alt: "The Royal Bride — Studio Kunal Photography" },
+    { src: "/images/curated-forest-wedding.jpg", alt: "Whispering Pines Anand Karaj — Studio Kunal Photography" },
+  ],
 };
+
+/** YouTube poster frames are real frames from the studio's own films. */
+export const youtubePoster = (id: string) => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+export const youtubePosterFallback = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 
 /** Section assignments. */
 export const media = {
-  hero: home[0],
+  hero: {
+    src: "/images/f2972483-4d84-40c4-8eef-624461921e77 (1).avif",
+    alt: "Studio Kunal Photography — luxury documentary wedding photography",
+  },
   reveal: home[1],
   story: [
     { ...home[2], alt: "Joyful bride and groom walking down the aisle with arms raised in laughter" },
@@ -93,13 +116,16 @@ export const media = {
     { ...home[7], alt: "Regal portrait of bride in voluminous white gown cascading down stone stairs with groom" },
     { ...home[8], alt: "Couple standing in golden hour sunset warmth by tranquil waters and sandstone cliffs" },
   ],
-  approach: [home[12], home[14], home[17]],
+  approach: [
+    home[12],
+    { src: "/images/approach-genuine-emotions.jpg", alt: "Genuine emotions intimate couple portrait — Studio Kunal Photography" },
+    { src: "/images/approach-cinematic-excellence.jpg", alt: "Indian bride walking down the aisle — Studio Kunal Photography" },
+  ],
   global: home[20],
-  finalCta: galleries["varinder-param-at-noor-mahal"][0],
-  investment: home[10],
-  contact: { src: "/images/contact-couple.jpg", alt: "Studio Kunal Photography bride and groom" },
+  finalCta: home[22],
+  investment: {
+    src: youtubePoster("PK30ZglbXJQ"),
+    alt: "Harkeet & Nina — Studio Kunal Photography Cinematic Film",
+  },
+  contact: { src: "/images/contact-couple-hd.jpg", alt: "Studio Kunal Photography bride and groom" },
 };
-
-/** YouTube poster frames are real frames from the studio's own films. */
-export const youtubePoster = (id: string) => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
-export const youtubePosterFallback = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;

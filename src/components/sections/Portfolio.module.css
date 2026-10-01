@@ -10,11 +10,11 @@
 }
 .title {
   font-size: var(--fs-title);
-  line-height: 0.92;
-  letter-spacing: -0.02em;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
 }
 .titleItalic {
-  font-style: italic;
+  font-style: normal;
   color: var(--champagne);
 }
 .lede {
@@ -116,7 +116,7 @@
   font-size: clamp(3rem, 8vw, 8rem);
   line-height: 0.8;
   color: var(--gray-2);
-  font-style: italic;
+  font-style: normal;
 }
 .name {
   font-size: clamp(2rem, 3.4vw, 3.8rem);

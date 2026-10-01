@@ -5,7 +5,7 @@ import { gsap, useGSAP, MQ } from "@/lib/gsap";
 import { brand } from "@/content/site";
 import styles from "./BrandStatement.module.css";
 
-const STATEMENT = ["WE CAPTURE", "THE MOMENTS", "YOU FELT."];
+const STATEMENT = ["WE CAPTURE THE MOMENTS", "YOU FELT."];
 
 const PHILOSOPHY = [brand.statements.cinematic, brand.statements.cultures, brand.statements.approach];
 
@@ -85,7 +85,7 @@ export default function BrandStatement() {
         <h2 id="statement" className={`serif ${styles.big}`}>
           {STATEMENT.map((l, i) => (
             <span className="line" key={i}>
-              <span className={i === 2 ? styles.italic : undefined}>{l}</span>
+              <span className={i === 1 ? styles.italic : undefined}>{l}</span>
             </span>
           ))}
         </h2>

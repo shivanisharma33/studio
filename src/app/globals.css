@@ -3,6 +3,36 @@
    Dark cinematic foundation. Photography stays the star.
    ───────────────────────────────────────────────────────────── */
 
+/* Font Bureau / Adobe Big Caslon FB declaration with local and web fallbacks */
+@font-face {
+  font-family: "big-caslon-fb";
+  src:
+    local("Big Caslon FB"),
+    local("Big Caslon"),
+    local("big-caslon-fb"),
+    local("BigCaslon-Medium"),
+    local("BigCaslon"),
+    url("/fonts/BigCaslon.woff2") format("woff2"),
+    url("/fonts/BigCaslon.ttf") format("truetype");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "big-caslon-fb";
+  src:
+    local("Big Caslon FB Italic"),
+    local("Big Caslon Italic"),
+    local("big-caslon-fb-italic"),
+    local("BigCaslon-Italic"),
+    url("/fonts/BigCaslon-Italic.woff2") format("woff2"),
+    url("/fonts/BigCaslon-Italic.ttf") format("truetype");
+  font-weight: 400 700;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   /* surfaces */
   --bg-0: #080808;
@@ -22,14 +52,14 @@
   --line: rgba(243, 237, 228, 0.14);
   --line-strong: rgba(243, 237, 228, 0.3);
 
-  /* type */
-  --serif: "Cormorant Garamond", "Cormorant", Georgia, "Times New Roman", serif;
-  --sans: "Manrope Variable", "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* type — Primary: big-Caslon-fb | Secondary / Body: Inter family */
+  --serif: "big-caslon-fb", "Big Caslon FB", "Big Caslon", "BigCaslon", "BigCaslon-Medium", "Libre Caslon Display", "Libre Caslon Text", "Baskervville", "Libre Baskerville", Baskerville, "Times New Roman", serif;
+  --sans: "Inter Variable", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
-  --fs-hero: clamp(2.6rem, 5.8vw, 6.6rem);
-  --fs-title: clamp(2.75rem, 7vw, 8rem);
-  --fs-mid: clamp(1.9rem, 4vw, 3.6rem);
-  --fs-body: clamp(1rem, 0.95rem + 0.25vw, 1.2rem);
+  --fs-hero: clamp(3.2rem, 5.8vw, 6.2rem);
+  --fs-title: clamp(2.35rem, 4.4vw, 4.25rem);
+  --fs-mid: clamp(1.6rem, 2.8vw, 2.5rem);
+  --fs-body: clamp(0.96rem, 0.92rem + 0.22vw, 1.12rem);
   --fs-meta: 0.72rem;
   --fs-meta-sm: 0.64rem;
   --track: 0.14em;
@@ -63,12 +93,15 @@ html.lenis,
 html.lenis body {
   height: auto;
 }
+
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
+
 .lenis.lenis-smooth [data-lenis-prevent] {
   overscroll-behavior: contain;
 }
+
 .lenis.lenis-stopped {
   overflow: hidden;
 }
@@ -116,8 +149,20 @@ h1,
 h2,
 h3,
 h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: var(--serif);
+}
+
 p {
   margin: 0;
+  font-family: var(--sans);
+}
+
+em,
+i {
+  font-style: normal;
 }
 
 ::selection {
@@ -144,31 +189,67 @@ p {
   animation: grain 8s steps(10) infinite;
   mix-blend-mode: overlay;
 }
+
 @keyframes grain {
-  0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-5%, -10%); }
-  20% { transform: translate(-15%, 5%); }
-  30% { transform: translate(7%, -25%); }
-  40% { transform: translate(-5%, 25%); }
-  50% { transform: translate(-15%, 10%); }
-  60% { transform: translate(15%, 0%); }
-  70% { transform: translate(0%, 15%); }
-  80% { transform: translate(3%, 35%); }
-  90% { transform: translate(-10%, 10%); }
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  10% {
+    transform: translate(-5%, -10%);
+  }
+
+  20% {
+    transform: translate(-15%, 5%);
+  }
+
+  30% {
+    transform: translate(7%, -25%);
+  }
+
+  40% {
+    transform: translate(-5%, 25%);
+  }
+
+  50% {
+    transform: translate(-15%, 10%);
+  }
+
+  60% {
+    transform: translate(15%, 0%);
+  }
+
+  70% {
+    transform: translate(0%, 15%);
+  }
+
+  80% {
+    transform: translate(3%, 35%);
+  }
+
+  90% {
+    transform: translate(-10%, 10%);
+  }
 }
 
 /* ── shared typographic utilities ── */
 .serif {
   font-family: var(--serif);
   font-weight: 400;
-  letter-spacing: -0.01em;
-  line-height: 0.95;
+  letter-spacing: -0.015em;
+  line-height: 1.02;
 }
+
 .serif-i {
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.02;
 }
+
 .meta {
   font-family: var(--sans);
   font-size: var(--fs-meta);
@@ -177,6 +258,7 @@ p {
   color: var(--gray);
   font-weight: 500;
 }
+
 .meta-sm {
   font-family: var(--sans);
   font-size: var(--fs-meta-sm);
@@ -185,6 +267,7 @@ p {
   color: var(--gray);
   font-weight: 500;
 }
+
 .champagne {
   color: var(--champagne);
 }
@@ -218,6 +301,7 @@ p {
   white-space: nowrap;
   transition: color 0.5s var(--ease-out);
 }
+
 .cta::after {
   content: "";
   position: absolute;
@@ -230,21 +314,26 @@ p {
   transform-origin: left;
   transition: transform 0.7s var(--ease-cine), opacity 0.4s;
 }
+
 .cta:hover::after {
   transform: scaleX(0);
   transform-origin: right;
   opacity: 0.8;
 }
+
 .cta .arrow {
   display: inline-block;
   transition: transform 0.6s var(--ease-out);
 }
+
 .cta:hover .arrow {
   transform: translateX(6px);
 }
+
 .cta.cta--primary {
   --cta-c: var(--champagne);
 }
+
 .cta.cta--boxed {
   padding: 1.1em 2.2em;
   border-radius: 999px;
@@ -254,23 +343,27 @@ p {
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
   transition: all 0.35s var(--ease-out);
 }
+
 .cta.cta--primary.cta--boxed {
   background: var(--champagne);
   color: var(--bg-0);
   border: 1px solid var(--champagne);
   font-weight: 700;
-  box-shadow: 0 4px 22px rgba(226, 196, 153, 0.32);
+  box-shadow: none;
 }
+
 .cta.cta--primary.cta--boxed .arrow {
   color: var(--bg-0);
 }
+
 .cta.cta--primary.cta--boxed:hover {
   background: #ecd4b2;
   border-color: #ecd4b2;
   color: var(--bg-0);
-  box-shadow: 0 6px 28px rgba(226, 196, 153, 0.52);
+  box-shadow: none;
   transform: translateY(-2px);
 }
+
 .cta.cta--secondary,
 .cta.cta--boxed:not(.cta--primary) {
   background: rgba(243, 237, 228, 0.08);
@@ -282,20 +375,24 @@ p {
   border-radius: 999px;
   font-weight: 600;
 }
+
 .cta.cta--secondary::after,
 .cta.cta--boxed:not(.cta--primary)::after {
   display: none;
 }
+
 .cta.cta--secondary:hover,
 .cta.cta--boxed:not(.cta--primary):hover {
   border-color: var(--champagne);
   color: var(--champagne);
   background: rgba(226, 196, 153, 0.16);
-  box-shadow: 0 4px 20px rgba(226, 196, 153, 0.25);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
   transform: translateY(-2px);
 }
+
 /* Long labels wrap instead of overflowing on the narrowest phones. */
 @media (max-width: 480px) {
+
   .cta.cta--boxed,
   .cta.cta--secondary {
     white-space: normal;
@@ -305,6 +402,7 @@ p {
     padding-inline: 1.5em;
   }
 }
+
 .cta.cta--boxed::after {
   display: none;
 }
@@ -333,13 +431,15 @@ p {
 .lines {
   display: block;
 }
+
 .line {
   display: block;
   overflow: hidden;
   padding-bottom: 0.08em;
   margin-bottom: -0.08em;
 }
-.line > span {
+
+.line>span {
   display: block;
   will-change: transform;
 }
@@ -351,6 +451,7 @@ p {
   transition: opacity 1.1s var(--ease-out), transform 1.1s var(--ease-out);
   transition-delay: var(--d, 0s);
 }
+
 [data-reveal].is-in {
   opacity: 1;
   transform: none;
@@ -358,6 +459,7 @@ p {
 
 /* ── Reduced motion: complex choreography becomes simple fades ── */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -366,9 +468,11 @@ p {
     transition-duration: 0.2s !important;
     scroll-behavior: auto !important;
   }
+
   .grain {
     animation: none;
   }
+
   [data-reveal] {
     opacity: 1;
     transform: none;
@@ -377,6 +481,17 @@ p {
 
 /* Custom cursor hides the native one only on fine pointers */
 @media (hover: hover) and (pointer: fine) {
+
+  body.has-cursor,
+  body.has-cursor a,
+  body.has-cursor button {
+    cursor: none;
+  }
+}
+
+/* Custom cursor hides the native one only on fine pointers */
+@media (hover: hover) and (pointer: fine) {
+
   body.has-cursor,
   body.has-cursor a,
   body.has-cursor button {

@@ -234,7 +234,7 @@
   outline: none;
 }
 .qItalic {
-  font-style: italic;
+  font-style: normal;
   color: var(--champagne);
 }
 .lede {
@@ -291,7 +291,7 @@
 .field input::placeholder,
 .field textarea::placeholder {
   color: var(--gray-2);
-  font-style: italic;
+  font-style: normal;
 }
 .field input:focus,
 .field textarea:focus {
@@ -354,7 +354,7 @@
 }
 .noteInner {
   font-family: var(--serif);
-  font-style: italic;
+  font-style: normal;
   font-size: clamp(1.1rem, 1.6vw, 1.35rem);
   line-height: 1.35;
   color: var(--warm-white);
@@ -606,7 +606,7 @@
 }
 .budgetEmpty {
   color: var(--gray-2);
-  font-style: italic;
+  font-style: normal;
 }
 .budgetCode {
   color: var(--champagne);

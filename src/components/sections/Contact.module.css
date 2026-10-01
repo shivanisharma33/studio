@@ -14,8 +14,8 @@
 }
 
 .title {
-  font-size: clamp(2.1rem, 3.8vw, 3.6rem);
-  line-height: 1.15;
+  font-size: var(--fs-title);
+  line-height: 1.02;
   color: var(--warm-white);
   letter-spacing: -0.015em;
   font-weight: 400;
@@ -251,19 +251,20 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #25d366;
+  background: var(--champagne);
   color: #0c0c0c;
   padding: 10px 20px;
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .successWaBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 18px rgba(37, 211, 102, 0.4);
+  background: #ecd4b2;
 }
 
 .resetBtn {

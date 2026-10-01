@@ -402,5 +402,41 @@
       "https://i.wfolio.com/x/LATXGxMAvg4T0aCx3BMAPcoPN8LBuMrG/WUxqXOvhFPl7GHv-GzWkMqqXeqAxaS7S/cb-D4t-deQMgm4USz7Ec9289ZmTzv6da/muUHzgUdurSc3w3bZzP4T57Mv-26tYEb/BXiHXQjOb3agklwt3riNHQ.jpg",
       "https://i.wfolio.com/x/LATXGxMAvg4T0aCx3BMAPcoPN8LBuMrG/WUxqXOvhFPl7GHv-GzWkMqqXeqAxaS7S/cb-D4t-deQMgm4USz7Ec9-cZfeTEt-tH/UZMg3GXbVw0LuceSl5hT0KPyyI7rkxMP/7qLjOghZ4vc1HtvJp8CS2A.jpg"
     ]
+  },
+  "forest-anand-karaj": {
+    "title": "Whispering Pines",
+    "location": "Ontario, Canada",
+    "category": "Wedding",
+    "images": [
+      "/images/curated-forest-wedding.jpg",
+      "/images/curated-royal-bride.jpg"
+    ]
+  },
+  "cathedral-grandeur": {
+    "title": "Cathedral Grandeur",
+    "location": "Downtown Toronto",
+    "category": "Pre-Wedding",
+    "images": [
+      "/images/curated-cathedral-steps.jpg",
+      "/images/curated-noir-archway.jpg"
+    ]
+  },
+  "noir-archway-embrace": {
+    "title": "Noir & Stone Archway",
+    "location": "Historic Estate",
+    "category": "Pre-Wedding",
+    "images": [
+      "/images/curated-noir-archway.jpg",
+      "/images/curated-cathedral-steps.jpg"
+    ]
+  },
+  "royal-heritage-bride": {
+    "title": "The Royal Bride",
+    "location": "Heritage Collection",
+    "category": "Traditions",
+    "images": [
+      "/images/curated-royal-bride.jpg",
+      "/images/curated-forest-wedding.jpg"
+    ]
   }
 }

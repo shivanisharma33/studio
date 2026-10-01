@@ -14,12 +14,12 @@
   top: 120px;
 }
 .title {
-  font-size: clamp(2.4rem, 5vw, 5.4rem);
-  line-height: 0.95;
-  letter-spacing: -0.02em;
+  font-size: var(--fs-title);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
 }
 .italic {
-  font-style: italic;
+  font-style: normal;
   color: var(--champagne);
 }
 .intro {

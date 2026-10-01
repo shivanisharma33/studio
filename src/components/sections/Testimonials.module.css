@@ -57,8 +57,8 @@
 }
 
 .title {
-  font-size: clamp(1.85rem, 3.4vw, 3rem);
-  line-height: 1.15;
+  font-size: var(--fs-title);
+  line-height: 1.02;
   letter-spacing: -0.015em;
   color: var(--warm-white);
 }
@@ -68,7 +68,7 @@
 }
 
 .italic {
-  font-style: italic;
+  font-style: normal;
   color: var(--champagne);
 }
 
@@ -564,7 +564,7 @@
 
 .readyTitle em {
   color: var(--champagne);
-  font-style: italic;
+  font-style: normal;
 }
 
 .readySub {

@@ -64,7 +64,7 @@ export default function Approach() {
           <p className="meta-sm" data-reveal>
             07 &nbsp;—&nbsp; OUR APPROACH — 01 / 02 / 03
           </p>
-          <h2 id="approach-title" className={`serif-i ${styles.headTitle}`} data-reveal>
+          <h2 id="approach-title" className={`serif ${styles.headTitle}`} data-reveal>
             Our approach will always inclined towards —
           </h2>
         </div>

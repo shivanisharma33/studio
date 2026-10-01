@@ -10,15 +10,15 @@ import styles from "./Testimonials.module.css";
 
 /** Curated photography pairings for each testimonial from the studio's real body of work */
 const couplePhotos: PhotoT[] = [
-  galleries["aman-mrinal"]?.[0] || home[3],
-  galleries["deep-payal"]?.[0] || home[2],
-  galleries["varinder-param-at-noor-mahal"]?.[0] || home[11],
-  galleries["nooreen-jugraj"]?.[0] || home[13],
-  galleries["akshita-rajat-a-lovestory-from-toronto-downtown"]?.[0] || home[7],
-  galleries["raman-akash-love-straight-outta-panjab"]?.[0] || home[15],
-  galleries["the-house-of-rituals-india"]?.[0] || home[16],
-  galleries["the-fashion-vault"]?.[0] || home[18],
-  galleries["aman-mrinal"]?.[1] || home[9],
+  home[0],
+  home[3],
+  home[9],
+  home[11],
+  home[13],
+  home[15],
+  home[16],
+  home[18],
+  home[19],
 ];
 
 function GoogleIcon() {

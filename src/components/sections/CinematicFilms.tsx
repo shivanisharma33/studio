@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import Image from "next/image";
 import { gsap, ScrollTrigger, useGSAP, MQ } from "@/lib/gsap";
 import { splitTitle } from "@/lib/films";
@@ -45,10 +45,11 @@ function FilmLightbox({ id, onClose }: { id: string; onClose: () => void }) {
 
 export default function CinematicFilms({ films }: { films: Film[] }) {
   const root = useRef<HTMLElement>(null);
+  const [viewMode, setViewMode] = useState<"cards" | "list">("cards");
+  const [category, setCategory] = useState<string>("all");
   const [playing, setPlaying] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
-  const INITIAL_COUNT = 3;
-  const displayedFilms = showAll ? films : films.slice(0, INITIAL_COUNT);
+  const INITIAL_COUNT = 4;
 
   const toggleShowMore = () => {
     setShowAll((prev) => !prev);
@@ -59,6 +60,53 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
 
   const featured = films[0];
   const featuredTitle = featured.title ? splitTitle(featured.title) : null;
+
+  // Filter films based on selected category
+  const filteredFilms = useMemo(() => {
+    if (category === "all") return films;
+    return films.filter((f) => {
+      const raw = `${f.title || ""}`.toLowerCase();
+      if (category === "ceremonies") {
+        return raw.includes("mehndi") || raw.includes("sangeet") || raw.includes("haldi") || raw.includes("ceremony");
+      }
+      if (category === "eshoot") {
+        return raw.includes("eshoot") || raw.includes("pre-wedding") || raw.includes("love story") || raw.includes("again & again");
+      }
+      if (category === "weddings") {
+        return !raw.includes("eshoot") && !raw.includes("mehndi");
+      }
+      return true;
+    });
+  }, [films, category]);
+
+  const displayedFilms = showAll ? filteredFilms : filteredFilms.slice(0, INITIAL_COUNT);
+
+  const getFilmMeta = (f: Film, index: number) => {
+    const t = f.title ? splitTitle(f.title) : null;
+    const raw = `${f.title || ""} ${t?.sub || ""}`.toLowerCase();
+
+    let badge = "WEDDING FILM";
+    let locationTag = "CANADA";
+
+    if (raw.includes("mehndi") || raw.includes("sangeet") || raw.includes("haldi") || raw.includes("ceremony")) {
+      badge = raw.includes("mehndi") ? "MEHNDI CEREMONY" : "CEREMONY";
+      locationTag = "TORONTO, ON";
+    } else if (raw.includes("eshoot") || raw.includes("pre-wedding") || raw.includes("again & again") || raw.includes("love story")) {
+      badge = "PRE-WEDDING E-SHOOT";
+      locationTag = "TORONTO DOWNTOWN";
+    } else if (raw.includes("hindu") || raw.includes("anand karaj")) {
+      badge = raw.includes("hindu") ? "HINDU WEDDING" : "ANAND KARAJ";
+      locationTag = "CANADA / DESTINATION";
+    } else {
+      badge = "CINEMATIC HIGHLIGHT";
+      locationTag = "CANADA / DESTINATION";
+    }
+
+    const mainTitle = t ? t.main : `Film ${String(index + 1).padStart(2, "0")}`;
+    const subTitle = t?.sub || "Studio Kunal Photography Canada";
+
+    return { mainTitle, subTitle, badge, locationTag };
+  };
 
   useGSAP(
     () => {
@@ -140,10 +188,22 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
               alt={featuredTitle ? `${featuredTitle.main} — film still` : "Studio Kunal Photography film still"}
               fill
               sizes="100vw"
-              quality={80}
+              quality={95}
+              priority
               style={{ objectFit: "cover" }}
             />
           </div>
+
+          <div className={styles.bgVideoWrap} aria-hidden="true">
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${featured.id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${featured.id}&playsinline=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0`}
+              className={styles.bgIframe}
+              title={featuredTitle ? featuredTitle.main : "Featured film preview"}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              tabIndex={-1}
+            />
+          </div>
+
           <div className={styles.screenShade} />
           <span className={styles.play}>
             <span className={styles.playRing} />
@@ -165,32 +225,217 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
         </button>
       </div>
 
-      {/* Film index — the nine films embedded on the studio's Cinematic Films page */}
+      {/* Film index — Cinema Cards & Editorial List with view toggle */}
       <div className="container">
-        <ol className={styles.list} aria-label="All films">
-          {displayedFilms.map((f, i) => {
-            const t = f.title ? splitTitle(f.title) : null;
-            return (
-              <li key={f.id} data-reveal style={{ ["--d" as string]: `${(i % 4) * 0.06}s` }}>
-                <button type="button" className={styles.row} onClick={() => setPlaying(f.id)} data-cursor="PLAY">
-                  <span className={`meta-sm ${styles.rowNum}`}>{String(i + 1).padStart(2, "0")}</span>
-                  <span className={styles.rowTitle}>
-                    <span className={`serif ${styles.rowMain}`}>{t ? t.main : `Film ${String(i + 1).padStart(2, "0")}`}</span>
-                    {t?.sub && <span className={`meta-sm ${styles.rowSub}`}>{t.sub}</span>}
-                  </span>
-                  <span className={styles.rowThumb} aria-hidden="true">
-                    <Image src={youtubePoster(f.id)} alt="" fill sizes="220px" style={{ objectFit: "cover" }} />
-                  </span>
-                  <span className={`meta-sm ${styles.rowPlay}`}>
-                    <span>{cta.watchTheFilm}</span> <Arrow />
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ol>
+        {/* Controls Bar: Categories & Layout Switcher */}
+        <div className={styles.controlsBar} data-reveal>
+          <div className={styles.controlsLeft}>
+            <span className={`meta-sm ${styles.archiveLabel}`}>CINEMATIC ARCHIVE</span>
+            <span className={styles.filmCountBadge}>
+              <span className={styles.countDot} />
+              {films.length} FILMS
+            </span>
+          </div>
 
-        {films.length > INITIAL_COUNT && (
+          <div className={styles.filterTabs} role="tablist" aria-label="Filter films">
+            <button
+              type="button"
+              className={`${styles.filterTab} ${category === "all" ? styles.filterTabActive : ""}`}
+              onClick={() => {
+                setCategory("all");
+                setTimeout(() => ScrollTrigger.refresh(), 100);
+              }}
+              aria-selected={category === "all"}
+            >
+              ALL ({films.length})
+            </button>
+            <button
+              type="button"
+              className={`${styles.filterTab} ${category === "weddings" ? styles.filterTabActive : ""}`}
+              onClick={() => {
+                setCategory("weddings");
+                setTimeout(() => ScrollTrigger.refresh(), 100);
+              }}
+              aria-selected={category === "weddings"}
+            >
+              WEDDINGS
+            </button>
+            <button
+              type="button"
+              className={`${styles.filterTab} ${category === "ceremonies" ? styles.filterTabActive : ""}`}
+              onClick={() => {
+                setCategory("ceremonies");
+                setTimeout(() => ScrollTrigger.refresh(), 100);
+              }}
+              aria-selected={category === "ceremonies"}
+            >
+              CEREMONIES
+            </button>
+            <button
+              type="button"
+              className={`${styles.filterTab} ${category === "eshoot" ? styles.filterTabActive : ""}`}
+              onClick={() => {
+                setCategory("eshoot");
+                setTimeout(() => ScrollTrigger.refresh(), 100);
+              }}
+              aria-selected={category === "eshoot"}
+            >
+              PRE-WEDDING
+            </button>
+          </div>
+
+          <div className={styles.viewSwitcher} role="group" aria-label="Layout mode">
+            <button
+              type="button"
+              className={`${styles.switchBtn} ${viewMode === "cards" ? styles.switchBtnActive : ""}`}
+              onClick={() => {
+                setViewMode("cards");
+                setTimeout(() => ScrollTrigger.refresh(), 100);
+              }}
+              aria-pressed={viewMode === "cards"}
+              title="Show as Cinema Cards"
+            >
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <rect x="1" y="1" width="6" height="6" rx="1.5" />
+                <rect x="9" y="1" width="6" height="6" rx="1.5" />
+                <rect x="1" y="9" width="6" height="6" rx="1.5" />
+                <rect x="9" y="9" width="6" height="6" rx="1.5" />
+              </svg>
+              <span>CARDS</span>
+            </button>
+            <button
+              type="button"
+              className={`${styles.switchBtn} ${viewMode === "list" ? styles.switchBtnActive : ""}`}
+              onClick={() => {
+                setViewMode("list");
+                setTimeout(() => ScrollTrigger.refresh(), 100);
+              }}
+              aria-pressed={viewMode === "list"}
+              title="Show as Editorial List"
+            >
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <rect x="1" y="2" width="14" height="2.5" rx="1" />
+                <rect x="1" y="6.75" width="14" height="2.5" rx="1" />
+                <rect x="1" y="11.5" width="14" height="2.5" rx="1" />
+              </svg>
+              <span>LIST</span>
+            </button>
+          </div>
+        </div>
+
+        {/* View Mode: Cinema Cards Grid */}
+        {viewMode === "cards" ? (
+          <div className={styles.gridWrap}>
+            <ul className={styles.grid} aria-label="Cinematic Film Cards">
+              {displayedFilms.map((f: Film, i: number) => {
+                const originalIndex = films.findIndex((orig) => orig.id === f.id);
+                const idx = originalIndex >= 0 ? originalIndex : i;
+                const { mainTitle, subTitle, badge, locationTag } = getFilmMeta(f, idx);
+
+                return (
+                  <li key={f.id} data-reveal style={{ ["--d" as string]: `${(i % 4) * 0.08}s` }}>
+                    <button
+                      type="button"
+                      className={styles.card}
+                      onClick={() => setPlaying(f.id)}
+                      data-cursor="PLAY"
+                      aria-label={`Play film: ${mainTitle}`}
+                    >
+                      <div className={styles.cardMedia}>
+                        <div className={styles.cardPoster}>
+                          <Image
+                            src={youtubePoster(f.id)}
+                            alt={`${mainTitle} — film still`}
+                            fill
+                            sizes="(max-width: 900px) 100vw, (max-width: 1400px) 50vw, 700px"
+                            quality={85}
+                            style={{ objectFit: "cover" }}
+                          />
+                        </div>
+                        <div className={styles.cardShade} />
+
+                        <div className={styles.cardTop}>
+                          <span className={styles.cardNum}>FILM {String(idx + 1).padStart(2, "0")}</span>
+                          <span className={styles.cardQuality}>
+                            <span className={styles.recDot} />
+                            4K CINEMA
+                          </span>
+                        </div>
+
+                        <div className={styles.cardPlayWrap}>
+                          <div className={styles.cardPlay}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                              <polygon points="5,3 19,12 5,21" />
+                            </svg>
+                          </div>
+                          <span className={`meta-sm ${styles.cardPlayText}`}>WATCH FILM</span>
+                        </div>
+                      </div>
+
+                      <div className={styles.cardInfo}>
+                        <div className={styles.cardMetaRow}>
+                          <span className={styles.cardTag}>{badge}</span>
+                          <span className={styles.cardLocation}>{locationTag}</span>
+                        </div>
+                        <h3 className={`serif ${styles.cardTitle}`}>{mainTitle}</h3>
+                        {subTitle && <p className={styles.cardSubtitle}>{subTitle}</p>}
+
+                        <div className={styles.cardFooter}>
+                          <div className={styles.cardSound} aria-hidden="true">
+                            <span className={styles.cardSoundBar} />
+                            <span className={styles.cardSoundBar} />
+                            <span className={styles.cardSoundBar} />
+                            <span className={styles.cardSoundBar} />
+                          </div>
+                          <span className={styles.cardWatch}>
+                            <span>WATCH THE FILM</span> <Arrow />
+                          </span>
+                        </div>
+                      </div>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ) : (
+          /* View Mode: Elevated Editorial List */
+          <ol className={styles.list} aria-label="All films list">
+            {displayedFilms.map((f: Film, i: number) => {
+              const originalIndex = films.findIndex((orig) => orig.id === f.id);
+              const idx = originalIndex >= 0 ? originalIndex : i;
+              const { mainTitle, subTitle, badge } = getFilmMeta(f, idx);
+
+              return (
+                <li key={f.id} data-reveal style={{ ["--d" as string]: `${(i % 4) * 0.06}s` }}>
+                  <button type="button" className={styles.row} onClick={() => setPlaying(f.id)} data-cursor="PLAY">
+                    <span className={`meta-sm ${styles.rowNum}`}>{String(idx + 1).padStart(2, "0")}</span>
+                    <span className={styles.rowTitle}>
+                      <span className={`serif ${styles.rowMain}`}>{mainTitle}</span>
+                      <span className={styles.rowMetaLine}>
+                        <span className={styles.rowBadge}>{badge}</span>
+                        {subTitle && <span className={`meta-sm ${styles.rowSub}`}>{subTitle}</span>}
+                      </span>
+                    </span>
+                    <span className={styles.rowThumb} aria-hidden="true">
+                      <Image src={youtubePoster(f.id)} alt="" fill sizes="260px" style={{ objectFit: "cover" }} />
+                      <span className={styles.rowThumbPlay}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <polygon points="5,3 19,12 5,21" />
+                        </svg>
+                      </span>
+                    </span>
+                    <span className={`meta-sm ${styles.rowPlay}`}>
+                      <span>{cta.watchTheFilm}</span> <Arrow />
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        )}
+
+        {filteredFilms.length > INITIAL_COUNT && (
           <div className={styles.showMoreWrap}>
             <button
               type="button"
@@ -202,7 +447,7 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
               <span className={styles.showMoreLine} />
               <span className={styles.showMorePill}>
                 <span className={styles.showMoreIcon}>{showAll ? "−" : "+"}</span>
-                <span>{showAll ? "SHOW LESS" : `SHOW MORE FILMS (${films.length - INITIAL_COUNT} MORE)`}</span>
+                <span>{showAll ? "SHOW LESS" : `SHOW MORE FILMS (${filteredFilms.length - INITIAL_COUNT} MORE)`}</span>
               </span>
               <span className={styles.showMoreLine} />
             </button>

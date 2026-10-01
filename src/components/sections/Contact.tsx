@@ -130,11 +130,12 @@ export default function Contact() {
           <div className={styles.photoCol}>
             <div className={styles.photoFrame}>
               <Image
-                src="/images/contact-couple.jpg"
-                alt="Studio Kunal Photography wedding couple under umbrella"
+                src="/images/contact-couple-hd.jpg"
+                alt="Studio Kunal Photography luxury wedding couple walking down the aisle"
                 fill
                 sizes="(min-width: 1024px) 460px, (min-width: 768px) 50vw, 100vw"
                 className={styles.photo}
+                quality={95}
                 priority
               />
               <div className={styles.photoOverlay} />

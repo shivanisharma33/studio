@@ -5,15 +5,20 @@
 .big {
   margin-top: 16px;
   font-size: var(--fs-title);
-  line-height: 0.92;
-  letter-spacing: -0.02em;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
   color: var(--ivory);
 }
+.big :global(.line) {
+  display: block;
+  white-space: nowrap;
+}
 .big :global(.line) > span {
+  display: inline-block;
   will-change: transform, clip-path;
 }
 .italic {
-  font-style: italic;
+  font-style: normal;
   color: var(--champagne);
 }
 .rule {
@@ -62,5 +67,11 @@
   }
   .aside {
     position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .big {
+    font-size: clamp(1.4rem, 6.2vw, 2.2rem);
   }
 }

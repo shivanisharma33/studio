@@ -244,7 +244,8 @@ export const investment = {
   body:
     "Rather than fixed packages, every proposal is thoughtfully tailored to your vision, location, and celebration — ensuring a truly bespoke experience.",
   /** The Investment page embeds this film. */
-  filmId: "GE4RwB_Ezf8",
+  filmId: "PK30ZglbXJQ",
+  title: "Harkeet & Nina — Fall in Love Again & Again",
 };
 
 /** FAQ — verbatim from the Get In Touch page (bold markers kept as **text**). */

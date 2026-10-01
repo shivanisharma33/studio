@@ -180,7 +180,7 @@
 .storyLocation {
   font-size: clamp(1rem, 1.4vw, 1.25rem);
   color: var(--gray);
-  font-style: italic;
+  font-style: normal;
   font-family: var(--serif);
 }
 

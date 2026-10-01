@@ -131,7 +131,7 @@ export default function Investment() {
               className={styles.photoBtn}
               onClick={() => setPlaying(true)}
               data-cursor="PLAY FILM"
-              aria-label="Play investment film"
+              aria-label="Play Harkeet & Nina — Fall in Love Again & Again"
             >
               <div className={styles.photoInner}>
                 <Photo photo={media.investment} sizes="(min-width: 1024px) 26vw, 100vw" />
@@ -143,7 +143,7 @@ export default function Investment() {
                 <span className={`meta-sm ${styles.playLabel}`}>WATCH FILM</span>
               </div>
             </button>
-            <span className={`meta-sm ${styles.photoCap}`}>CUSTOMIZED PRICING · BESPOKE EXPERIENCE</span>
+            <span className={`meta-sm ${styles.photoCap}`}>HARKEET &amp; NINA · ESHOOT FILM</span>
           </div>
         </div>
       </div>

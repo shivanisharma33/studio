@@ -48,14 +48,24 @@ export default function FinalCta() {
   return (
     <section ref={root} className={styles.wrap} aria-labelledby="final-title" data-floating-cta-hide="">
       <div className={styles.media}>
-        <Photo photo={media.finalCta} sizes="100vw" quality={85} style={{ objectPosition: "center 50%" }} />
+        <Photo
+          photo={media.finalCta}
+          sizes="100vw"
+          quality={95}
+          priority
+          className={styles.bgImage}
+        />
       </div>
       <div className={styles.shade} />
 
       <div className={`container ${styles.content}`}>
-        <span className={styles.eyebrow} data-cta-fade>
-          15 &nbsp;—&nbsp; FINAL CINEMATIC CTA &nbsp;·&nbsp; {brand.regions.join("  ·  ")}
-        </span>
+        <div className={styles.header} data-cta-fade>
+          <span className={styles.pillBadge}>
+            <span className={styles.pillDot} />
+            15 &nbsp;—&nbsp; FINAL CINEMATIC CHAPTER &nbsp;·&nbsp; {brand.regions.join("  ·  ")}
+          </span>
+        </div>
+
         <h2 id="final-title" className={`serif ${styles.title}`}>
           <span className="line">
             <span>YOUR STORY DESERVES</span>
@@ -69,13 +79,8 @@ export default function FinalCta() {
           With a cinematic approach and an eye for genuine moments, we transform real emotions into lasting memories — preserving every chapter of your celebration with timeless artistry across North America, India, and worldwide.
         </p>
 
-        <div className={styles.row}>
-          <div className={styles.meta} data-cta-fade>
-            <span className={`meta-sm champagne`}>BOOKINGS OPEN 2026–2027</span>
-            <span className="meta-sm">{brand.positioning.join("  ·  ")}</span>
-            <span className="meta-sm">{brand.limitedDates.toUpperCase()}</span>
-          </div>
-          <div className={styles.ctas} data-cta-fade>
+        <div className={styles.actionBlock} data-cta-fade>
+          <div className={styles.ctas}>
             <InquiryCta source="final" primary boxed cursor="BEGIN">
               LET’S CREATE SOMETHING TIMELESS
             </InquiryCta>
@@ -83,6 +88,21 @@ export default function FinalCta() {
               <span>{cta.seeOurMagic}</span>
               <Arrow />
             </Link>
+          </div>
+
+          <div className={styles.trustBadges}>
+            <div className={styles.trustBadge}>
+              <span className={styles.trustDot} />
+              <span className={styles.goldText}>BOOKINGS OPEN 2026–2027</span>
+            </div>
+            <span className={styles.trustDivider}>·</span>
+            <div className={styles.trustBadge}>
+              <span>{brand.limitedDates.toUpperCase()}</span>
+            </div>
+            <span className={styles.trustDivider}>·</span>
+            <div className={styles.trustBadge}>
+              <span>{brand.positioning.join("  ·  ")}</span>
+            </div>
           </div>
         </div>
       </div>

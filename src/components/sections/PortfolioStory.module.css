@@ -50,7 +50,7 @@
   font-weight: 400;
 }
 .headlineItalic {
-  font-style: italic;
+  font-style: normal;
   color: var(--champagne);
   text-transform: none;
   letter-spacing: 0.02em;
@@ -88,7 +88,7 @@
 .the {
   order: -1;
   font-size: 0.32em;
-  font-style: italic;
+  font-style: normal;
   color: var(--champagne);
   letter-spacing: 0.02em;
   margin-bottom: 0.1em;
