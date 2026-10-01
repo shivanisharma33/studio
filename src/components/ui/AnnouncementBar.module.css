@@ -35,20 +35,18 @@
   height: 6px;
   border-radius: 50%;
   background: var(--champagne);
-  box-shadow: 0 0 8px var(--champagne);
-  animation: pulseGlow 2.4s infinite ease-in-out;
+  animation: pulseDotAnim 2.2s infinite ease-in-out;
+  flex-shrink: 0;
 }
 
-@keyframes pulseGlow {
+@keyframes pulseDotAnim {
   0%, 100% {
-    transform: scale(0.9);
+    transform: scale(0.85);
     opacity: 0.7;
-    box-shadow: 0 0 4px var(--champagne);
   }
   50% {
-    transform: scale(1.3);
+    transform: scale(1.2);
     opacity: 1;
-    box-shadow: 0 0 10px var(--champagne);
   }
 }
 
@@ -63,7 +61,7 @@
   transition: opacity 0.3s ease;
 }
 
-/* Center: Automatic vertical ticker (one by one, no user clicks required) */
+/* Center: Automatic vertical ticker */
 .ticker {
   position: relative;
   height: 26px;
@@ -93,6 +91,7 @@
   transform: translateY(20px);
   transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
   pointer-events: none;
+  min-width: 0;
 }
 
 .slide.active {
@@ -110,6 +109,11 @@
 .messageHighlight {
   color: var(--champagne);
   font-weight: 600;
+}
+
+.slideDivider {
+  display: inline;
+  opacity: 0.6;
 }
 
 .detail {
@@ -161,7 +165,15 @@
   transform: translateX(3px);
 }
 
-/* Mobile & Tablet styles */
+.ctaDesktop {
+  display: inline;
+}
+
+.ctaMobile {
+  display: none;
+}
+
+/* Tablet view */
 @media (max-width: 1023px) {
   .bar {
     max-height: 48px;
@@ -176,20 +188,75 @@
   }
   .slide {
     font-size: 0.7rem;
+    justify-content: flex-start;
   }
 }
 
-@media (max-width: 640px) {
+/* Mobile view: high-efficiency single line with no overflow */
+@media (max-width: 768px) {
+  .bar {
+    max-height: 44px;
+  }
+  .inner {
+    height: 36px;
+    gap: 8px;
+    padding: 0 12px;
+  }
   .status {
+    gap: 0;
+  }
+  .statusTag {
+    display: none;
+  }
+  .pulseDot {
+    width: 5px;
+    height: 5px;
+    margin-right: 2px;
+  }
+  .detail {
+    display: none;
+  }
+  .slideDivider {
     display: none;
   }
   .slide {
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     justify-content: flex-start;
   }
+  .messageHighlight {
+    font-size: 0.7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ctaDesktop {
+    display: none;
+  }
+  .ctaMobile {
+    display: inline;
+  }
   .ctaPill {
-    font-size: 0.6rem;
-    padding: 3px 8px;
-    letter-spacing: 0.1em;
+    font-size: 0.62rem;
+    padding: 3px 9px;
+    letter-spacing: 0.08em;
+    gap: 4px;
+  }
+}
+
+/* Small phone view (e.g. iPhone SE, 320px - 380px) */
+@media (max-width: 380px) {
+  .inner {
+    padding: 0 8px;
+    gap: 6px;
+  }
+  .slide {
+    font-size: 0.64rem;
+  }
+  .messageHighlight {
+    font-size: 0.64rem;
+  }
+  .ctaPill {
+    font-size: 0.58rem;
+    padding: 2px 7px;
   }
 }

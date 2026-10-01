@@ -11,6 +11,7 @@ type Announcement = {
   lead: string;
   detail: string;
   cta: string;
+  ctaMobile?: string;
   action: { type: "inquiry"; source: string } | { type: "link"; href: string };
 };
 
@@ -21,14 +22,16 @@ const ANNOUNCEMENTS: Announcement[] = [
     lead: "Bookings Open for 2026–2027",
     detail: "Limited prime dates remaining across North America & India",
     cta: "Check Availability",
+    ctaMobile: "Check Dates",
     action: { type: "inquiry", source: "announcement_calendar" },
   },
   {
     id: "destinations",
     statusTag: "GLOBAL PRESENCE",
     lead: "Now Documenting Worldwide",
-    detail: "Toronto · Vancouver · New Delhi · International Destinations",
+    detail: "Toronto · Vancouver · New Delhi · Destinations",
     cta: "Check Your Date",
+    ctaMobile: "Inquire",
     action: { type: "inquiry", source: "announcement_destinations" },
   },
   {
@@ -37,6 +40,7 @@ const ANNOUNCEMENTS: Announcement[] = [
     lead: "Timeless 4K Wedding Cinema",
     detail: "Authentic emotions & editorial visual storytelling",
     cta: "Explore Films",
+    ctaMobile: "Explore",
     action: { type: "link", href: "#cinematic-films" },
   },
 ];
@@ -79,7 +83,7 @@ export default function AnnouncementBar() {
   return (
     <aside className={styles.bar} aria-label="Announcements">
       <div className={styles.inner}>
-        {/* Left: Status with glowing breathing dot */}
+        {/* Left: Status with live breathing dot */}
         <div className={styles.status}>
           <span className={styles.pulseDot} aria-hidden="true" />
           <span className={styles.statusTag}>{current.statusTag}</span>
@@ -106,7 +110,7 @@ export default function AnnouncementBar() {
                 title="Click to explore"
               >
                 <strong className={styles.messageHighlight}>{item.lead}</strong>
-                <span>{" \u2014 "}</span>
+                <span className={styles.slideDivider}>{" \u2014 "}</span>
                 <span className={styles.detail}>{item.detail}</span>
               </div>
             );
@@ -120,8 +124,10 @@ export default function AnnouncementBar() {
             className={styles.ctaPill}
             onClick={() => handleAction(current)}
             data-cursor="BEGIN"
+            aria-label={`${current.lead} - ${current.cta}`}
           >
-            <span>{current.cta}</span>
+            <span className={styles.ctaDesktop}>{current.cta}</span>
+            <span className={styles.ctaMobile}>{current.ctaMobile || current.cta}</span>
             <span className={styles.ctaArrow} aria-hidden="true">{"\u2192"}</span>
           </button>
         </div>
