@@ -109,8 +109,7 @@ export default function Hero() {
 
           <div className={styles.ctas} data-hero-fade>
             <InquiryCta source="hero" primary boxed cursor="BEGIN" className={styles.primaryBtn}>
-              <span>CHECK YOUR DATE</span>
-              <Arrow />
+              GET IN TOUCH
             </InquiryCta>
             <Link href="#portfolio" className={styles.secondaryBtn} data-cursor="EXPLORE">
               <span>EXPLORE PORTFOLIO</span>
