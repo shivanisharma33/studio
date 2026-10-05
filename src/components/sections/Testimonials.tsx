@@ -3,23 +3,8 @@
 import { useCallback, useRef, useState } from "react";
 import { gsap, useGSAP, MQ } from "@/lib/gsap";
 import { testimonials, SITE_URL } from "@/content/site";
-import { galleries, home, type Photo as PhotoT } from "@/content/media";
-import Photo from "@/components/ui/Photo";
 import InquiryCta from "@/components/inquiry/InquiryCta";
 import styles from "./Testimonials.module.css";
-
-/** Curated photography pairings for each testimonial from the studio's real body of work */
-const couplePhotos: PhotoT[] = [
-  home[0],
-  home[3],
-  home[9],
-  home[11],
-  home[13],
-  home[15],
-  home[16],
-  home[18],
-  home[19],
-];
 
 function GoogleIcon() {
   return (
@@ -50,13 +35,20 @@ function VerifiedCheck() {
   );
 }
 
-function PinIcon() {
+function QuoteMark() {
   return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-      <circle cx="12" cy="10" r="3" />
+    <svg width="38" height="30" viewBox="0 0 38 30" fill="none" aria-hidden="true" className={styles.quoteSvg}>
+      <path d="M0 30V18C0 8.064 6.72 2.112 16.32 0.192L17.76 4.032C11.52 5.76 8.16 9.6 7.68 15.12H15.84V30H0ZM22.08 30V18C22.08 8.064 28.8 2.112 38.4 0.192L39.84 4.032C33.6 5.76 30.24 9.6 29.76 15.12H37.92V30H22.08Z" fill="currentColor" />
     </svg>
   );
+}
+
+function getInitials(couple: string) {
+  const parts = couple.split(/&|and/i).map((s) => s.trim());
+  if (parts.length >= 2 && parts[0] && parts[1]) {
+    return `${parts[0][0]}&${parts[1][0]}`;
+  }
+  return couple.slice(0, 2).toUpperCase();
 }
 
 export default function Testimonials() {
@@ -68,7 +60,6 @@ export default function Testimonials() {
   const total = testimonials.length;
   const t = testimonials[index];
   const [first, ...rest] = t.paragraphs;
-  const currentPhoto = couplePhotos[index] || galleries[t.gallerySlug || ""]?.[0] || home[index % home.length];
 
   const transitionTo = useCallback(
     (next: number, dir: 1 | -1) => {
@@ -83,21 +74,19 @@ export default function Testimonials() {
       setBusy(true);
       gsap.to(card, {
         autoAlpha: 0,
-        x: dir * -18,
-        scale: 0.99,
-        duration: 0.28,
+        y: dir * -12,
+        duration: 0.24,
         ease: "power2.in",
         onComplete: () => {
           setIndex(next);
           setExpanded(false);
           gsap.fromTo(
             card,
-            { autoAlpha: 0, x: dir * 18, scale: 0.99 },
+            { autoAlpha: 0, y: dir * 12 },
             {
               autoAlpha: 1,
-              x: 0,
-              scale: 1,
-              duration: 0.5,
+              y: 0,
+              duration: 0.45,
               ease: "expo.out",
               onComplete: () => setBusy(false),
             }
@@ -161,16 +150,6 @@ export default function Testimonials() {
       tabIndex={0}
       aria-label="Client Testimonials and Google Reviews"
     >
-      {/* Subtle ambient crossfade background */}
-      <div className={styles.bgs} aria-hidden="true">
-        {couplePhotos.map((photo, i) => (
-          <div className={`${styles.bg} ${i === index ? styles.bgOn : ""}`} key={i}>
-            <Photo photo={photo} sizes="100vw" quality={60} />
-          </div>
-        ))}
-        <div className={styles.bgVeil} />
-      </div>
-
       <div className={`container ${styles.inner}`}>
         {/* Section Header with authentic Google Review trust badge */}
         <div className={styles.head}>
@@ -205,33 +184,24 @@ export default function Testimonials() {
           </div>
         </div>
 
-        {/* Main Showcase Review Card */}
+        {/* Main Real Review Card */}
         <div className={styles.showcase}>
           <div ref={cardRef} className={styles.card}>
-            {/* Left: Authentic Couple Photo & Story Attribution */}
-            <div className={styles.portraitCol}>
-              <div className={styles.portraitFrame}>
-                <Photo
-                  photo={currentPhoto}
-                  sizes="(min-width: 1024px) 460px, 100vw"
-                  quality={88}
-                  priority
-                />
-                <div className={styles.portraitVignette} />
-                <div className={styles.portraitMetaBar}>
-                  <div className={styles.portraitLocation}>
-                    <PinIcon />
-                    <span>{t.location}</span>
-                  </div>
-                  <div className={styles.portraitEventPill}>{t.event}</div>
+            {/* Top Review Header */}
+            <div className={styles.reviewTopHeader}>
+              <div className={styles.profileBadge}>
+                <div className={styles.avatarCircle}>
+                  <span>{getInitials(t.couple)}</span>
+                </div>
+                <div className={styles.profileMeta}>
+                  <h3 className={`serif ${styles.coupleHeading}`}>{t.couple}</h3>
+                  <p className={styles.coupleSub}>
+                    {t.event} &nbsp;·&nbsp; {t.location}
+                  </p>
                 </div>
               </div>
-            </div>
 
-            {/* Right: Authentic Client Review */}
-            <div className={styles.narrativeCol}>
-              {/* Review Verification Header */}
-              <div className={styles.reviewHeader}>
+              <div className={styles.rightTagGroup}>
                 <div className={styles.sourceTagGroup}>
                   {t.source === "google" && (
                     <span className={`${styles.sourceBadge} ${styles.badgeGoogle}`}>
@@ -270,16 +240,14 @@ export default function Testimonials() {
                   <span className={styles.counterTotal}>{String(total).padStart(2, "0")}</span>
                 </div>
               </div>
+            </div>
 
-              {/* Author / Couple Info */}
-              <div className={styles.coupleHeader}>
-                <h3 className={`serif ${styles.coupleHeading}`}>{t.couple}</h3>
-                <p className={styles.coupleSub}>
-                  {t.event} &nbsp;·&nbsp; {t.location}
-                </p>
+            {/* Review Content */}
+            <div className={styles.narrativeCol}>
+              <div className={styles.quoteWatermark}>
+                <QuoteMark />
               </div>
 
-              {/* Review Text Body */}
               <blockquote className={styles.quoteBlock}>
                 <p className={styles.quoteLead}>“{first}”</p>
                 {rest.length > 0 && (
@@ -309,7 +277,7 @@ export default function Testimonials() {
                 )}
               </blockquote>
 
-              {/* Authentic Action Links & Navigation Row */}
+              {/* Action Links & Navigation Row */}
               <div className={styles.bottomRow}>
                 <div className={styles.proofLinks}>
                   {t.link && (
@@ -381,6 +349,31 @@ export default function Testimonials() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Quick Grid Preview of Reviews */}
+        <div className={styles.reviewGridTrack}>
+          {testimonials.map((item, i) => {
+            const isCurrent = i === index;
+            return (
+              <button
+                key={item.couple}
+                type="button"
+                className={`${styles.miniCard} ${isCurrent ? styles.miniCardActive : ""}`}
+                onClick={() => goTo(i)}
+              >
+                <div className={styles.miniHeader}>
+                  <div className={styles.miniAvatar}>{getInitials(item.couple)}</div>
+                  <div className={styles.miniMeta}>
+                    <span className={styles.miniName}>{item.couple}</span>
+                    <span className={styles.miniStars}>★★★★★</span>
+                  </div>
+                </div>
+                <p className={styles.miniSnippet}>"{item.paragraphs[0]}"</p>
+                <span className={styles.miniLoc}>{item.location}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Bottom invitation bar */}
