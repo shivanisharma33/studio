@@ -84,9 +84,6 @@ export default function FloatingInquire() {
       data-inquiry-open={isOpen ? "true" : "false"}
       aria-hidden={isOpen}
     >
-      <WhatsAppLink text={GREETING} from="floating" className={styles.wa} tabIndex={shown ? 0 : -1} aria-label="Chat on WhatsApp">
-        <WhatsAppIcon size={46} className={styles.waIcon} />
-      </WhatsAppLink>
       <a
         href="#get-in-touch"
         className={styles.btn}
@@ -104,6 +101,9 @@ export default function FloatingInquire() {
         <span>{hasProgress ? "CONTINUE YOUR INQUIRY" : "CHECK YOUR DATE"}</span>
         <Arrow />
       </a>
+      <WhatsAppLink text={GREETING} from="floating" className={styles.wa} tabIndex={shown ? 0 : -1} aria-label="Chat on WhatsApp">
+        <WhatsAppIcon size={46} className={styles.waIcon} />
+      </WhatsAppLink>
     </div>
   );
 }
