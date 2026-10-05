@@ -82,7 +82,7 @@ export default function AnnouncementBar() {
 
   return (
     <aside className={styles.bar} aria-label="Announcements">
-      <div className={styles.inner}>
+      <div className={`container ${styles.inner}`}>
         {/* Left: Status with live breathing dot */}
         <div className={styles.status}>
           <span className={styles.pulseDot} aria-hidden="true" />
