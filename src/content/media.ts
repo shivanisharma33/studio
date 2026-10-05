@@ -111,7 +111,7 @@ export const media = {
   story: [
     { ...home[2], alt: "Joyful bride and groom walking down the aisle with arms raised in laughter" },
     { ...home[4], alt: "Intimate black and white portrait of bride and groom beneath historic cathedral stone arches" },
-    { ...home[5], alt: "Couple dancing and laughing barefoot by the open beach and water" },
+    { src: "/images/new image.avif", alt: "Couple dancing and laughing barefoot by the open beach and water" },
     { ...home[6], alt: "Bride and groom in ornate Indian wedding attire resting foreheads together in gentle devotion" },
     { ...home[7], alt: "Regal portrait of bride in voluminous white gown cascading down stone stairs with groom" },
     { ...home[8], alt: "Couple standing in golden hour sunset warmth by tranquil waters and sandstone cliffs" },
