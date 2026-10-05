@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap, useGSAP, MQ } from "@/lib/gsap";
 import { testimonials, SITE_URL } from "@/content/site";
 import InquiryCta from "@/components/inquiry/InquiryCta";
@@ -37,7 +37,7 @@ function VerifiedCheck() {
 
 function QuoteMark() {
   return (
-    <svg width="38" height="30" viewBox="0 0 38 30" fill="none" aria-hidden="true" className={styles.quoteSvg}>
+    <svg width="30" height="24" viewBox="0 0 38 30" fill="none" aria-hidden="true" className={styles.quoteSvg}>
       <path d="M0 30V18C0 8.064 6.72 2.112 16.32 0.192L17.76 4.032C11.52 5.76 8.16 9.6 7.68 15.12H15.84V30H0ZM22.08 30V18C22.08 8.064 28.8 2.112 38.4 0.192L39.84 4.032C33.6 5.76 30.24 9.6 29.76 15.12H37.92V30H22.08Z" fill="currentColor" />
     </svg>
   );
@@ -53,65 +53,31 @@ function getInitials(couple: string) {
 
 export default function Testimonials() {
   const root = useRef<HTMLElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
-  const [expanded, setExpanded] = useState(false);
-  const [busy, setBusy] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [expandedMap, setExpandedMap] = useState<Record<number, boolean>>({});
   const total = testimonials.length;
-  const t = testimonials[index];
-  const [first, ...rest] = t.paragraphs;
 
-  const transitionTo = useCallback(
-    (next: number, dir: 1 | -1) => {
-      if (busy) return;
-      const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const card = cardRef.current;
-      if (!card || reduced) {
-        setIndex(next);
-        setExpanded(false);
-        return;
-      }
-      setBusy(true);
-      gsap.to(card, {
-        autoAlpha: 0,
-        y: dir * -12,
-        duration: 0.24,
-        ease: "power2.in",
-        onComplete: () => {
-          setIndex(next);
-          setExpanded(false);
-          gsap.fromTo(
-            card,
-            { autoAlpha: 0, y: dir * 12 },
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.45,
-              ease: "expo.out",
-              onComplete: () => setBusy(false),
-            }
-          );
-        },
-      });
-    },
-    [busy]
-  );
+  const nextSlide = useCallback(() => {
+    setIndex((prev) => (prev + 1) % total);
+  }, [total]);
 
-  const go = useCallback(
-    (dir: 1 | -1) => {
-      const next = (index + dir + total) % total;
-      transitionTo(next, dir);
-    },
-    [index, total, transitionTo]
-  );
+  const prevSlide = useCallback(() => {
+    setIndex((prev) => (prev - 1 + total) % total);
+  }, [total]);
 
-  const goTo = useCallback(
-    (target: number) => {
-      if (target === index) return;
-      transitionTo(target, target > index ? 1 : -1);
-    },
-    [index, transitionTo]
-  );
+  // Automatic Slider — advances every 5 seconds unless hovered/touched
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      nextSlide();
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [isPaused, nextSlide]);
+
+  const toggleExpanded = (i: number) => {
+    setExpandedMap((prev) => ({ ...prev, [i]: !prev[i] }));
+  };
 
   useGSAP(
     () => {
@@ -144,8 +110,8 @@ export default function Testimonials() {
       className={styles.wrap}
       aria-labelledby="testimonials-title"
       onKeyDown={(e) => {
-        if (e.key === "ArrowRight") go(1);
-        if (e.key === "ArrowLeft") go(-1);
+        if (e.key === "ArrowRight") nextSlide();
+        if (e.key === "ArrowLeft") prevSlide();
       }}
       tabIndex={0}
       aria-label="Client Testimonials and Google Reviews"
@@ -184,196 +150,193 @@ export default function Testimonials() {
           </div>
         </div>
 
-        {/* Main Real Review Card */}
-        <div className={styles.showcase}>
-          <div ref={cardRef} className={styles.card}>
-            {/* Top Review Header */}
-            <div className={styles.reviewTopHeader}>
-              <div className={styles.profileBadge}>
-                <div className={styles.avatarCircle}>
-                  <span>{getInitials(t.couple)}</span>
-                </div>
-                <div className={styles.profileMeta}>
-                  <h3 className={`serif ${styles.coupleHeading}`}>{t.couple}</h3>
-                  <p className={styles.coupleSub}>
-                    {t.event} &nbsp;·&nbsp; {t.location}
-                  </p>
-                </div>
-              </div>
+        {/* Automatic 3-Card Slider Viewport */}
+        <div
+          className={styles.sliderViewport}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
+        >
+          <div
+            className={styles.sliderTrack}
+            style={{ "--active-index": index } as React.CSSProperties}
+          >
+            {testimonials.map((t, i) => {
+              const [first, ...rest] = t.paragraphs;
+              const isExpanded = !!expandedMap[i];
 
-              <div className={styles.rightTagGroup}>
-                <div className={styles.sourceTagGroup}>
-                  {t.source === "google" && (
-                    <span className={`${styles.sourceBadge} ${styles.badgeGoogle}`}>
-                      <GoogleIcon />
-                      <span>{t.sourceLabel}</span>
-                      <span className={styles.verifiedTick}>
-                        <VerifiedCheck />
-                      </span>
-                    </span>
-                  )}
-                  {t.source === "instagram" && (
-                    <span className={`${styles.sourceBadge} ${styles.badgeInstagram}`}>
-                      <InstagramIcon />
-                      <span>{t.sourceLabel}</span>
-                      <span className={styles.verifiedTick}>
-                        <VerifiedCheck />
-                      </span>
-                    </span>
-                  )}
-                  {t.source === "client" && (
-                    <span className={`${styles.sourceBadge} ${styles.badgeClient}`}>
-                      <span>{t.sourceLabel}</span>
-                      <span className={styles.verifiedTick}>
-                        <VerifiedCheck />
-                      </span>
-                    </span>
-                  )}
-                  <span className={styles.starsGold} aria-label="5 star rating">
-                    ★★★★★
-                  </span>
-                </div>
-
-                <div className={styles.counterBox} aria-live="polite">
-                  <span className={styles.counterNum}>{String(index + 1).padStart(2, "0")}</span>
-                  <span className={styles.counterSep}>/</span>
-                  <span className={styles.counterTotal}>{String(total).padStart(2, "0")}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Review Content */}
-            <div className={styles.narrativeCol}>
-              <div className={styles.quoteWatermark}>
-                <QuoteMark />
-              </div>
-
-              <blockquote className={styles.quoteBlock}>
-                <p className={styles.quoteLead}>“{first}”</p>
-                {rest.length > 0 && (
-                  <div
-                    className={`${styles.accordion} ${expanded ? styles.accordionOpen : ""}`}
-                    aria-hidden={!expanded}
-                  >
-                    <div className={styles.accordionInner}>
-                      {rest.map((p, i) => (
-                        <p key={i} className={styles.quoteBody}>
-                          {p}
+              return (
+                <div key={t.couple + i} className={styles.cardItem}>
+                  {/* Card Header: Avatar & Source Badge */}
+                  <div className={styles.cardHeader}>
+                    <div className={styles.authorBadge}>
+                      <div className={styles.avatarCircle}>
+                        <span>{getInitials(t.couple)}</span>
+                      </div>
+                      <div className={styles.authorMeta}>
+                        <h3 className={`serif ${styles.coupleHeading}`}>{t.couple}</h3>
+                        <p className={styles.coupleSub}>
+                          {t.event} &nbsp;·&nbsp; {t.location}
                         </p>
-                      ))}
+                      </div>
+                    </div>
+
+                    <div className={styles.sourceGroup}>
+                      {t.source === "google" && (
+                        <span className={`${styles.sourceBadge} ${styles.badgeGoogle}`}>
+                          <GoogleIcon />
+                          <span>Google</span>
+                          <span className={styles.verifiedTick}>
+                            <VerifiedCheck />
+                          </span>
+                        </span>
+                      )}
+                      {t.source === "instagram" && (
+                        <span className={`${styles.sourceBadge} ${styles.badgeInstagram}`}>
+                          <InstagramIcon />
+                          <span>Instagram</span>
+                          <span className={styles.verifiedTick}>
+                            <VerifiedCheck />
+                          </span>
+                        </span>
+                      )}
+                      {t.source === "client" && (
+                        <span className={`${styles.sourceBadge} ${styles.badgeClient}`}>
+                          <span>Verified</span>
+                          <span className={styles.verifiedTick}>
+                            <VerifiedCheck />
+                          </span>
+                        </span>
+                      )}
                     </div>
                   </div>
-                )}
-                {rest.length > 0 && (
-                  <button
-                    type="button"
-                    className={`meta-sm ${styles.expandBtn}`}
-                    onClick={() => setExpanded((v) => !v)}
-                    aria-expanded={expanded}
-                  >
-                    {expanded ? "READ LESS" : "READ FULL REVIEW"}{" "}
-                    <span aria-hidden="true">{expanded ? "−" : "+"}</span>
-                  </button>
-                )}
-              </blockquote>
 
-              {/* Action Links & Navigation Row */}
-              <div className={styles.bottomRow}>
-                <div className={styles.proofLinks}>
-                  {t.link && (
-                    <a
-                      className={styles.authenticLink}
-                      href={t.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      data-cursor="VIEW"
-                    >
-                      <InstagramIcon />
-                      <span>VIEW ON INSTAGRAM ↗</span>
-                    </a>
-                  )}
-                  {t.gallerySlug && (
-                    <a
-                      className={styles.authenticLink}
-                      href={`${SITE_URL}/${t.gallerySlug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      data-cursor="VIEW"
-                    >
-                      <span>VIEW WEDDING GALLERY ↗</span>
-                    </a>
-                  )}
-                  <span className={styles.documentedPill}>
-                    <VerifiedCheck /> Verified Story
-                  </span>
-                </div>
+                  {/* Rating Stars & Quote */}
+                  <div className={styles.cardBody}>
+                    <div className={styles.starsRow}>
+                      <span className={styles.starsGold} aria-label="5 star rating">
+                        ★★★★★
+                      </span>
+                      <QuoteMark />
+                    </div>
 
-                {/* Dot Pagination Controls */}
-                <div className={styles.dotsTrack} aria-label="Select review">
-                  {testimonials.map((item, i) => (
-                    <button
-                      key={item.couple}
-                      type="button"
-                      className={`${styles.dotBtn} ${i === index ? styles.dotActive : ""}`}
-                      onClick={() => goTo(i)}
-                      aria-label={`Go to review by ${item.couple}`}
-                      title={item.couple}
-                    >
-                      <span className={styles.dotIndicator} />
-                    </button>
-                  ))}
-                </div>
+                    <blockquote className={styles.quoteBlock}>
+                      <p className={styles.quoteLead}>“{first}”</p>
 
-                <div className={styles.navArrows}>
-                  <button
-                    type="button"
-                    className={styles.circleBtn}
-                    onClick={() => go(-1)}
-                    aria-label="Previous review"
-                    data-cursor="PREV"
-                    data-magnetic=""
-                  >
-                    ←
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.circleBtn}
-                    onClick={() => go(1)}
-                    aria-label="Next review"
-                    data-cursor="NEXT"
-                    data-magnetic=""
-                  >
-                    →
-                  </button>
+                      {rest.length > 0 && (
+                        <div
+                          className={`${styles.accordion} ${isExpanded ? styles.accordionOpen : ""}`}
+                          aria-hidden={!isExpanded}
+                        >
+                          <div className={styles.accordionInner}>
+                            {rest.map((p, pIdx) => (
+                              <p key={pIdx} className={styles.quoteBody}>
+                                {p}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {rest.length > 0 && (
+                        <button
+                          type="button"
+                          className={`meta-sm ${styles.expandBtn}`}
+                          onClick={() => toggleExpanded(i)}
+                          aria-expanded={isExpanded}
+                        >
+                          {isExpanded ? "READ LESS" : "READ FULL REVIEW"}{" "}
+                          <span aria-hidden="true">{isExpanded ? "−" : "+"}</span>
+                        </button>
+                      )}
+                    </blockquote>
+                  </div>
+
+                  {/* Card Footer: Action Link & Verified Badge */}
+                  <div className={styles.cardFooter}>
+                    <span className={styles.documentedPill}>
+                      <VerifiedCheck /> Verified Story
+                    </span>
+
+                    {t.link && (
+                      <a
+                        className={styles.authenticLink}
+                        href={t.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-cursor="VIEW"
+                      >
+                        <InstagramIcon />
+                        <span>INSTAGRAM ↗</span>
+                      </a>
+                    )}
+                    {t.gallerySlug && !t.link && (
+                      <a
+                        className={styles.authenticLink}
+                        href={`${SITE_URL}/${t.gallerySlug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-cursor="VIEW"
+                      >
+                        <span>GALLERY ↗</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Quick Grid Preview of Reviews */}
-        <div className={styles.reviewGridTrack}>
-          {testimonials.map((item, i) => {
-            const isCurrent = i === index;
-            return (
+        {/* Controls & Pagination Bar */}
+        <div className={styles.controlsRow}>
+          <div className={styles.counterBox} aria-live="polite">
+            <span className={styles.counterNum}>{String(index + 1).padStart(2, "0")}</span>
+            <span className={styles.counterSep}>/</span>
+            <span className={styles.counterTotal}>{String(total).padStart(2, "0")}</span>
+            {isPaused && <span className={styles.pausePill}>PAUSED ON HOVER</span>}
+          </div>
+
+          {/* Indicator Dots */}
+          <div className={styles.dotsTrack} aria-label="Select review slide">
+            {testimonials.map((item, i) => (
               <button
-                key={item.couple}
+                key={item.couple + i}
                 type="button"
-                className={`${styles.miniCard} ${isCurrent ? styles.miniCardActive : ""}`}
-                onClick={() => goTo(i)}
+                className={`${styles.dotBtn} ${i === index ? styles.dotActive : ""}`}
+                onClick={() => setIndex(i)}
+                aria-label={`Go to review by ${item.couple}`}
+                title={item.couple}
               >
-                <div className={styles.miniHeader}>
-                  <div className={styles.miniAvatar}>{getInitials(item.couple)}</div>
-                  <div className={styles.miniMeta}>
-                    <span className={styles.miniName}>{item.couple}</span>
-                    <span className={styles.miniStars}>★★★★★</span>
-                  </div>
-                </div>
-                <p className={styles.miniSnippet}>"{item.paragraphs[0]}"</p>
-                <span className={styles.miniLoc}>{item.location}</span>
+                <span className={styles.dotIndicator} />
               </button>
-            );
-          })}
+            ))}
+          </div>
+
+          {/* Navigation Arrows */}
+          <div className={styles.navArrows}>
+            <button
+              type="button"
+              className={styles.circleBtn}
+              onClick={prevSlide}
+              aria-label="Previous review"
+              data-cursor="PREV"
+              data-magnetic=""
+            >
+              ←
+            </button>
+            <button
+              type="button"
+              className={styles.circleBtn}
+              onClick={nextSlide}
+              aria-label="Next review"
+              data-cursor="NEXT"
+              data-magnetic=""
+            >
+              →
+            </button>
+          </div>
         </div>
 
         {/* Bottom invitation bar */}
