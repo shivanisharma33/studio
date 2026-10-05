@@ -14,6 +14,7 @@ export type InquiryEvent =
   | "step_completed"
   | "date_selected"
   | "location_selected"
+  | "city_entered"
   | "event_type_selected"
   | "services_selected"
   | "budget_selected"
