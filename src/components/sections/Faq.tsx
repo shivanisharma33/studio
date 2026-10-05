@@ -16,6 +16,12 @@ function Rich({ text }: { text: string }) {
   );
 }
 
+
+
+
+
+
+
 export default function Faq() {
   const [open, setOpen] = useState<number | null>(0);
 
