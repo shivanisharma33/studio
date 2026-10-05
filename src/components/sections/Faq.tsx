@@ -30,7 +30,7 @@ export default function Faq() {
       <div className="container">
         <div className={styles.grid}>
           <div className={styles.aside}>
-            <p className="meta-sm" data-reveal>
+            <p className={`meta-sm ${styles.category}`} data-reveal>
               13 &nbsp;—&nbsp; FAQ
             </p>
             <h2 id="faq-title" className={`serif ${styles.title}`} data-reveal>

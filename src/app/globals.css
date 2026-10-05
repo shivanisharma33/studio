@@ -52,6 +52,27 @@
   --line: rgba(243, 237, 228, 0.14);
   --line-strong: rgba(243, 237, 228, 0.3);
 
+  /* ── luxury beige & travertine palette (warm editorial neutrals) ── */
+  --beige-bg: #f5f0e6;
+  --beige-bg-radial: radial-gradient(circle at 18% 18%, #faf6ef 0%, #f4ede2 50%, #eae0d0 100%);
+  --beige-surface: #faf6ef;
+  --beige-card: #f9f5ed;
+  --beige-card-border: rgba(184, 158, 120, 0.32);
+  --beige-card-border-hover: rgba(168, 138, 92, 0.6);
+  --beige-card-shadow: 0 18px 42px -12px rgba(92, 76, 52, 0.14), 0 4px 14px rgba(0, 0, 0, 0.04);
+  --beige-line: rgba(140, 115, 80, 0.18);
+  --beige-line-strong: rgba(140, 115, 80, 0.35);
+
+  /* beige section typography & accents */
+  --espresso-900: #141210;
+  --espresso-800: #231f1a;
+  --espresso-700: #3b352d;
+  --espresso-600: #574f44;
+  --espresso-muted: #7d7366;
+  --warm-bronze: #8f7243;
+  --warm-bronze-dark: #6e542c;
+  --champagne-gold: #c6a87c;
+
   /* type — Primary: big-Caslon-fb | Secondary / Body: Inter family */
   --serif: "big-caslon-fb", "Big Caslon FB", "Big Caslon", "BigCaslon", "BigCaslon-Medium", "Libre Caslon Display", "Libre Caslon Text", "Baskervville", "Libre Baskerville", Baskerville, "Times New Roman", serif;
   --sans: "Inter Variable", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;

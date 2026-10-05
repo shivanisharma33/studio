@@ -58,7 +58,6 @@ export const nav = [
   { n: "04", label: "STORIES BY TYPE", href: "#stories-by-type" },
   { n: "05", label: "TESTIMONIALS", href: "#testimonials" },
   { n: "06", label: "INVESTMENT", href: "#investment" },
-  { n: "07", label: "GET IN TOUCH", href: "#get-in-touch" },
 ];
 
 export const cta = {
@@ -96,14 +95,14 @@ export type PortfolioItem = (typeof portfolio)[number];
  */
 export const films = [
   { id: "qhmxcS6rbzY", title: "Glimpse from Parth & Zeal || Mehndi Ceremony || Studio Kunal Photography Canada" },
-  { id: "GE4RwB_Ezf8", title: null },
+  { id: "GE4RwB_Ezf8", title: "Wedding Highlights || Studio Kunal Photography Canada" },
   { id: "PK30ZglbXJQ", title: "Harkeet & Nina || Fall in love : Again & Again || Eshoot || Studio Kunal Photography Canada" },
-  { id: "EEFd2OHEV6A", title: null },
-  { id: "V50vQEXenaE", title: null },
-  { id: "MkhER4Ob6dA", title: null },
-  { id: "ZT4f1XDbmDg", title: null },
-  { id: "4djvYWzA-LY", title: null },
-  { id: "YBAhqOTVLH4", title: null },
+  { id: "EEFd2OHEV6A", title: "Cinematic Wedding Highlights || Studio Kunal Photography Canada" },
+  { id: "V50vQEXenaE", title: "Romantic Wedding Story || Studio Kunal Photography Canada" },
+  { id: "MkhER4Ob6dA", title: "Intimate Wedding Moments || Studio Kunal Photography Canada" },
+  { id: "ZT4f1XDbmDg", title: "Luxury Wedding Cinema || Studio Kunal Photography Canada" },
+  { id: "4djvYWzA-LY", title: "Royal Wedding Film || Studio Kunal Photography Canada" },
+  { id: "YBAhqOTVLH4", title: "Timeless Wedding Cinema || Studio Kunal Photography Canada" },
 ] as const;
 
 export type Film = { id: string; title: string | null };

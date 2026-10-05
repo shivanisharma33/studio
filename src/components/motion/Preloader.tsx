@@ -16,6 +16,13 @@ export default function Preloader() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
+    try {
+      if (sessionStorage.getItem("sk_intro_seen")) {
+        markIntroDone();
+        setDone(true);
+        return;
+      }
+    } catch {}
     document.body.classList.add("is-loading");
     return () => document.body.classList.remove("is-loading");
   }, []);
@@ -24,16 +31,26 @@ export default function Preloader() {
     () => {
       const el = root.current;
       if (!el) return;
+      try {
+        if (sessionStorage.getItem("sk_intro_seen")) {
+          markIntroDone();
+          setDone(true);
+          return;
+        }
+      } catch {}
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       const finish = () => {
+        try {
+          sessionStorage.setItem("sk_intro_seen", "1");
+        } catch {}
         document.body.classList.remove("is-loading");
         markIntroDone();
         setDone(true);
       };
 
       if (reduced) {
-        gsap.to(el, { autoAlpha: 0, duration: 0.4, delay: 0.3, onComplete: finish });
+        gsap.to(el, { autoAlpha: 0, duration: 0.2, onComplete: finish });
         return;
       }
 
@@ -42,15 +59,15 @@ export default function Preloader() {
         .fromTo(
           `.${styles.word} .line > span`,
           { yPercent: 110 },
-          { yPercent: 0, duration: 1.3, stagger: 0.12 },
-          0.25
+          { yPercent: 0, duration: 0.5, stagger: 0.06 },
+          0.05
         )
-        .fromTo(`.${styles.meta}`, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.9 }, 0.9)
-        .fromTo(`.${styles.rule}`, { scaleX: 0 }, { scaleX: 1, duration: 1.4, ease: "power4.inOut" }, 0.7)
-        .to(`.${styles.word} .line > span`, { yPercent: -110, duration: 0.9, ease: "power4.in", stagger: 0.06 }, 2.15)
-        .to(`.${styles.meta}`, { autoAlpha: 0, duration: 0.4 }, 2.15)
-        .to(`.${styles.rule}`, { scaleX: 0, transformOrigin: "right", duration: 0.7, ease: "power4.in" }, 2.3)
-        .to(el, { clipPath: "inset(0 0 100% 0)", duration: 1.25, ease: "power4.inOut" }, 2.75);
+        .fromTo(`.${styles.meta}`, { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 0.2)
+        .fromTo(`.${styles.rule}`, { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power3.inOut" }, 0.2)
+        .to(`.${styles.word} .line > span`, { yPercent: -110, duration: 0.35, ease: "power3.in", stagger: 0.03 }, 0.6)
+        .to(`.${styles.meta}`, { autoAlpha: 0, duration: 0.2 }, 0.6)
+        .to(`.${styles.rule}`, { scaleX: 0, transformOrigin: "right", duration: 0.25, ease: "power3.in" }, 0.65)
+        .to(el, { clipPath: "inset(0 0 100% 0)", duration: 0.5, ease: "expo.inOut" }, 0.75);
     },
     { scope: root }
   );

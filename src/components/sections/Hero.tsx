@@ -33,11 +33,11 @@ export default function Hero() {
           return;
         }
         const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
-        tl.to(q(`.${styles.media}`), { autoAlpha: 1, duration: 2.2, ease: "power2.out" }, 0)
-          .to(q(`.${styles.media}`), { scale: 1, duration: 3.2, ease: "power2.out" }, 0)
-          .to(q(`.${styles.eyebrow}`), { autoAlpha: 1, y: 0, duration: 1.2 }, 0.4)
-          .to(q(`.${styles.headline} .line > span`), { yPercent: 0, duration: 1.5, stagger: 0.14 }, 0.5)
-          .to(q("[data-hero-fade]"), { autoAlpha: 1, y: 0, duration: 1.2, stagger: 0.1 }, 1.2);
+        tl.to(q(`.${styles.media}`), { autoAlpha: 1, duration: 1.0, ease: "power2.out" }, 0)
+          .to(q(`.${styles.media}`), { scale: 1, duration: 1.6, ease: "power2.out" }, 0)
+          .to(q(`.${styles.eyebrow}`), { autoAlpha: 1, y: 0, duration: 0.6 }, 0.1)
+          .to(q(`.${styles.headline} .line > span`), { yPercent: 0, duration: 0.8, stagger: 0.08 }, 0.15)
+          .to(q("[data-hero-fade]"), { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.06 }, 0.35);
       });
 
       // Slow parallax + fade as the story scrolls on.
@@ -78,7 +78,7 @@ export default function Hero() {
           photo={media.hero}
           sizes="100vw"
           priority
-          quality={90}
+          quality={80}
           style={{ objectFit: "cover", objectPosition: "70% 48%" }}
         />
         <div className={styles.shade} />

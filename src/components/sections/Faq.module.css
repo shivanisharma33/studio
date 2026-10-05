@@ -1,46 +1,73 @@
 .wrap {
-  background: var(--bg-0);
+  position: relative;
+  background: var(--beige-bg);
+  background: var(--beige-bg-radial);
+  color: var(--espresso-900);
+  overflow: hidden;
+  border-top: 1px solid var(--beige-line-strong);
+  border-bottom: 1px solid var(--beige-line-strong);
 }
+
 .grid {
   display: grid;
   grid-template-columns: 0.8fr 1.2fr;
   gap: clamp(28px, 4.5vw, 68px);
   align-items: start;
 }
+
 .aside {
   display: grid;
   gap: 18px;
   position: sticky;
   top: 120px;
 }
+
+.category {
+  color: var(--warm-bronze) !important;
+  font-weight: 600 !important;
+  letter-spacing: var(--track-lg);
+}
+
 .title {
   font-size: var(--fs-title);
   line-height: 1.02;
   letter-spacing: -0.015em;
+  color: var(--espresso-900);
 }
+
 .italic {
   font-style: normal;
-  color: var(--champagne);
+  color: var(--warm-bronze);
 }
+
 .intro {
-  color: var(--gray);
+  color: var(--espresso-600);
   max-width: 40ch;
+  line-height: 1.65;
+  font-size: 1.02rem;
 }
 
 .list {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--beige-line-strong);
 }
+
 .item {
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--beige-line);
   opacity: 1;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
+
 .item:hover {
-  background: rgba(243, 237, 228, 0.02);
+  background: rgba(140, 115, 80, 0.05);
 }
+
+.itemOpen {
+  border-bottom-color: var(--warm-bronze);
+}
+
 .trigger {
   width: 100%;
   display: grid;
@@ -48,7 +75,7 @@
   gap: clamp(16px, 2.5vw, 36px);
   align-items: center;
   text-align: left;
-  padding: clamp(18px, 2.4vw, 30px) 0;
+  padding: clamp(20px, 2.5vw, 32px) 0;
   background: none;
   border: none;
   font: inherit;
@@ -57,62 +84,76 @@
   outline: none;
   transition: padding-left 0.4s var(--ease-out);
 }
+
 .trigger:hover {
   padding-left: 8px;
 }
+
 .num {
-  color: var(--champagne-2);
+  color: var(--warm-bronze);
+  font-weight: 700;
   transition: color 0.3s ease;
 }
+
 .itemOpen .num,
 .item:hover .num {
-  color: var(--champagne);
+  color: var(--warm-bronze-dark);
 }
+
 .labels {
   display: grid;
   gap: 8px;
   min-width: 0;
 }
+
 .label {
-  color: var(--gray);
+  color: var(--espresso-muted);
   transition: color 0.3s ease;
 }
+
 .itemOpen .label,
 .item:hover .label {
-  color: var(--champagne-2);
+  color: var(--warm-bronze-dark);
 }
+
 .q {
   font-size: clamp(1.4rem, 2.2vw, 2.2rem);
   line-height: 1.1;
-  color: var(--ivory);
+  color: var(--espresso-900);
   opacity: 1 !important;
   visibility: visible !important;
   transition: color 0.35s ease;
 }
+
 .itemOpen .q,
 .item:hover .q {
-  color: #fff;
+  color: #000000;
 }
+
 .plus {
   position: relative;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
 }
+
 .plus span {
   position: absolute;
   inset: 50% auto auto 0;
   width: 100%;
-  height: 1px;
-  background: var(--ivory);
+  height: 1.5px;
+  background: var(--espresso-900);
   transition: transform 0.45s var(--ease-out), background-color 0.3s;
 }
+
 .plus span:last-child {
   transform: rotate(90deg);
 }
+
 .itemOpen .plus span {
-  background: var(--champagne);
+  background: var(--warm-bronze);
 }
+
 .itemOpen .plus span:last-child {
   transform: rotate(0deg);
 }
@@ -122,27 +163,32 @@
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
 .itemOpen .panel {
   grid-template-rows: 1fr;
 }
+
 .panelInner {
   overflow: hidden;
 }
+
 .a {
-  padding: 0 0 clamp(20px, 2.6vw, 32px) calc(3ch + clamp(16px, 2.5vw, 36px));
+  padding: 0 0 clamp(22px, 2.8vw, 34px) calc(3ch + clamp(16px, 2.5vw, 36px));
   max-width: 62ch;
-  color: var(--warm-white);
+  color: var(--espresso-600);
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 0.35s 0.08s, transform 0.45s 0.08s var(--ease-out);
-  line-height: 1.68;
+  line-height: 1.72;
 }
+
 .itemOpen .a {
-  opacity: 0.95;
+  opacity: 1;
   transform: none;
 }
+
 .a strong {
-  color: var(--ivory);
+  color: var(--espresso-900);
   font-weight: 600;
 }
 

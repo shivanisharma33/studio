@@ -97,7 +97,7 @@ export default function Navigation() {
 
         <div className={styles.right}>
           <InquiryCta source="nav" primary boxed className={styles.connect} cursor="BEGIN">
-            CHECK YOUR DATE
+            GET IN TOUCH
           </InquiryCta>
           <button
             type="button"
@@ -123,6 +123,16 @@ export default function Navigation() {
               </Link>
             </li>
           ))}
+          <li style={{ transitionDelay: open ? `${0.08 + nav.length * 0.06}s` : "0s" }}>
+            <InquiryCta
+              source="nav_mobile"
+              primary
+              boxed
+              className={styles.mobileCta}
+            >
+              GET IN TOUCH
+            </InquiryCta>
+          </li>
         </ul>
         <div className={styles.menuFoot}>
           <span className="meta-sm">{brand.regions.join(" · ")}</span>

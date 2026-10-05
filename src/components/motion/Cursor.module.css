@@ -14,6 +14,7 @@
   margin: -3px 0 0 -3px;
   border-radius: 50%;
   background: var(--ivory);
+  mix-blend-mode: difference;
   transition: opacity 0.3s, transform 0.3s;
 }
 .dot.hidden {

@@ -13,22 +13,36 @@
 
 .card {
   position: relative;
-  background: linear-gradient(135deg, rgba(22, 22, 26, 0.95) 0%, rgba(14, 14, 16, 0.98) 100%);
-  border: 1px solid rgba(226, 196, 153, 0.28);
+  background: linear-gradient(135deg, #faf7f1 0%, #f4ede0 50%, #eae0cf 100%);
+  border: 1px solid rgba(184, 158, 120, 0.42);
   border-radius: 24px;
-  padding: clamp(32px, 5vw, 56px) clamp(24px, 5vw, 48px);
+  padding: clamp(34px, 5vw, 58px) clamp(24px, 5vw, 48px);
   overflow: hidden;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 24px 64px -18px rgba(0, 0, 0, 0.6),
+    0 4px 16px rgba(140, 115, 80, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.85);
 }
 
 .card::before {
   content: "";
   position: absolute;
-  top: -50%;
-  right: -20%;
+  top: -40%;
+  right: -15%;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(201, 181, 143, 0.3) 0%, rgba(250, 246, 239, 0) 70%);
+  pointer-events: none;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
   width: 320px;
   height: 320px;
-  background: radial-gradient(circle, rgba(226, 196, 153, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+  background: radial-gradient(circle, rgba(235, 220, 195, 0.4) 0%, rgba(250, 246, 239, 0) 70%);
   pointer-events: none;
 }
 
@@ -46,18 +60,19 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(226, 196, 153, 0.1);
-  border: 1px solid rgba(226, 196, 153, 0.3);
-  padding: 6px 16px;
+  background: rgba(143, 114, 67, 0.09);
+  border: 1px solid rgba(143, 114, 67, 0.3);
+  padding: 6px 18px;
   border-radius: 999px;
+  backdrop-filter: blur(8px);
 }
 
 .pulseDot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--champagne);
-  box-shadow: 0 0 8px var(--champagne);
+  background: var(--warm-bronze);
+  box-shadow: 0 0 8px rgba(143, 114, 67, 0.6);
   animation: pulse 2s infinite ease-in-out;
 }
 
@@ -75,24 +90,25 @@
 .tagText {
   font-family: var(--sans);
   font-size: 0.68rem;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   font-weight: 700;
-  color: var(--champagne);
+  color: var(--warm-bronze-dark);
   text-transform: uppercase;
 }
 
 .heading {
-  font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+  font-size: clamp(1.85rem, 3.4vw, 2.85rem);
   line-height: 1.12;
-  color: #ffffff;
+  color: var(--espresso-900);
   margin: 0;
+  letter-spacing: -0.015em;
 }
 
 .subtext {
   font-family: var(--sans);
-  font-size: clamp(0.9rem, 1.05vw, 1.02rem);
-  line-height: 1.6;
-  color: rgba(243, 237, 228, 0.85);
+  font-size: clamp(0.92rem, 1.05vw, 1.04rem);
+  line-height: 1.65;
+  color: var(--espresso-600);
   margin: 0;
 }
 
@@ -108,8 +124,20 @@
 
 .bookBtn {
   font-size: 0.76rem !important;
-  padding: 12px 28px !important;
+  padding: 13px 30px !important;
   letter-spacing: 0.14em !important;
+  background: var(--espresso-900) !important;
+  color: #faf6ee !important;
+  border: 1px solid var(--espresso-800) !important;
+  box-shadow: 0 6px 20px rgba(20, 18, 16, 0.25) !important;
+  transition: all 0.35s ease !important;
+}
+
+.bookBtn:hover {
+  background: #2a2520 !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 26px rgba(20, 18, 16, 0.35) !important;
 }
 
 .waBtn {
@@ -119,24 +147,24 @@
   height: 48px;
   padding: 0 22px;
   border-radius: 999px;
-  background: rgba(16, 16, 18, 0.94);
-  border: 1px solid rgba(37, 211, 102, 0.45);
-  color: var(--champagne);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(143, 114, 67, 0.35);
+  color: var(--espresso-800);
   font-family: var(--sans);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 10px rgba(92, 76, 52, 0.08);
 }
 
 .waBtn:hover {
   border-color: #25D366;
-  color: #ffffff;
-  background: rgba(20, 24, 21, 0.98);
+  color: #1b1916;
+  background: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.22);
 }
 
 @media (max-width: 640px) {

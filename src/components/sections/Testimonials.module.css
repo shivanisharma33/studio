@@ -64,27 +64,35 @@
   will-change: transform;
 }
 
-/* Compact Card Item */
+/* Compact Card Item - Luxury Warm Beige Letterpress Card */
 .cardItem {
   flex: 0 0 var(--card-width);
   min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: linear-gradient(145deg, rgba(24, 24, 24, 0.95) 0%, rgba(14, 14, 14, 0.98) 100%);
-  border: 1px solid rgba(201, 181, 143, 0.16);
-  border-radius: 16px;
-  padding: 20px 18px;
-  box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.65);
+  background: linear-gradient(150deg, #faf7f2 0%, #f4ede1 55%, #ebe1d1 100%);
+  border: 1px solid rgba(184, 158, 120, 0.42);
+  border-radius: 18px;
+  padding: 22px 20px;
+  box-shadow: 
+    0 16px 36px -12px rgba(0, 0, 0, 0.55),
+    0 4px 14px rgba(92, 76, 52, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
   gap: 14px;
   position: relative;
   overflow: hidden;
-  transition: border-color 0.3s ease, transform 0.3s ease;
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .cardItem:hover {
-  border-color: rgba(201, 181, 143, 0.38);
+  border-color: rgba(160, 130, 85, 0.65);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 22px 48px -12px rgba(0, 0, 0, 0.65),
+    0 6px 18px rgba(92, 76, 52, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95);
 }
 
 /* Card Header: Avatar & Couple Meta */
@@ -94,7 +102,7 @@
   align-items: center;
   gap: 10px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(243, 237, 228, 0.08);
+  border-bottom: 1px solid rgba(140, 115, 80, 0.18);
 }
 
 .authorBadge {
@@ -108,15 +116,15 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(201, 181, 143, 0.25) 0%, rgba(201, 181, 143, 0.08) 100%);
-  border: 1px solid rgba(201, 181, 143, 0.35);
+  background: linear-gradient(135deg, rgba(184, 158, 120, 0.28) 0%, rgba(184, 158, 120, 0.12) 100%);
+  border: 1px solid rgba(184, 158, 120, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--champagne);
-  font-family: var(--font-serif);
+  color: var(--warm-bronze-dark);
+  font-family: var(--serif);
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.04em;
   flex-shrink: 0;
 }
@@ -131,26 +139,28 @@
 .coupleHeading {
   font-size: 1.08rem;
   line-height: 1.2;
-  color: var(--ivory);
+  color: var(--espresso-900);
   letter-spacing: -0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 500;
 }
 
 .coupleSub {
   font-size: 0.64rem;
-  letter-spacing: 0.06em;
-  color: var(--champagne);
-  opacity: 0.85;
+  letter-spacing: 0.08em;
+  color: var(--warm-bronze-dark);
+  opacity: 0.95;
   text-transform: uppercase;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .quoteSvg {
-  color: rgba(201, 181, 143, 0.22);
+  color: rgba(143, 114, 67, 0.38);
   flex-shrink: 0;
 }
 
@@ -171,10 +181,10 @@
 
 .quoteLead {
   font-size: 0.88rem;
-  line-height: 1.48;
-  color: var(--warm-white);
+  line-height: 1.54;
+  color: var(--espresso-800);
   letter-spacing: -0.005em;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .accordion {
@@ -195,15 +205,14 @@
 
 .quoteBody {
   font-size: 0.84rem;
-  color: var(--warm-white);
-  opacity: 0.82;
-  line-height: 1.5;
+  color: var(--espresso-600);
+  line-height: 1.55;
   margin-top: 2px;
 }
 
 .expandBtn {
   justify-self: start;
-  color: var(--champagne);
+  color: var(--warm-bronze-dark);
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -211,12 +220,12 @@
   cursor: pointer;
   font-size: 0.62rem;
   letter-spacing: 0.1em;
-  font-weight: 600;
+  font-weight: 700;
   transition: color 0.2s ease;
 }
 
 .expandBtn:hover {
-  color: var(--ivory);
+  color: var(--espresso-900);
 }
 
 /* Card Footer */
@@ -225,7 +234,7 @@
   justify-content: flex-end;
   align-items: center;
   padding-top: 10px;
-  border-top: 1px solid rgba(243, 237, 228, 0.06);
+  border-top: 1px solid rgba(140, 115, 80, 0.16);
 }
 
 .authenticLink {
@@ -233,18 +242,20 @@
   align-items: center;
   gap: 4px;
   font-size: 0.6rem;
-  letter-spacing: 0.08em;
-  color: var(--champagne);
-  background: rgba(201, 181, 143, 0.08);
-  border: 1px solid rgba(201, 181, 143, 0.2);
-  padding: 4px 10px;
+  letter-spacing: 0.09em;
+  color: var(--espresso-800);
+  background: rgba(184, 158, 120, 0.14);
+  border: 1px solid rgba(184, 158, 120, 0.35);
+  padding: 4px 11px;
   border-radius: 999px;
+  font-weight: 600;
   transition: all 0.25s ease;
 }
 
 .authenticLink:hover {
-  background: rgba(201, 181, 143, 0.2);
-  color: var(--ivory);
+  background: var(--espresso-900);
+  color: #faf6ee;
+  border-color: var(--espresso-900);
 }
 
 /* Controls Row */
