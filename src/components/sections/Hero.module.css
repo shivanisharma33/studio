@@ -236,6 +236,7 @@
 
 @media (max-width: 900px) {
   .hero {
+    padding-top: 136px;
     padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
   }
 
@@ -253,7 +254,7 @@
 
 @media (max-width: 640px) {
   .hero {
-    padding-top: 72px;
+    padding-top: 136px;
   }
 
   .content {
