@@ -196,10 +196,10 @@
 /* Mobile view: high-efficiency single line with no overflow */
 @media (max-width: 768px) {
   .bar {
-    max-height: 48px;
+    max-height: 52px;
   }
   .inner {
-    height: 40px;
+    height: 44px;
     gap: 8px;
     padding: 0 12px;
   }
@@ -221,11 +221,11 @@
     display: none;
   }
   .slide {
-    font-size: 0.85rem;
+    font-size: 0.92rem;
     justify-content: flex-start;
   }
   .messageHighlight {
-    font-size: 0.85rem;
+    font-size: 0.92rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -237,8 +237,8 @@
     display: inline;
   }
   .ctaPill {
-    font-size: 0.78rem;
-    padding: 4px 11px;
+    font-size: 0.82rem;
+    padding: 5px 12px;
     letter-spacing: 0.08em;
     gap: 4px;
   }
@@ -251,13 +251,13 @@
     gap: 6px;
   }
   .slide {
-    font-size: 0.78rem;
+    font-size: 0.85rem;
   }
   .messageHighlight {
-    font-size: 0.78rem;
+    font-size: 0.85rem;
   }
   .ctaPill {
-    font-size: 0.72rem;
-    padding: 3px 9px;
+    font-size: 0.78rem;
+    padding: 4px 10px;
   }
 }
