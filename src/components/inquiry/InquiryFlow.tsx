@@ -3,33 +3,16 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import { brand, contact } from "@/content/site";
-import { media, type Photo as PhotoT } from "@/content/media";
-import {
-  copy,
-  countryPicks,
-  currencyForCountry,
-  eventDays,
-  eventTypes,
-  guestCounts,
-  months,
-  preferences,
-  promotedYears,
-  services,
-  steps,
-  VENUE_UNDECIDED,
-  yearOptions,
-  type CurrencyCode,
-} from "@/content/inquiry";
-import { LIMITS, summaryRows, validateAll, validateStep, type Inquiry } from "@/lib/inquiry/model";
+import { media } from "@/content/media";
+import { budgetList, copy } from "@/content/inquiry";
+import { LIMITS, validateStep, type Inquiry } from "@/lib/inquiry/model";
 import { buildWhatsAppMessage } from "@/lib/inquiry/whatsapp";
 import { submitInquiry } from "@/lib/inquiry/submit";
 import { track } from "@/lib/inquiry/analytics";
 import Photo from "@/components/ui/Photo";
 import Arrow from "@/components/ui/Arrow";
-import { ChoiceGroup, FieldError, TextField } from "./Fields";
-import BudgetSelector from "./BudgetSelector";
 import WhatsAppLink from "./WhatsAppLink";
-import { REVIEW, stepName, type FlowState, type Phase } from "./types";
+import { stepName, type FlowState, type Phase } from "./types";
 import styles from "./InquiryFlow.module.css";
 
 type Props = {
@@ -43,55 +26,53 @@ type Props = {
   onClose: () => void;
 };
 
-/** Background photograph per screen — soft, dark, blurred; changes gently between chapters. */
-const BACKDROPS: PhotoT[] = [media.hero, media.story[0], media.global, media.reveal, media.investment, media.finalCta];
-const BACKDROP_FOR_VIEW = [0, 0, 1, 2, 3, 3, 4, 4, 5, 5];
-
-const stepIndex = (key: string) => steps.findIndex((s) => s.key === key);
-
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([tabindex="-1"]), textarea, select, [tabindex]:not([tabindex="-1"])';
 
-export default function InquiryFlow({ state, setState, phase, setPhase, restored, onDismissRestored, onReset, onClose }: Props) {
-  const { data, view, reached } = state;
+const SESSION_OPTIONS = [
+  { id: "Wedding", label: "Wedding" },
+  { id: "Pre-Wedding", label: "Pre-Wedding" },
+  { id: "Proposal / Engagement", label: "Proposal & Engagement" },
+  { id: "Cinematic Film", label: "Cinematic Film" },
+  { id: "Destination Wedding", label: "Destination Wedding" },
+  { id: "Other", label: "Other Story" },
+];
+
+export default function InquiryFlow({ state, setState, phase, setPhase, restored, onReset, onClose }: Props) {
+  const { data, view } = state;
   const rootRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const animating = useRef(false);
-  const dir = useRef(1);
   const sendingRef = useRef(false);
   const closingRef = useRef(false);
   const reduced = useRef(false);
 
   const [showErrors, setShowErrors] = useState(false);
   const [touched, setTouched] = useState<Set<keyof Inquiry>>(new Set());
-  const [returnToReview, setReturnToReview] = useState(false);
   const [retrying, setRetrying] = useState(false);
   const [errorDetail, setErrorDetail] = useState("");
   const [honeypot, setHoneypot] = useState("");
-  const [seenBackdrops, setSeenBackdrops] = useState<Set<number>>(() => new Set([BACKDROP_FOR_VIEW[view]]));
+
+  const stepIdx = view === 1 ? 1 : 0;
+  const stepKey = stepIdx === 1 ? "contact" : "event";
 
   const screen: "steps" | "success" | "error" =
     phase === "success" ? "success" : phase === "error" || (phase === "sending" && retrying) ? "error" : "steps";
-  const screenKey = screen === "steps" ? `v${view}` : screen;
-  const stepKey = view < REVIEW ? steps[view].key : null;
-  const errors = useMemo(() => (stepKey ? validateStep(stepKey, data) : {}), [stepKey, data]);
+  const screenKey = screen === "steps" ? `v${stepIdx}` : screen;
+
+  const errors = useMemo(() => validateStep(stepKey, data), [stepKey, data]);
   const err = (f: keyof Inquiry) => (showErrors || touched.has(f) ? errors[f] : undefined);
-  const backdrop = screen === "steps" ? BACKDROP_FOR_VIEW[view] : BACKDROPS.length - 1;
   const waText = buildWhatsAppMessage(data);
 
   const update = useCallback(
     (patch: Partial<Inquiry>) => setState((s) => ({ ...s, data: { ...s.data, ...patch } })),
     [setState]
   );
+
   const touch = (f: keyof Inquiry) => () => {
     if (String(data[f] ?? "").trim()) setTouched((t) => new Set(t).add(f));
   };
 
-  useEffect(() => {
-    setSeenBackdrops((s) => (s.has(backdrop) ? s : new Set(s).add(backdrop)));
-  }, [backdrop]);
-
-  /* ── open: lock page scroll, reveal like a new chapter ─────────────── */
   useLayoutEffect(() => {
     reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const lenis = window.__lenis;
@@ -121,7 +102,6 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
     gsap.to(el, { autoAlpha: 0, duration: reduced.current ? 0.2 : 0.5, ease: "power2.inOut", onComplete: onClose });
   }, [onClose]);
 
-  /* ── keyboard: Esc closes, Tab stays inside the dialog ─────────────── */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -139,139 +119,52 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
         lastEl.focus();
       } else if (!e.shiftKey && document.activeElement === lastEl) {
         e.preventDefault();
-        firstEl.focus();
+        lastEl.focus();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [requestClose]);
 
-  /* ── screen transitions: current leaves left, next arrives from the right ── */
-  const leave = useCallback((then: () => void, direction = 1, force = false) => {
-    // Mid-transition navigation is ignored — except outcomes, which must always land.
-    if (animating.current) return force ? then() : undefined;
-    dir.current = direction;
+  const leave = useCallback((then: () => void) => {
     const panel = panelRef.current;
     if (!panel || reduced.current) return then();
     animating.current = true;
     gsap.to(panel, {
-      x: -direction * 56,
       autoAlpha: 0,
-      duration: 0.32,
+      y: -16,
+      duration: 0.24,
       ease: "power2.in",
       onComplete: then,
     });
   }, []);
 
-  const pendingErrors = useRef(false);
-  const goTo = useCallback(
-    (next: number, opts: { showErrors?: boolean } = {}) => {
-      if (next === view && screen === "steps") return;
-      onDismissRestored();
-      leave(
-        () => {
-          pendingErrors.current = Boolean(opts.showErrors);
-          setState((s) => ({ ...s, view: next, reached: Math.max(s.reached, next) }));
-        },
-        next >= view ? 1 : -1
-      );
-    },
-    [view, screen, leave, setState, onDismissRestored]
-  );
-
-  useLayoutEffect(() => {
-    setShowErrors(pendingErrors.current);
-    pendingErrors.current = false;
-    setTouched(new Set());
-    bodyRef.current?.scrollTo({ top: 0 });
-    const panel = panelRef.current;
-    if (!panel) return;
-    const focusFirst = () => {
-      if (screenKey === `v${REVIEW}`) return;
-      const target =
-        panel.querySelector<HTMLElement>('[aria-invalid="true"]') ??
-        panel.querySelector<HTMLElement>("input:not([type=range]):not([tabindex='-1']), textarea") ??
-        panel.querySelector<HTMLElement>("h2");
-      target?.focus({ preventScroll: true });
-    };
-    const lines = panel.querySelectorAll(".line > span");
-    if (reduced.current) {
-      gsap.fromTo(panel, { autoAlpha: 0, x: 0 }, { autoAlpha: 1, duration: 0.3, onComplete: () => (animating.current = false) });
-      gsap.set(lines, { yPercent: 0 });
-      focusFirst();
+  const nextStep = () => {
+    const errs = validateStep("event", data);
+    if (Object.keys(errs).length > 0) {
+      setShowErrors(true);
       return;
     }
-    const tl = gsap.timeline({
-      onComplete: () => {
-        animating.current = false;
-      },
+    setShowErrors(false);
+    leave(() => {
+      setState((s) => ({ ...s, view: 1, reached: Math.max(s.reached, 1) }));
+      if (bodyRef.current) bodyRef.current.scrollTop = 0;
     });
-    tl.fromTo(panel, { x: dir.current * 56, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.65, ease: "expo.out" }, 0);
-    tl.fromTo(lines, { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.07 }, 0.05);
-    tl.fromTo(
-      panel.querySelectorAll("[data-rise]"),
-      { autoAlpha: 0, y: 18 },
-      { autoAlpha: 1, y: 0, duration: 0.6, ease: "expo.out", stagger: 0.05, clearProps: "transform" },
-      0.18
-    );
-    // Focus after the panel is visible so mobile keyboards don't jump mid-slide.
-    tl.call(focusFirst, [], 0.3);
-    return () => {
-      tl.kill();
-      animating.current = false;
-    };
-  }, [screenKey]);
-
-  /* ── step completion ───────────────────────────────────────────────── */
-  const trackStep = () => {
-    if (!stepKey) return;
-    track("step_completed", { step: stepKey, index: view + 1 });
-    if (stepKey === "you") track("step_completed", { step: "you" });
-    if (stepKey === "details") track("step_completed", { step: "details" });
   };
 
-  const next = () => {
-    if (animating.current || !stepKey) return;
-    if (Object.keys(errors).length) {
-      setShowErrors(true);
-      requestAnimationFrame(() => {
-        panelRef.current?.querySelector<HTMLElement>('[aria-invalid="true"], fieldset[aria-describedby] button')?.focus();
-      });
-      return;
-    }
-    trackStep();
-    if (returnToReview) {
-      setReturnToReview(false);
-      goTo(REVIEW);
-    } else goTo(view + 1);
+  const prevStep = () => {
+    setShowErrors(false);
+    leave(() => {
+      setState((s) => ({ ...s, view: 0 }));
+      if (bodyRef.current) bodyRef.current.scrollTop = 0;
+    });
   };
 
-  const back = () => {
-    if (view > 0) goTo(view - 1);
-  };
-
-  const edit = (step: number) => {
-    setReturnToReview(true);
-    goTo(step);
-  };
-
-  const jump = (i: number) => {
-    if (i === view || i > reached || phase === "sending") return;
-    if (i > view && Object.keys(errors).length) {
-      setShowErrors(true);
-      return;
-    }
-    goTo(i);
-  };
-
-  /* ── submission ────────────────────────────────────────────────────── */
   const send = async () => {
     if (sendingRef.current) return;
-    const { firstInvalidStep } = validateAll(data);
-    if (firstInvalidStep >= 0) {
-      setReturnToReview(true);
-      if (screen !== "steps") setPhase("form");
-      goTo(firstInvalidStep, { showErrors: true });
+    const errs = validateStep("contact", data);
+    if (Object.keys(errs).length > 0) {
+      setShowErrors(true);
       return;
     }
     sendingRef.current = true;
@@ -283,14 +176,13 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
       setPhase(res.ok ? "success" : "error");
     };
     if (res.ok) {
-      track("inquiry_completed", { currency: data.currency, services: data.services.join(",") });
+      track("inquiry_completed", { currency: data.currency });
     } else {
       track("inquiry_failed");
       setErrorDetail(res.error);
     }
-    // From the error screen a retry that fails again just stays put.
     if (!res.ok && screen === "error") finish();
-    else leave(finish, 1, true);
+    else leave(finish);
   };
 
   const retry = () => {
@@ -299,216 +191,219 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
   };
 
   const waTrack = { step: stepName(view), phase };
+  const sending = phase === "sending";
 
-  /* ── currency follows the country until the visitor picks one ─────── */
-  const setCountry = (country: string) => {
-    const inferred = currencyForCountry(country);
-    setState((s) => ({
-      ...s,
-      data: { ...s.data, country, currency: !s.currencyTouched && inferred ? inferred : s.data.currency },
-    }));
-  };
-  const setCurrency = (currency: CurrencyCode) =>
-    setState((s) => ({ ...s, currencyTouched: true, data: { ...s.data, currency } }));
+  const renderForm = () => (
+    <div className={styles.formContainer}>
+      {/* Floating Glassmorphic 2-Step Card */}
+      <div className={styles.formCard} data-rise>
+        {/* Header: —— REQUEST A QUOTE —— */}
+        <div className={styles.quoteHeader}>
+          <span className={styles.lineDecor} />
+          <h2 className={styles.quoteTitle}>REQUEST A QUOTE</h2>
+          <span className={styles.lineDecor} />
+        </div>
 
-  /* ── render helpers ────────────────────────────────────────────────── */
-  const heading = (lines: readonly string[], kicker?: string) => (
-    <header className={styles.qHead}>
-      {kicker && (
-        <p className={`meta-sm ${styles.kicker}`} data-rise>
-          {kicker}
-        </p>
-      )}
-      <h2 className={`serif ${styles.question}`} tabIndex={-1}>
-        {lines.map((l, i) => (
-          <span className="line" key={l}>
-            <span className={i === lines.length - 1 ? styles.qItalic : undefined}>{l}</span>
-          </span>
-        ))}
-      </h2>
-    </header>
-  );
+        {/* Progress Bar & Step Counter */}
+        <div className={styles.progressContainer}>
+          <div className={styles.counterRow}>
+            <span className={styles.stepCounter}>{stepIdx === 0 ? "1 / 2" : "2 / 2"}</span>
+          </div>
+          <div className={styles.progressBarTrack} role="progressbar" aria-valuenow={stepIdx === 0 ? 50 : 100} aria-valuemin={0} aria-valuemax={100}>
+            <div
+              className={styles.progressBarFill}
+              style={{ width: stepIdx === 0 ? "50%" : "100%" }}
+            />
+          </div>
+        </div>
 
-  const now = new Date();
-  const years = yearOptions(now);
+        {/* Step 1: Event Details */}
+        {stepIdx === 0 && (
+          <div className={styles.stepContent} key="step-1">
+            <h3 className={styles.stepSectionTitle}>Event Details</h3>
 
-  const renderStep = () => {
-    const s = steps[view];
-    switch (s.key) {
-      case "you":
-        return (
-          <>
-            {heading(s.heading, s.kicker)}
-            <div className={styles.fields} data-rise>
-              <TextField
-                label="YOUR NAME"
-                value={data.name}
-                onChange={(v) => update({ name: v })}
-                onBlur={touch("name")}
-                placeholder="Enter your full name"
-                autoComplete="name"
-                maxLength={LIMITS.name}
-                error={err("name")}
-                large
-              />
-              <TextField
-                label="PHONE NUMBER"
-                value={data.phone}
-                onChange={(v) => update({ phone: v })}
-                onBlur={touch("phone")}
-                placeholder="Enter your phone number"
-                autoComplete="tel"
-                type="tel"
-                maxLength={LIMITS.phone}
-                error={err("phone")}
-                large
-              />
-            </div>
-          </>
-        );
-      case "details": {
-        const thisYear = now.getFullYear();
-        const pastMonth = (m: number) => data.year === thisYear && m < now.getMonth();
-        return (
-          <>
-            {heading(s.heading, s.kicker)}
-            <div className={styles.fields} data-rise>
-              <TextField
-                label="CITY OR REGION"
-                value={data.city}
-                onChange={(v) => update({ city: v })}
-                onBlur={touch("city")}
-                placeholder="Enter your city or region (e.g. Toronto, Vancouver, Delhi)"
-                autoComplete="address-level2"
-                maxLength={LIMITS.place}
-                error={err("city")}
-                large
-              />
-              <TextField
-                label="VENUE / LOCATION (OPTIONAL)"
-                value={data.venue}
-                onChange={(v) => update({ venue: v })}
-                onBlur={touch("venue")}
-                placeholder="Enter venue name (or TBD)"
-                maxLength={LIMITS.place}
-                error={err("venue")}
-                large
-              />
+            <div className={styles.stepFields}>
+              {/* Venue & City * */}
+              <div className={styles.inputCell}>
+                <input
+                  type="text"
+                  className={`${styles.boxedInput} ${err("city") ? styles.inputError : ""}`}
+                  placeholder="Venue & City *"
+                  value={data.city}
+                  onChange={(e) => update({ city: e.target.value })}
+                  onBlur={touch("city")}
+                  maxLength={LIMITS.place}
+                />
+                {err("city") && <span className={styles.fieldErrorText}>{err("city")}</span>}
+              </div>
 
-              <fieldset className={styles.group} data-rise aria-describedby={err("month") ? "err-month" : undefined}>
-                <legend className={`meta-sm ${styles.label}`}>MONTH</legend>
-                <div className={`${styles.choices} ${styles.cols_months}`} role="radiogroup" aria-label="Month">
-                  {months.map((m, i) => (
-                    <button
-                      key={m}
-                      type="button"
-                      role="radio"
-                      aria-checked={data.month === i}
-                      disabled={pastMonth(i)}
-                      className={`${styles.choice} ${styles.choiceCompact} ${data.month === i ? styles.choiceOn : ""}`}
-                      onClick={() => update({ month: i })}
-                    >
-                      <span className={styles.check} aria-hidden="true" />
-                      <span className={styles.choiceLabel}>{m}</span>
-                    </button>
-                  ))}
+              {/* Event & Dates (e.g. Wedding on 11th March) * */}
+              <div className={styles.inputCell}>
+                <input
+                  type="text"
+                  className={`${styles.boxedInput} ${err("eventDetails") ? styles.inputError : ""}`}
+                  placeholder="Event & Dates (e.g. Wedding on 11th March) *"
+                  value={data.eventDetails}
+                  onChange={(e) => update({ eventDetails: e.target.value, story: e.target.value })}
+                  onBlur={touch("eventDetails")}
+                  maxLength={LIMITS.story}
+                />
+                {err("eventDetails") && <span className={styles.fieldErrorText}>{err("eventDetails")}</span>}
+              </div>
+
+              {/* Estimated Budget * with Dropdown */}
+              <div className={styles.inputCell}>
+                <div className={styles.selectWrapper}>
+                  <select
+                    className={`${styles.boxedSelect} ${err("budget") ? styles.inputError : ""} ${!data.budget ? styles.selectPlaceholder : ""}`}
+                    value={data.budget}
+                    onChange={(e) => update({ budget: e.target.value })}
+                    onBlur={touch("budget")}
+                  >
+                    <option value="" disabled>Estimated Budget *</option>
+                    {budgetList.map((b) => (
+                      <option key={b} value={b} className={styles.selectOption}>
+                        {b}
+                      </option>
+                    ))}
+                  </select>
+                  <span className={styles.selectChevron} aria-hidden="true">
+                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                      <path d="M1.5 1.75L6 6.25L10.5 1.75" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </span>
                 </div>
-                <FieldError id="err-month" message={err("month")} />
-              </fieldset>
+                {err("budget") && <span className={styles.fieldErrorText}>{err("budget")}</span>}
+              </div>
+            </div>
 
-              <fieldset className={styles.group} data-rise aria-describedby={err("year") ? "err-year" : undefined}>
-                <legend className={`meta-sm ${styles.label}`}>YEAR</legend>
-                <div className={`${styles.choices} ${styles.cols_five}`} role="radiogroup" aria-label="Year">
-                  {years.map((y) => {
-                    const open = promotedYears.includes(y);
+            {/* Next Circular Arrow Button at bottom right */}
+            <div className={styles.step1Actions}>
+              <button
+                type="button"
+                className={styles.circleNextBtn}
+                onClick={nextStep}
+                aria-label="Next step: Contact Details"
+              >
+                <Arrow />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Personal / Contact Details */}
+        {stepIdx === 1 && (
+          <div className={styles.stepContent} key="step-2">
+            <h3 className={styles.stepSectionTitle}>Personal Details</h3>
+
+            <div className={styles.stepFields}>
+              {/* Your Name * */}
+              <div className={styles.inputCell}>
+                <input
+                  type="text"
+                  className={`${styles.boxedInput} ${err("name") ? styles.inputError : ""}`}
+                  placeholder="Your Name *"
+                  value={data.name}
+                  onChange={(e) => update({ name: e.target.value })}
+                  onBlur={touch("name")}
+                  autoComplete="name"
+                  maxLength={LIMITS.name}
+                />
+                {err("name") && <span className={styles.fieldErrorText}>{err("name")}</span>}
+              </div>
+
+              {/* Phone Number * */}
+              <div className={styles.inputCell}>
+                <input
+                  type="tel"
+                  className={`${styles.boxedInput} ${err("phone") ? styles.inputError : ""}`}
+                  placeholder="Phone Number (e.g. +91 98765 43210) *"
+                  value={data.phone}
+                  onChange={(e) => update({ phone: e.target.value })}
+                  onBlur={touch("phone")}
+                  autoComplete="tel"
+                  maxLength={LIMITS.phone}
+                />
+                {err("phone") && <span className={styles.fieldErrorText}>{err("phone")}</span>}
+              </div>
+
+              {/* Email Address * */}
+              <div className={styles.inputCell}>
+                <input
+                  type="email"
+                  className={`${styles.boxedInput} ${err("email") ? styles.inputError : ""}`}
+                  placeholder="Email Address *"
+                  value={data.email}
+                  onChange={(e) => update({ email: e.target.value })}
+                  onBlur={touch("email")}
+                  autoComplete="email"
+                  maxLength={LIMITS.email}
+                />
+                {err("email") && <span className={styles.fieldErrorText}>{err("email")}</span>}
+              </div>
+
+              {/* Type of Session with Adorable Chips */}
+              <div className={styles.inputCell}>
+                <label className={styles.miniLabel}>
+                  Type of Session <span className={styles.req}>*</span>
+                </label>
+                <div className={styles.sessionChipsGrid}>
+                  {SESSION_OPTIONS.map((item) => {
+                    const selected = data.sessionType === item.id;
                     return (
                       <button
-                        key={y}
+                        key={item.id}
                         type="button"
-                        role="radio"
-                        aria-checked={data.year === y}
-                        className={`${styles.choice} ${styles.yearBtn} ${open ? styles.yearOpen : ""} ${data.year === y ? styles.choiceOn : ""}`}
-                        onClick={() =>
-                          update({ year: y, month: y === thisYear && data.month !== null && data.month < now.getMonth() ? null : data.month })
-                        }
+                        className={`${styles.sessionChip} ${selected ? styles.sessionChipActive : ""}`}
+                        onClick={() => update({ sessionType: item.id, eventType: [item.id] })}
                       >
-                        <span className={styles.check} aria-hidden="true" />
-                        <span className={`serif ${styles.yearNum}`}>{y}</span>
-                        {open && <span className={`meta-sm ${styles.yearTag}`}>BOOKINGS OPEN</span>}
+                        <span>{item.label}</span>
                       </button>
                     );
                   })}
                 </div>
-                <FieldError id="err-year" message={err("year")} />
-              </fieldset>
-
-              <fieldset className={styles.group} data-rise>
-                <legend className={`meta-sm ${styles.label}`}>APPROXIMATE BUDGET</legend>
-                <BudgetSelector
-                  budget={data.budget}
-                  currency={data.currency}
-                  error={err("budget")}
-                  onBudget={(b) => update({ budget: b })}
-                  onCurrency={setCurrency}
-                />
-              </fieldset>
+                {err("sessionType") && <span className={styles.fieldErrorText}>{err("sessionType")}</span>}
+              </div>
             </div>
-          </>
-        );
-      }
-    }
-  };
 
-  const rows = summaryRows(data);
-  const sending = phase === "sending";
+            {/* Bot Honeypot */}
+            <div className={styles.hp} aria-hidden="true">
+              <label htmlFor="inq-website">Website</label>
+              <input
+                id="inq-website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+              />
+            </div>
 
-  const renderReview = () => (
-    <>
-      {heading(["YOUR STORY", "SO FAR."], `${data.name.trim().split(/\s+/)[0]?.toUpperCase() || "WELCOME"} — REVIEW OR EDIT ANYTHING BEFORE YOU SEND`)}
-      <dl className={styles.summary}>
-        {rows.map((r) => (
-          <div key={r.label} className={`${styles.row} ${r.label === "Story" ? styles.rowWide : ""}`} data-rise>
-            <dt className="meta-sm">{r.label.toUpperCase()}</dt>
-            <dd className={r.value ? undefined : styles.empty}>{r.value || "—"}</dd>
-            <button
-              type="button"
-              className={`meta-sm ${styles.edit}`}
-              onClick={() => edit(stepIndex(r.step))}
-              disabled={sending}
-              aria-label={`Edit ${r.label}`}
-            >
-              EDIT <Arrow />
-            </button>
+            {/* Step 2 Actions: Back button & Submit Button */}
+            <div className={styles.step2Actions}>
+              <button
+                type="button"
+                className={styles.circleBackBtn}
+                onClick={prevStep}
+                aria-label="Previous step: Event Details"
+              >
+                <span className={styles.backArrow}>←</span>
+              </button>
+
+              <button
+                type="button"
+                className={`${styles.luxurySubmitBtn} ${sending ? styles.btnDisabled : ""}`}
+                onClick={send}
+                disabled={sending}
+              >
+                <span>{sending ? "CHECKING AVAILABILITY…" : "SUBMIT REQUEST"}</span>
+                <Arrow />
+              </button>
+            </div>
           </div>
-        ))}
-      </dl>
-
-      <section className={styles.final} aria-labelledby="inq-final" data-rise>
-        <p className="meta-sm champagne">READY TO CONNECT?</p>
-        <p id="inq-final" className={`serif ${styles.finalTitle}`}>
-          LET’S CREATE
-          <br />
-          SOMETHING
-          <br />
-          <em>TIMELESS.</em>
-        </p>
-        {/* honeypot — bots fill hidden fields */}
-        <div className={styles.hp} aria-hidden="true">
-          <label htmlFor="inq-website">Website</label>
-          <input id="inq-website" type="text" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
-        </div>
-        <div className={styles.finalActions}>
-          <SendButton sending={sending} onClick={send} />
-          <WhatsAppLink text={waText} from="review" trackProps={waTrack} className="cta">
-            <span>CONTINUE ON WHATSAPP</span>
-            <Arrow />
-          </WhatsAppLink>
-        </div>
-        <button type="button" className={`meta-sm ${styles.textBtn}`} onClick={() => goTo(REVIEW - 1)} disabled={sending}>
-          <Arrow dir="left" /> EDIT DETAILS
-        </button>
-      </section>
-    </>
+        )}
+      </div>
+    </div>
   );
 
   const renderSuccess = () => (
@@ -518,7 +413,7 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
       </p>
       <h2 className={`serif ${styles.outcomeTitle}`} tabIndex={-1}>
         <span className="line">
-          <span>YOUR STORY</span>
+          <span>YOUR LOVE STORY</span>
         </span>
         <span className="line">
           <span className={styles.qItalic}>IS ON ITS WAY.</span>
@@ -526,7 +421,7 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
       </h2>
       <div className={styles.outcomeCopy} data-rise>
         <p className={styles.lede}>Thank you for reaching out to {brand.name}.</p>
-        <p className={styles.lede}>We’re excited to learn more about your celebration.</p>
+        <p className={styles.lede}>We can&apos;t wait to learn more about your wedding celebration.</p>
         <p className={styles.lede}>{copy.followUp}</p>
       </div>
       <div className={styles.outcomeActions} data-rise>
@@ -560,7 +455,10 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
         you entered has been lost.
       </p>
       <div className={styles.outcomeActions} data-rise>
-        <SendButton sending={sending} onClick={retry} label="TRY AGAIN" />
+        <button type="button" className={styles.luxurySubmitBtn} onClick={retry} disabled={sending}>
+          <span>{sending ? "SENDING..." : "TRY AGAIN"}</span>
+          <Arrow />
+        </button>
         <WhatsAppLink text={waText} from="error" trackProps={waTrack} className="cta cta--primary">
           <span>CONTINUE ON WHATSAPP</span>
           <Arrow />
@@ -575,9 +473,6 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
     </div>
   );
 
-  const progress = Math.min(view, REVIEW) / REVIEW;
-  const isForm = screen === "steps" && view < REVIEW;
-
   return (
     <div
       ref={rootRef}
@@ -586,139 +481,52 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
       aria-modal="true"
       aria-label={`Wedding inquiry — ${brand.name}`}
     >
-      {/* soft photographic backdrop — one layer per chapter, crossfaded */}
-      <div className={`${styles.backdrops} ${screen === "success" ? styles.backdropsSuccess : ""}`} aria-hidden="true">
-        {BACKDROPS.map((p, i) =>
-          seenBackdrops.has(i) ? (
-            <div key={p.src} className={`${styles.backdrop} ${i === backdrop ? styles.backdropOn : ""}`}>
-              <Photo photo={{ src: p.src, alt: "" }} sizes="60vw" quality={45} />
-            </div>
-          ) : null
-        )}
+      {/* Background Image with Cinematic Blurry Effect */}
+      <div className={styles.backdrops} aria-hidden="true">
+        <div className={styles.bgImageWrap}>
+          <Photo photo={media.contact || media.hero} sizes="100vw" quality={85} priority />
+        </div>
         <div className={styles.veil} />
       </div>
 
       <div className={styles.chrome}>
         <div className={styles.brand}>
           <span className={`serif ${styles.brandTop}`}>{brand.wordmark[0]}</span>
-          <span className={`meta-sm ${styles.brandSub}`}>THE INQUIRY</span>
+          <span className={`meta-sm ${styles.brandSub}`}>CHECK YOUR DATE</span>
         </div>
-
-        {screen === "steps" && (
-          <nav className={styles.progress} aria-label="Inquiry progress">
-            <ol className={styles.rail}>
-              {[...steps.map((s) => s.label), "REVIEW"].map((label, i) => (
-                <li key={label}>
-                  <button
-                    type="button"
-                    className={`${styles.railItem} ${i === view ? styles.railOn : ""} ${i < view ? styles.railDone : ""}`}
-                    onClick={() => jump(i)}
-                    disabled={i > reached || sending}
-                    aria-current={i === view ? "step" : undefined}
-                  >
-                    <span className={styles.railNum}>{String(i + 1).padStart(2, "0")}</span>
-                    <span className={styles.railLabel}>{label}</span>
-                  </button>
-                </li>
-              ))}
-            </ol>
-            <div className={styles.compact} aria-hidden="true">
-              <span className="meta-sm">
-                {view < REVIEW ? (
-                  <>
-                    <span className={styles.compactNow}>{String(view + 1).padStart(2, "0")}</span> / {String(REVIEW).padStart(2, "0")} —{" "}
-                    {steps[view].label}
-                  </>
-                ) : (
-                  <span className={styles.compactNow}>REVIEW — YOUR STORY SO FAR</span>
-                )}
-              </span>
-            </div>
-            <div className={styles.track} aria-hidden="true">
-              <span className={styles.trackFill} style={{ transform: `scaleX(${Math.max(progress, 0.02)})` }} />
-            </div>
-          </nav>
-        )}
 
         <button type="button" className={`meta-sm ${styles.close}`} onClick={requestClose} disabled={sending} data-cursor="CLOSE">
           <span className={styles.closeText}>CLOSE</span> <span aria-hidden="true">×</span>
         </button>
       </div>
 
-      <p className="sr-only" aria-live="polite">
-        {screen === "steps" ? (view < REVIEW ? `Step ${view + 1} of ${REVIEW}: ${steps[view].label}` : "Review your inquiry") : ""}
-      </p>
-
       <form
         className={styles.frame}
         noValidate
         onSubmit={(e) => {
           e.preventDefault();
-          if (isForm) next();
+          if (stepIdx === 0) nextStep();
+          else void send();
         }}
       >
         <div ref={bodyRef} className={styles.body} data-lenis-prevent>
-          {restored && isForm && (
+          {restored && screen === "steps" && (
             <div className={styles.restored}>
               <span className="meta-sm">WELCOME BACK — WE KEPT YOUR DETAILS FOR THIS SESSION.</span>
               <button
                 type="button"
                 className={`meta-sm ${styles.textBtn}`}
-                onClick={() => {
-                  dir.current = -1;
-                  onReset();
-                }}
+                onClick={onReset}
               >
                 START OVER
               </button>
             </div>
           )}
-          <div ref={panelRef} key={screenKey} className={`${styles.panel} ${view === REVIEW && screen === "steps" ? styles.panelWide : ""}`}>
-            {screen === "success" ? renderSuccess() : screen === "error" ? renderError() : view < REVIEW ? renderStep() : renderReview()}
+          <div ref={panelRef} key={screenKey} className={styles.panel}>
+            {screen === "success" ? renderSuccess() : screen === "error" ? renderError() : renderForm()}
           </div>
         </div>
-
-        {isForm && (
-          <div className={styles.foot}>
-            <div className={styles.footInner}>
-              {view > 0 ? (
-                <button type="button" className={`cta ${styles.back}`} onClick={back}>
-                  <Arrow dir="left" />
-                  <span>BACK</span>
-                </button>
-              ) : (
-                <span className={`meta-sm ${styles.footNote}`}>{brand.booking.toUpperCase()}</span>
-              )}
-              <div className={styles.footRight}>
-                <span className={`meta-sm ${styles.enterHint}`} aria-hidden="true">
-                  PRESS ENTER ↵
-                </span>
-                <button type="submit" className="cta cta--primary cta--boxed" data-cursor="NEXT">
-                  <span>{returnToReview ? "BACK TO SUMMARY" : view === REVIEW - 1 ? "REVIEW MY STORY" : "CONTINUE"}</span>
-                  <Arrow />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </form>
     </div>
-  );
-}
-
-function SendButton({ sending, onClick, label = "SEND MY INQUIRY" }: { sending: boolean; onClick: () => void; label?: string }) {
-  return (
-    <button
-      type="button"
-      className={`cta cta--primary cta--boxed ${styles.send} ${sending ? styles.sending : ""}`}
-      onClick={onClick}
-      disabled={sending}
-      aria-busy={sending}
-      data-cursor="SEND"
-    >
-      <span>{sending ? "SENDING YOUR STORY…" : label}</span>
-      {!sending && <Arrow />}
-      <span className={styles.sendLine} aria-hidden="true" />
-    </button>
   );
 }

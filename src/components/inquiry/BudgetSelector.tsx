@@ -8,10 +8,10 @@ import { FieldError } from "./Fields";
 import styles from "./InquiryFlow.module.css";
 
 type Props = {
-  budget: Inquiry["budget"];
+  budget: number | "unsure" | null;
   currency: CurrencyCode;
   error?: string;
-  onBudget: (b: Inquiry["budget"]) => void;
+  onBudget: (b: number | "unsure" | null) => void;
   onCurrency: (c: CurrencyCode) => void;
 };
 
