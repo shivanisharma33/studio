@@ -296,6 +296,9 @@
 }
 
 .directLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--champagne);
   font-size: 0.82rem;
   transition: color 0.2s ease;

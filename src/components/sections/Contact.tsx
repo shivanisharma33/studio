@@ -6,6 +6,7 @@ import { gsap, useGSAP, MQ } from "@/lib/gsap";
 import { contact } from "@/content/site";
 import { track } from "@/lib/inquiry/analytics";
 import Arrow from "@/components/ui/Arrow";
+import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
 import styles from "./Contact.module.css";
 
 export default function Contact() {
@@ -164,6 +165,7 @@ export default function Contact() {
                     rel="noopener noreferrer"
                     className={styles.successWaBtn}
                   >
+                    <WhatsAppIcon size={18} />
                     <span>CHAT DIRECTLY ON WHATSAPP</span>
                     <Arrow />
                   </a>
@@ -272,6 +274,7 @@ export default function Contact() {
                 </a>
                 <span className={styles.directSep}>·</span>
                 <a href={contact.whatsapp} target="_blank" rel="noopener noreferrer" className={styles.directLink}>
+                  <WhatsAppIcon size={15} />
                   <span>WhatsApp</span>
                 </a>
                 <span className={styles.directSep}>·</span>
