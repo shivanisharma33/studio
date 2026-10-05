@@ -85,16 +85,14 @@ export function validateStep(step: StepKey, d: Inquiry): InquiryErrors {
   const e: InquiryErrors = {};
   switch (step) {
     case "you":
-      if (!d.name.trim()) e.name = "Please enter your first name.";
+      if (!d.name.trim()) e.name = "Please enter your name.";
+      if (!d.phone.trim()) e.phone = "Please enter your phone number.";
+      else if (!isValidPhone(d.phone)) e.phone = "Please enter a valid phone number.";
       break;
-    case "city":
+    case "details":
       if (!d.city.trim()) e.city = "Please enter your city or region.";
-      break;
-    case "date":
       if (d.month === null) e.month = "Please choose a month.";
       if (d.year === null) e.year = "Please choose a year.";
-      break;
-    case "budget":
       if (d.budget === null) e.budget = "Please choose an approximate budget range — or “I’m not sure yet”.";
       break;
   }
@@ -193,9 +191,11 @@ export type SummaryRow = { label: string; value: string; /** The step that edits
 /** Ordered label/value pairs — used by the review screen and the webhook payload. */
 export function summaryRows(d: Inquiry): SummaryRow[] {
   return [
-    { label: "First Name", value: d.name.trim(), step: "you" },
-    { label: "City", value: d.city.trim(), step: "city" },
-    { label: "Date", value: formatDate(d), step: "date" },
-    { label: "Approximate Budget", value: formatBudget(d), step: "budget" },
+    { label: "Name", value: d.name.trim(), step: "you" },
+    { label: "Phone", value: d.phone.trim(), step: "you" },
+    { label: "City", value: d.city.trim(), step: "details" },
+    { label: "Venue", value: formatVenue(d), step: "details" },
+    { label: "Date", value: formatDate(d), step: "details" },
+    { label: "Approximate Budget", value: formatBudget(d), step: "details" },
   ];
 }

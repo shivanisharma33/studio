@@ -116,10 +116,8 @@ export const VENUE_UNDECIDED = "Not decided yet";
 
 /** Step chapters — label shown in the progress rail, heading lines shown large. */
 export const steps = [
-  { key: "you", label: "NAME", kicker: "LET’S START WITH YOU.", heading: ["WHAT IS YOUR", "FIRST NAME?"] },
-  { key: "city", label: "CITY", kicker: "WHERE IS YOUR CELEBRATION?", heading: ["WHAT CITY OR REGION", "IS IT IN?"] },
-  { key: "date", label: "DATE", kicker: "LET’S CHECK YOUR DATE.", heading: ["WHEN IS YOUR STORY", "HAPPENING?"] },
-  { key: "budget", label: "BUDGET", kicker: "EVERY STORY IS DIFFERENT.", heading: ["WHAT IS YOUR", "APPROXIMATE BUDGET?"] },
+  { key: "you", label: "NAME & PHONE", kicker: "LET’S START WITH YOU.", heading: ["ENTER YOUR NAME &", "PHONE NUMBER"] },
+  { key: "details", label: "DETAILS", kicker: "CELEBRATION DETAILS.", heading: ["CITY, VENUE, DATE", "& BUDGET"] },
 ] as const;
 
 export type StepKey = (typeof steps)[number]["key"];

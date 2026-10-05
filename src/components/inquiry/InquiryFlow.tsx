@@ -226,9 +226,8 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
   const trackStep = () => {
     if (!stepKey) return;
     track("step_completed", { step: stepKey, index: view + 1 });
-    if (stepKey === "city") track("city_entered", { city: data.city.trim() });
-    if (stepKey === "date") track("date_selected", { month: data.month !== null ? months[data.month] : "", year: data.year ?? "" });
-    if (stepKey === "budget") track("budget_selected", { currency: data.currency, range: data.budget === null ? "" : String(data.budget) });
+    if (stepKey === "you") track("step_completed", { step: "you" });
+    if (stepKey === "details") track("step_completed", { step: "details" });
   };
 
   const next = () => {
@@ -342,20 +341,34 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
             {heading(s.heading, s.kicker)}
             <div className={styles.fields} data-rise>
               <TextField
-                label="FIRST NAME"
+                label="YOUR NAME"
                 value={data.name}
                 onChange={(v) => update({ name: v })}
                 onBlur={touch("name")}
-                placeholder="Enter your first name"
-                autoComplete="given-name"
+                placeholder="Enter your full name"
+                autoComplete="name"
                 maxLength={LIMITS.name}
                 error={err("name")}
+                large
+              />
+              <TextField
+                label="PHONE NUMBER"
+                value={data.phone}
+                onChange={(v) => update({ phone: v })}
+                onBlur={touch("phone")}
+                placeholder="Enter your phone number"
+                autoComplete="tel"
+                type="tel"
+                maxLength={LIMITS.phone}
+                error={err("phone")}
                 large
               />
             </div>
           </>
         );
-      case "city":
+      case "details": {
+        const thisYear = now.getFullYear();
+        const pastMonth = (m: number) => data.year === thisYear && m < now.getMonth();
         return (
           <>
             {heading(s.heading, s.kicker)}
@@ -371,17 +384,17 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
                 error={err("city")}
                 large
               />
-            </div>
-          </>
-        );
-      case "date": {
-        const thisYear = now.getFullYear();
-        const pastMonth = (m: number) => data.year === thisYear && m < now.getMonth();
-        const dateChosen = data.month !== null && data.year !== null;
-        return (
-          <>
-            {heading(s.heading, s.kicker)}
-            <div className={styles.fields}>
+              <TextField
+                label="VENUE / LOCATION (OPTIONAL)"
+                value={data.venue}
+                onChange={(v) => update({ venue: v })}
+                onBlur={touch("venue")}
+                placeholder="Enter venue name (or TBD)"
+                maxLength={LIMITS.place}
+                error={err("venue")}
+                large
+              />
+
               <fieldset className={styles.group} data-rise aria-describedby={err("month") ? "err-month" : undefined}>
                 <legend className={`meta-sm ${styles.label}`}>MONTH</legend>
                 <div className={`${styles.choices} ${styles.cols_months}`} role="radiogroup" aria-label="Month">
@@ -427,38 +440,22 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
                   })}
                 </div>
                 <FieldError id="err-year" message={err("year")} />
-                <div className={`${styles.note} ${dateChosen ? styles.noteOn : ""}`} aria-live="polite">
-                  <p className={`${styles.noteInner} ${styles.noteMeta}`}>
-                    {dateChosen && (
-                      <>
-                        <span className={styles.sentMark} aria-hidden="true" /> {copy.dateReceived}
-                      </>
-                    )}
-                  </p>
-                </div>
+              </fieldset>
+
+              <fieldset className={styles.group} data-rise>
+                <legend className={`meta-sm ${styles.label}`}>APPROXIMATE BUDGET</legend>
+                <BudgetSelector
+                  budget={data.budget}
+                  currency={data.currency}
+                  error={err("budget")}
+                  onBudget={(b) => update({ budget: b })}
+                  onCurrency={setCurrency}
+                />
               </fieldset>
             </div>
           </>
         );
       }
-      case "budget":
-        return (
-          <>
-            {heading(s.heading, s.kicker)}
-            <p className={styles.lede} data-rise>
-              {copy.budgetIntro}
-            </p>
-            <div className={styles.fields} data-rise>
-              <BudgetSelector
-                budget={data.budget}
-                currency={data.currency}
-                error={err("budget")}
-                onBudget={(b) => update({ budget: b })}
-                onCurrency={setCurrency}
-              />
-            </div>
-          </>
-        );
     }
   };
 
