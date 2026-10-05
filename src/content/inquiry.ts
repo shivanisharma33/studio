@@ -116,15 +116,10 @@ export const VENUE_UNDECIDED = "Not decided yet";
 
 /** Step chapters — label shown in the progress rail, heading lines shown large. */
 export const steps = [
-  { key: "you", label: "YOU", kicker: "LET’S START WITH YOU.", heading: ["WHAT SHOULD WE", "CALL YOU?"] },
-  { key: "reach", label: "REACH", kicker: "SO WE CAN CONTINUE THE CONVERSATION.", heading: ["WHERE CAN WE", "REACH YOU?"] },
+  { key: "you", label: "NAME", kicker: "LET’S START WITH YOU.", heading: ["WHAT IS YOUR", "FIRST NAME?"] },
+  { key: "city", label: "CITY", kicker: "WHERE IS YOUR CELEBRATION?", heading: ["WHAT CITY OR REGION", "IS IT IN?"] },
   { key: "date", label: "DATE", kicker: "LET’S CHECK YOUR DATE.", heading: ["WHEN IS YOUR STORY", "HAPPENING?"] },
-  { key: "location", label: "LOCATION", kicker: "WHERE WILL IT TAKE PLACE?", heading: ["WHERE WILL", "IT HAPPEN?"] },
-  { key: "event", label: "EVENT", kicker: "THE SHAPE OF YOUR CELEBRATION.", heading: ["TELL US ABOUT", "THE CELEBRATION."] },
-  { key: "services", label: "SERVICES", kicker: "DOCUMENTARY · EDITORIAL · CINEMATIC", heading: ["WHAT WOULD YOU LIKE", "US TO CREATE?"] },
-  { key: "budget", label: "INVESTMENT", kicker: "EVERY STORY IS DIFFERENT.", heading: ["WHAT ARE YOU PLANNING", "TO INVEST IN YOUR STORY?"] },
-  { key: "matters", label: "PRIORITIES", kicker: "CHOOSE AS MANY AS FEEL RIGHT.", heading: ["WHAT MATTERS", "MOST TO YOU?"] },
-  { key: "story", label: "STORY", kicker: "IN YOUR OWN WORDS.", heading: ["TELL US A LITTLE", "ABOUT YOUR STORY."] },
+  { key: "budget", label: "BUDGET", kicker: "EVERY STORY IS DIFFERENT.", heading: ["WHAT IS YOUR", "APPROXIMATE BUDGET?"] },
 ] as const;
 
 export type StepKey = (typeof steps)[number]["key"];

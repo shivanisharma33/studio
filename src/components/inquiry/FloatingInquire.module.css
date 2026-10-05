@@ -4,9 +4,9 @@
   bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   z-index: 70;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
   opacity: 0;
   visibility: hidden;
   transform: translate3d(0, 16px, 0);
@@ -28,19 +28,19 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  min-height: 50px;
-  padding: 0 26px;
+  gap: 10px;
+  height: 48px;
+  padding: 0 24px;
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 999px;
   background: linear-gradient(135deg, #ecd4b2 0%, var(--champagne) 50%, #b89f72 100%);
   color: var(--bg-0);
   font-family: var(--sans);
-  font-size: var(--fs-meta-sm);
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: var(--track-lg);
   white-space: nowrap;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
   overflow: hidden;
   transition: all 0.35s var(--ease-out);
 }
@@ -54,7 +54,7 @@
 .btn:hover {
   background: linear-gradient(135deg, #f5e2c8 0%, #d8c39e 50%, #c4ab7e 100%);
   color: var(--bg-0);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.55);
   transform: translateY(-2px);
 }
 
@@ -110,15 +110,15 @@
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
 }
 
-/* Mobile View: CONSTANTLY visible in hero section & on scroll */
+/* Mobile View: Clean side-by-side horizontal row aligned at bottom right */
 @media (max-width: 900px) {
   .wrap {
-    right: 16px;
+    right: 14px;
     left: auto;
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
     filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.65));
     opacity: 1 !important;
     visibility: visible !important;
@@ -134,38 +134,19 @@
   }
 
   .btn {
-    min-height: 46px;
-    padding: 0 20px;
-    background: linear-gradient(135deg, #ecd4b2 0%, var(--champagne) 50%, #b89f72 100%);
-    color: var(--bg-0);
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-  }
-
-  .btn .arrow {
-    color: var(--bg-0);
+    height: 44px;
+    padding: 0 16px;
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
   }
 
   .wa {
-    width: 48px;
-    height: 48px;
-    padding: 0;
-    border-radius: 50%;
-    border: none;
-    background: transparent;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45), 0 0 12px rgba(37, 211, 102, 0.3);
-    transition: all 0.25s ease;
-  }
-
-  .wa:active {
-    transform: scale(0.95);
+    width: 44px;
+    height: 44px;
   }
 
   .waIcon {
-    width: 48px;
-    height: 48px;
-    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+    width: 44px;
+    height: 44px;
   }
 }

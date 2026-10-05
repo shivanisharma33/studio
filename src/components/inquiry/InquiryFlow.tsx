@@ -226,11 +226,8 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
   const trackStep = () => {
     if (!stepKey) return;
     track("step_completed", { step: stepKey, index: view + 1 });
+    if (stepKey === "city") track("city_entered", { city: data.city.trim() });
     if (stepKey === "date") track("date_selected", { month: data.month !== null ? months[data.month] : "", year: data.year ?? "" });
-    if (stepKey === "location") track("location_selected", { country: data.country.trim(), venue_known: data.venue.trim() !== "" && data.venue !== VENUE_UNDECIDED });
-    if (stepKey === "event") track("event_type_selected", { types: data.eventType.join(","), days: data.eventDays, guests: data.guestCount });
-    if (stepKey === "services") track("services_selected", { services: data.services.join(",") });
-    if (stepKey === "matters") track("preferences_selected", { preferences: data.preferences.join(","), count: data.preferences.length });
     if (stepKey === "budget") track("budget_selected", { currency: data.currency, range: data.budget === null ? "" : String(data.budget) });
   };
 
@@ -345,12 +342,12 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
             {heading(s.heading, s.kicker)}
             <div className={styles.fields} data-rise>
               <TextField
-                label="YOUR NAME"
+                label="FIRST NAME"
                 value={data.name}
                 onChange={(v) => update({ name: v })}
                 onBlur={touch("name")}
-                placeholder="Enter your name"
-                autoComplete="name"
+                placeholder="Enter your first name"
+                autoComplete="given-name"
                 maxLength={LIMITS.name}
                 error={err("name")}
                 large
@@ -358,35 +355,21 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
             </div>
           </>
         );
-      case "reach":
+      case "city":
         return (
           <>
             {heading(s.heading, s.kicker)}
             <div className={styles.fields} data-rise>
               <TextField
-                label="EMAIL"
-                type="email"
-                value={data.email}
-                onChange={(v) => update({ email: v })}
-                onBlur={touch("email")}
-                placeholder="you@example.com"
-                autoComplete="email"
-                inputMode="email"
-                maxLength={LIMITS.email}
-                error={err("email")}
-              />
-              <TextField
-                label="WHATSAPP / PHONE"
-                type="tel"
-                value={data.phone}
-                onChange={(v) => update({ phone: v })}
-                onBlur={touch("phone")}
-                placeholder="+1 … or +91 …"
-                autoComplete="tel"
-                inputMode="tel"
-                maxLength={LIMITS.phone}
-                hint="Include your country code — we work across North America and India."
-                error={err("phone")}
+                label="CITY OR REGION"
+                value={data.city}
+                onChange={(v) => update({ city: v })}
+                onBlur={touch("city")}
+                placeholder="Enter your city or region (e.g. Toronto, Vancouver, Delhi)"
+                autoComplete="address-level2"
+                maxLength={LIMITS.place}
+                error={err("city")}
+                large
               />
             </div>
           </>
@@ -458,130 +441,6 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
           </>
         );
       }
-      case "location":
-        return (
-          <>
-            {heading(s.heading, s.kicker)}
-            <p className={`meta-sm champagne ${styles.support}`} data-rise>
-              {copy.regions}
-            </p>
-            <div className={styles.fields} data-rise>
-              <div className={styles.withPicks}>
-                <TextField
-                  label="COUNTRY"
-                  value={data.country}
-                  onChange={setCountry}
-                  onBlur={touch("country")}
-                  placeholder="Country"
-                  autoComplete="country-name"
-                  maxLength={LIMITS.place}
-                  error={err("country")}
-                />
-                <div className={styles.picks} aria-label="Quick country picks">
-                  {countryPicks.map((c) => (
-                    <button
-                      key={c.label}
-                      type="button"
-                      aria-pressed={data.country === c.label}
-                      className={`${styles.pick} ${data.country === c.label ? styles.pickOn : ""}`}
-                      onClick={() => setCountry(c.label)}
-                    >
-                      {c.label.toUpperCase()}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <TextField
-                label="CITY / REGION"
-                value={data.city}
-                onChange={(v) => update({ city: v })}
-                onBlur={touch("city")}
-                placeholder="City or region"
-                autoComplete="address-level2"
-                maxLength={LIMITS.place}
-                error={err("city")}
-              />
-              <div className={styles.withPicks}>
-                <TextField
-                  label="VENUE"
-                  value={data.venue}
-                  onChange={(v) => update({ venue: v })}
-                  placeholder={`Venue name or “${VENUE_UNDECIDED}”`}
-                  maxLength={LIMITS.place}
-                  optional
-                />
-                <div className={styles.picks}>
-                  <button
-                    type="button"
-                    aria-pressed={data.venue === VENUE_UNDECIDED}
-                    className={`${styles.pick} ${data.venue === VENUE_UNDECIDED ? styles.pickOn : ""}`}
-                    onClick={() => update({ venue: data.venue === VENUE_UNDECIDED ? "" : VENUE_UNDECIDED })}
-                  >
-                    NOT DECIDED YET
-                  </button>
-                </div>
-              </div>
-            </div>
-          </>
-        );
-      case "event":
-        return (
-          <>
-            {heading(s.heading, s.kicker)}
-            <div className={styles.fields}>
-              <div data-rise>
-                <ChoiceGroup
-                  legend="EVENT TYPE"
-                  options={eventTypes}
-                  multiple
-                  value={data.eventType}
-                  onChange={(v) => update({ eventType: v })}
-                  error={err("eventType")}
-                  columns="three"
-                />
-              </div>
-              <div data-rise>
-                <ChoiceGroup
-                  legend="NUMBER OF EVENTS / DAYS"
-                  options={eventDays}
-                  value={data.eventDays}
-                  onChange={(v) => update({ eventDays: v })}
-                  optional
-                  columns="auto"
-                  size="small"
-                />
-              </div>
-              <div data-rise>
-                <ChoiceGroup
-                  legend="APPROXIMATE GUEST COUNT"
-                  options={guestCounts}
-                  value={data.guestCount}
-                  onChange={(v) => update({ guestCount: v })}
-                  optional
-                  columns="auto"
-                  size="small"
-                />
-              </div>
-            </div>
-          </>
-        );
-      case "services":
-        return (
-          <>
-            {heading(s.heading, s.kicker)}
-            <div className={styles.fields} data-rise>
-              <ChoiceGroup
-                legend="SERVICES"
-                options={services}
-                multiple
-                value={data.services}
-                onChange={(v) => update({ services: v })}
-                error={err("services")}
-                columns="two"
-              />
-            </div>
-          </>
-        );
       case "budget":
         return (
           <>
@@ -597,53 +456,6 @@ export default function InquiryFlow({ state, setState, phase, setPhase, restored
                 onBudget={(b) => update({ budget: b })}
                 onCurrency={setCurrency}
               />
-            </div>
-          </>
-        );
-      case "matters":
-        return (
-          <>
-            {heading(s.heading, s.kicker)}
-            <div className={styles.fields} data-rise>
-              <ChoiceGroup
-                legend="WHAT MATTERS MOST"
-                options={preferences}
-                multiple
-                value={data.preferences}
-                onChange={(v) => update({ preferences: v })}
-                optional
-                columns="three"
-              />
-            </div>
-          </>
-        );
-      case "story":
-        return (
-          <>
-            {heading(s.heading, s.kicker)}
-            <p className={styles.lede} data-rise>
-              {copy.storyPrompt}
-            </p>
-            <div className={styles.fields} data-rise>
-              <div className={`${styles.field} ${styles.fieldArea}`}>
-                <label htmlFor="inq-story" className={`meta-sm ${styles.label}`}>
-                  YOUR STORY<span className={styles.optional}> — OPTIONAL</span>
-                </label>
-                <div className={styles.inputWrap}>
-                  <textarea
-                    id="inq-story"
-                    rows={6}
-                    value={data.story}
-                    maxLength={LIMITS.story}
-                    onChange={(e) => update({ story: e.target.value })}
-                    placeholder={copy.storyPlaceholder}
-                  />
-                  <span className={styles.underline} aria-hidden="true" />
-                </div>
-                <span className={`meta-sm ${styles.count}`} aria-hidden="true">
-                  {data.story.length} / {LIMITS.story}
-                </span>
-              </div>
             </div>
           </>
         );

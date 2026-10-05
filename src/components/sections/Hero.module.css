@@ -55,12 +55,12 @@
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .eyebrowLine {
   display: inline-block;
-  width: 32px;
+  width: 44px;
   height: 2px;
   background: var(--champagne);
   border-radius: 1px;
@@ -68,11 +68,12 @@
 
 .eyebrowText {
   font-family: var(--sans);
-  font-size: clamp(0.68rem, 0.82vw, 0.8rem);
-  letter-spacing: 0.22em;
-  color: var(--ivory);
-  font-weight: 500;
+  font-size: clamp(0.95rem, 1.2vw, 1.18rem);
+  letter-spacing: 0.18em;
+  color: var(--champagne);
+  font-weight: 600;
   text-transform: uppercase;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
 }
 
 /* 3-line Headline */
@@ -254,6 +255,16 @@
   .content {
     padding-top: 86px;
     gap: 18px;
+  }
+
+  .eyebrowText {
+    font-size: 0.95rem;
+    letter-spacing: 0.16em;
+    font-weight: 600;
+  }
+
+  .eyebrowLine {
+    width: 38px;
   }
 
   .headline {

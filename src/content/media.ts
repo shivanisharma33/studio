@@ -48,9 +48,9 @@ export const home: Photo[] = [
 /** Opening two frames from each portfolio gallery, keyed by slug. */
 export const galleries: Record<string, Photo[]> = {
   "aman-mrinal": [
-    "KXZwv_4H3x3SIiMs4xo4Z36F3PlTYASn/pfMqSTQAtrUIaaebAG1IyRWTgXtDAGYC/Y9Xp7WsnxEj312nOM9rTWg.jpg",
-    "DGE8V9FrHB9BeoP-Nss4xjOmw52nOx6o/V1ofnximQgPp5faTO5P9VAWZzNJsTghG/6-y5M-Zi5K1wtKVDoEdK0A.jpg",
-  ].map((p) => ({ src: img(p), alt: "Aman & Mrinal — Studio Kunal Photography" })),
+    { src: "/images/new image.avif", alt: "Aman & Mrinal — Studio Kunal Photography" },
+    { src: "/images/new2.avif", alt: "Aman & Mrinal — Studio Kunal Photography" },
+  ],
   "nooreen-jugraj": [
     "zonjRRzSFjTi2FM2hUQQdx9v0MBRr8fn/LmOBw2cef8n5JPwTnpOQHSnQxqXrARJe/n7o-t3VIOFrhm9NWIEuEUQ.jpg",
     "OAipGqMFz0RlSt6UJWyfmuN5eukiGyrz/c7BUksFJJ21-hIw88zwlK3TSFI7Bg976/S9jE61FFHif78wgMoOvvbA.jpg",

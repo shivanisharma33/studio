@@ -3,6 +3,7 @@ import Preloader from "@/components/motion/Preloader";
 import Navigation from "@/components/sections/Navigation";
 import Hero from "@/components/sections/Hero";
 import BrandStatement from "@/components/sections/BrandStatement";
+import BookSlotBanner from "@/components/sections/BookSlotBanner";
 import ImageReveal from "@/components/sections/ImageReveal";
 import CinematicFilms from "@/components/sections/CinematicFilms";
 import Portfolio from "@/components/sections/Portfolio";
@@ -32,6 +33,8 @@ export default async function Page() {
         <Hero />
         {/* 02  IMMEDIATE PROOF / BRAND POSITIONING */}
         <BrandStatement />
+        {/* 02b BOOK A SLOT CTA (VISIBLE AFTER 2 SECTIONS) */}
+        <BookSlotBanner />
         {/* 03  WHAT WE CAPTURE */}
         <ImageReveal />
         {/* 04  CINEMATIC FILMS */}

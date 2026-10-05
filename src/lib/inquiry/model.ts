@@ -85,33 +85,17 @@ export function validateStep(step: StepKey, d: Inquiry): InquiryErrors {
   const e: InquiryErrors = {};
   switch (step) {
     case "you":
-      if (!d.name.trim()) e.name = "Please enter your name.";
+      if (!d.name.trim()) e.name = "Please enter your first name.";
       break;
-    case "reach":
-      if (!d.email.trim()) e.email = "Please enter your email address.";
-      else if (!EMAIL_RE.test(d.email.trim())) e.email = "Please enter a valid email address.";
-      if (!d.phone.trim()) e.phone = "Please enter your WhatsApp or phone number.";
-      else if (!isValidPhone(d.phone)) e.phone = "Please enter a valid phone number, including country code (e.g. +1 or +91).";
+    case "city":
+      if (!d.city.trim()) e.city = "Please enter your city or region.";
       break;
     case "date":
       if (d.month === null) e.month = "Please choose a month.";
       if (d.year === null) e.year = "Please choose a year.";
       break;
-    case "location":
-      if (!d.country.trim()) e.country = "Please tell us the country.";
-      if (!d.city.trim()) e.city = "Please tell us the city or region.";
-      break;
-    case "event":
-      if (d.eventType.length === 0) e.eventType = "Please choose at least one type of celebration.";
-      break;
-    case "services":
-      if (d.services.length === 0) e.services = "Please choose at least one service.";
-      break;
     case "budget":
-      if (d.budget === null) e.budget = "Please choose an approximate range — or “I’m not sure yet”.";
-      break;
-    case "matters":
-    case "story":
+      if (d.budget === null) e.budget = "Please choose an approximate budget range — or “I’m not sure yet”.";
       break;
   }
   return e;
@@ -209,20 +193,9 @@ export type SummaryRow = { label: string; value: string; /** The step that edits
 /** Ordered label/value pairs — used by the review screen and the webhook payload. */
 export function summaryRows(d: Inquiry): SummaryRow[] {
   return [
-    { label: "Name", value: d.name.trim(), step: "you" },
-    { label: "Email", value: d.email.trim(), step: "reach" },
-    { label: "Phone / WhatsApp", value: d.phone.trim(), step: "reach" },
-    { label: "Month", value: d.month !== null ? titleCase(months[d.month]) : "", step: "date" },
-    { label: "Year", value: d.year !== null ? String(d.year) : "", step: "date" },
-    { label: "Country", value: d.country.trim(), step: "location" },
-    { label: "City / Region", value: d.city.trim(), step: "location" },
-    { label: "Venue", value: formatVenue(d), step: "location" },
-    { label: "Event", value: formatEventTypes(d), step: "event" },
-    { label: "Number of Days", value: formatDays(d), step: "event" },
-    { label: "Guest Count", value: formatGuests(d), step: "event" },
-    { label: "Services", value: formatServices(d), step: "services" },
-    { label: "Investment Range", value: formatBudget(d), step: "budget" },
-    { label: "Preferences", value: formatPreferences(d), step: "matters" },
-    { label: "Story", value: d.story.trim(), step: "story" },
+    { label: "First Name", value: d.name.trim(), step: "you" },
+    { label: "City", value: d.city.trim(), step: "city" },
+    { label: "Date", value: formatDate(d), step: "date" },
+    { label: "Approximate Budget", value: formatBudget(d), step: "budget" },
   ];
 }

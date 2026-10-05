@@ -79,7 +79,7 @@ const STORIES: StoryItem[] = [
     categoryLabel: "WEDDING",
     location: "TORONTO, CANADA",
     slug: "aman-mrinal",
-    imgSrc: storyGalleries["aman-mrinal"]?.images[2] || galleries["aman-mrinal"][0].src,
+    imgSrc: "/images/new image.avif",
   },
   {
     id: "06",

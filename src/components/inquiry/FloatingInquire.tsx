@@ -41,13 +41,16 @@ export default function FloatingInquire() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  const [pastTwoSections, setPastTwoSections] = useState(false);
+
   useEffect(() => {
     let ticking = false;
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        setPastHero(window.scrollY > window.innerHeight * 0.85);
+        // Visible after two sections (past Hero & BrandStatement)
+        setPastTwoSections(window.scrollY > window.innerHeight * 1.3);
         ticking = false;
       });
     };
