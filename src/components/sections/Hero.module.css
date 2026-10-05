@@ -282,7 +282,7 @@
     width: 100%;
   }
 
-  .ctas > * {
+  .ctas>* {
     width: 100%;
     justify-content: center;
     text-align: center;

@@ -68,21 +68,21 @@ export default function FinalCta() {
 
         <h2 id="final-title" className={`serif ${styles.title}`}>
           <span className="line">
-            <span>YOUR STORY DESERVES</span>
+            <span>CRAFTED LIKE CINEMA.</span>
           </span>
           <span className="line">
-            <span className={styles.italic}>TO BE REMEMBERED.</span>
+            <span className={styles.italic}>REMEMBERED FOREVER.</span>
           </span>
         </h2>
 
         <p className={styles.lead} data-cta-fade>
-          With a cinematic approach and an eye for genuine moments, we transform real emotions into lasting memories — preserving every chapter of your celebration with timeless artistry across North America, India, and worldwide.
+          With a cinematic approach and an eye for genuine moments, we transform real emotions into lasting memories — preserving every chapter of your celebration with timeless artistry across North America, India, and destinations worldwide.
         </p>
 
         <div className={styles.actionBlock} data-cta-fade>
           <div className={styles.ctas}>
             <InquiryCta source="final" primary boxed cursor="BEGIN">
-              LET’S CREATE SOMETHING TIMELESS
+              COMMISSION YOUR STORY
             </InquiryCta>
             <Link href="#portfolio" className="cta cta--secondary" data-cursor="EXPLORE" data-magnetic="">
               <span>{cta.seeOurMagic}</span>

@@ -95,16 +95,13 @@ export default function Hero() {
             <span className={styles.headlineRow}>WE CAPTURE</span>
           </span>
           <span className="line">
-            <span className={styles.headlineRow}>STORIES THAT</span>
-          </span>
-          <span className="line">
-            <span className={`${styles.headlineRow} ${styles.headlineGold}`}>LAST FOREVER.</span>
+            <span className={`${styles.headlineRow} ${styles.headlineGold}`}>WHAT TIME CANNOT.</span>
           </span>
         </h1>
 
         <div className={styles.bottom}>
           <p className={styles.support} data-hero-fade>
-            Studio Kunal Photography is an international photography company dedicated to capturing timeless stories with authenticity and emotion.
+            Studio Kunal Photography is an international photography company dedicated to capturing timeless stories with authenticity and emotion across North America, India, and worldwide destinations.
           </p>
 
           <div className={styles.ctas} data-hero-fade>

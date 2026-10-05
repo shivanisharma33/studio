@@ -475,7 +475,7 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
           </h3>
           <div className={styles.imagineCopy} data-reveal>
             <p>Every celebration has a rhythm, a feeling, a moment that deserves to be remembered.</p>
-            <InquiryCta source="film" primary boxed cursor="BEGIN">
+            <InquiryCta source="film" primary boxed cursor="BEGIN" className={styles.imagineBtn}>
               TELL US ABOUT YOUR STORY
             </InquiryCta>
           </div>

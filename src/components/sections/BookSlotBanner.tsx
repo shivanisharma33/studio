@@ -46,11 +46,11 @@ export default function BookSlotBanner() {
             </div>
 
             <h2 className={`serif ${styles.heading}`} data-banner-fade>
-              Book Your Exclusive Consultation Slot
+              WHERE MOMENTS BECOME HEIRLOOMS.
             </h2>
 
             <p className={styles.subtext} data-banner-fade>
-              Reserve prime dates across North America &amp; India. Connect directly with our team to secure availability for your upcoming wedding story.
+              Wedding Photography &nbsp;·&nbsp; Cinematic Films &nbsp;·&nbsp; Celebrations
             </p>
 
             <div className={styles.actions} data-banner-fade>

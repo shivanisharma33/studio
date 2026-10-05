@@ -10,7 +10,9 @@ export const brand = {
   name: "Studio Kunal Photography",
   wordmark: ["STUDIO KUNAL", "PHOTOGRAPHY"],
   regions: ["NORTH AMERICA", "INDIA"],
-  headline: "From North America to India, We Capture Stories That Last Forever",
+  headline: "We Capture What Time Cannot",
+  tagline: "Where Moments Become Heirlooms",
+  ctaTagline: "Crafted Like Cinema. Remembered Forever.",
   /** Verbatim brand description from the homepage. */
   description:
     "Studio Kunal Photography is an international photography company dedicated to capturing timeless stories with authenticity and emotion. With a cinematic approach and an eye for genuine moments, we transform real emotions into lasting memories. We are proudly based across North America and India, offering seamless photography and cinematography services for couples worldwide. With a deep understanding of diverse cultures, traditions, and wedding celebrations, we bring a global perspective while preserving the authenticity of every moment. Our approach will always inclined towards — timeless storytelling, genuine emotions, and cinematic excellence.",
