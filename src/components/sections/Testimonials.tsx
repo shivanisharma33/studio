@@ -22,20 +22,109 @@ function getInitials(couple: string) {
   return couple.slice(0, 2).toUpperCase();
 }
 
+const CLONES_COUNT = 3;
+
+interface TrackItem {
+  testimonial: (typeof testimonials)[number];
+  originalIndex: number;
+  trackKey: string;
+}
+
+const TRACK_ITEMS: TrackItem[] = [
+  ...testimonials.slice(-CLONES_COUNT).map((t, idx) => ({
+    testimonial: t,
+    originalIndex: testimonials.length - CLONES_COUNT + idx,
+    trackKey: `pre-${t.couple}-${idx}`,
+  })),
+  ...testimonials.map((t, idx) => ({
+    testimonial: t,
+    originalIndex: idx,
+    trackKey: `main-${t.couple}-${idx}`,
+  })),
+  ...testimonials.slice(0, CLONES_COUNT).map((t, idx) => ({
+    testimonial: t,
+    originalIndex: idx,
+    trackKey: `post-${t.couple}-${idx}`,
+  })),
+];
+
 export default function Testimonials() {
   const root = useRef<HTMLElement>(null);
-  const [index, setIndex] = useState(0);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [isSnapping, setIsSnapping] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [expandedMap, setExpandedMap] = useState<Record<number, boolean>>({});
   const total = testimonials.length;
 
+  const displayIndex = ((activeSlide % total) + total) % total;
+
+  const touchStartX = useRef<number | null>(null);
+
   const nextSlide = useCallback(() => {
-    setIndex((prev) => (prev + 1) % total);
-  }, [total]);
+    if (isSnapping) return;
+    setActiveSlide((prev) => prev + 1);
+  }, [isSnapping]);
 
   const prevSlide = useCallback(() => {
-    setIndex((prev) => (prev - 1 + total) % total);
-  }, [total]);
+    if (isSnapping) return;
+    setActiveSlide((prev) => prev - 1);
+  }, [isSnapping]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsPaused(true);
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    setIsPaused(false);
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    touchStartX.current = null;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+  };
+
+  const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return;
+    if (activeSlide >= total) {
+      setIsSnapping(true);
+      setActiveSlide(0);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsSnapping(false);
+        });
+      });
+    } else if (activeSlide < 0) {
+      setIsSnapping(true);
+      setActiveSlide(total - 1);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsSnapping(false);
+        });
+      });
+    }
+  };
+
+  // Safety snap fallback in case transitionEnd doesn't fire
+  useEffect(() => {
+    if (activeSlide >= total || activeSlide < 0) {
+      const timer = setTimeout(() => {
+        setIsSnapping(true);
+        setActiveSlide(activeSlide >= total ? 0 : total - 1);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setIsSnapping(false);
+          });
+        });
+      }, 650);
+      return () => clearTimeout(timer);
+    }
+  }, [activeSlide, total]);
 
   // Automatic Slider — advances every 5 seconds unless hovered/touched
   useEffect(() => {
@@ -46,8 +135,8 @@ export default function Testimonials() {
     return () => clearInterval(timer);
   }, [isPaused, nextSlide]);
 
-  const toggleExpanded = (i: number) => {
-    setExpandedMap((prev) => ({ ...prev, [i]: !prev[i] }));
+  const toggleExpanded = (originalIdx: number) => {
+    setExpandedMap((prev) => ({ ...prev, [originalIdx]: !prev[originalIdx] }));
   };
 
   useGSAP(
@@ -107,19 +196,23 @@ export default function Testimonials() {
           className={styles.sliderViewport}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          onTouchStart={() => setIsPaused(true)}
-          onTouchEnd={() => setIsPaused(false)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
           <div
             className={styles.sliderTrack}
-            style={{ "--active-index": index } as React.CSSProperties}
+            onTransitionEnd={handleTransitionEnd}
+            style={{
+              "--active-index": activeSlide + CLONES_COUNT,
+              transition: isSnapping ? "none" : undefined,
+            } as React.CSSProperties}
           >
-            {testimonials.map((t, i) => {
+            {TRACK_ITEMS.map(({ testimonial: t, originalIndex, trackKey }) => {
               const [first, ...rest] = t.paragraphs;
-              const isExpanded = !!expandedMap[i];
+              const isExpanded = !!expandedMap[originalIndex];
 
               return (
-                <div key={t.couple + i} className={styles.cardItem}>
+                <div key={trackKey} className={styles.cardItem}>
                   {/* Card Header: Avatar & Couple Meta */}
                   <div className={styles.cardHeader}>
                     <div className={styles.authorBadge}>
@@ -160,7 +253,7 @@ export default function Testimonials() {
                         <button
                           type="button"
                           className={`meta-sm ${styles.expandBtn}`}
-                          onClick={() => toggleExpanded(i)}
+                          onClick={() => toggleExpanded(originalIndex)}
                           aria-expanded={isExpanded}
                         >
                           {isExpanded ? "READ LESS" : "READ FULL REVIEW"}{" "}
@@ -205,7 +298,7 @@ export default function Testimonials() {
         {/* Controls & Pagination Bar */}
         <div className={styles.controlsRow}>
           <div className={styles.counterBox} aria-live="polite">
-            <span className={styles.counterNum}>{String(index + 1).padStart(2, "0")}</span>
+            <span className={styles.counterNum}>{String(displayIndex + 1).padStart(2, "0")}</span>
             <span className={styles.counterSep}>/</span>
             <span className={styles.counterTotal}>{String(total).padStart(2, "0")}</span>
           </div>
@@ -216,8 +309,11 @@ export default function Testimonials() {
               <button
                 key={item.couple + i}
                 type="button"
-                className={`${styles.dotBtn} ${i === index ? styles.dotActive : ""}`}
-                onClick={() => setIndex(i)}
+                className={`${styles.dotBtn} ${i === displayIndex ? styles.dotActive : ""}`}
+                onClick={() => {
+                  if (isSnapping) return;
+                  setActiveSlide(i);
+                }}
                 aria-label={`Go to review by ${item.couple}`}
                 title={item.couple}
               >
@@ -252,7 +348,7 @@ export default function Testimonials() {
         </div>
 
         {/* Bottom invitation bar */}
-        <div className={styles.readyBar} data-reveal>
+        <div className={styles.readyBar}>
           <div className={styles.readyLeft}>
             <p className={`serif ${styles.readyTitle}`}>
               Ready to craft your <em>own story?</em>

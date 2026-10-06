@@ -236,11 +236,10 @@ export default function StoriesByType() {
           {filtered.map((item, i) => (
             <button
               type="button"
-              key={item.id}
+              key={`${activeTab}-${item.id}`}
               onClick={() => openStory(item.slug)}
               className={styles.card}
               data-cursor="VIEW STORY"
-              data-reveal
               style={{ ["--d" as string]: `${(i % 3) * 0.08}s`, textAlign: "left", cursor: "pointer" }}
             >
               <div className={styles.thumbWrap}>
