@@ -33,7 +33,7 @@ function FilmLightbox({ id, onClose }: { id: string; onClose: () => void }) {
       </button>
       <div className={styles.player}>
         <iframe
-          src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&color=white`}
+          src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1&playsinline=1&color=white`}
           title="Studio Kunal Photography — film"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
@@ -48,6 +48,8 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
   const [viewMode, setViewMode] = useState<"cards" | "list">("cards");
   const [category, setCategory] = useState<string>("all");
   const [playing, setPlaying] = useState<string | null>(null);
+  const [activePlayingId, setActivePlayingId] = useState<string | null>(null);
+  const [featuredPlaying, setFeaturedPlaying] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const INITIAL_COUNT = 4;
 
@@ -175,54 +177,74 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
 
       {/* Featured film — full-bleed cinema screen */}
       <div className={styles.stage}>
-        <button
-          type="button"
-          className={styles.screen}
-          onClick={() => setPlaying(featured.id)}
-          data-cursor="PLAY"
-          aria-label={featuredTitle ? `Play film: ${featuredTitle.main}` : "Play film"}
-        >
-          <div className={styles.poster}>
-            <Image
-              src={youtubePoster(featured.id)}
-              alt={featuredTitle ? `${featuredTitle.main} — film still` : "Studio Kunal Photography film still"}
-              fill
-              sizes="100vw"
-              quality={95}
-              priority
-              style={{ objectFit: "cover" }}
-            />
-          </div>
-
-          <div className={styles.bgVideoWrap} aria-hidden="true">
+        {featuredPlaying ? (
+          <div className={styles.featuredActivePlayer}>
             <iframe
-              src={`https://www.youtube-nocookie.com/embed/${featured.id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${featured.id}&playsinline=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0`}
-              className={styles.bgIframe}
-              title={featuredTitle ? featuredTitle.main : "Featured film preview"}
+              src={`https://www.youtube-nocookie.com/embed/${featured.id}?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1&playsinline=1`}
+              className={styles.featuredActiveIframe}
+              title={featuredTitle ? featuredTitle.main : "Featured film"}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              tabIndex={-1}
+              allowFullScreen
             />
+            <button
+              type="button"
+              className={styles.featuredCloseBtn}
+              onClick={() => setFeaturedPlaying(false)}
+              aria-label="Close featured video"
+            >
+              <span aria-hidden="true">×</span> CLOSE
+            </button>
           </div>
+        ) : (
+          <button
+            type="button"
+            className={styles.screen}
+            onClick={() => setFeaturedPlaying(true)}
+            data-cursor="PLAY"
+            aria-label={featuredTitle ? `Play film: ${featuredTitle.main}` : "Play film"}
+          >
+            <div className={styles.poster}>
+              <Image
+                src={youtubePoster(featured.id)}
+                alt={featuredTitle ? `${featuredTitle.main} — film still` : "Studio Kunal Photography film still"}
+                fill
+                sizes="100vw"
+                quality={95}
+                priority
+                style={{ objectFit: "cover" }}
+              />
+            </div>
 
-          <div className={styles.screenShade} />
-          <span className={styles.play}>
-            <span className={styles.playRing} />
-            <span className={`meta-sm ${styles.playLabel}`}>
-              {cta.playFilm} <Arrow />
+            <div className={styles.bgVideoWrap} aria-hidden="true">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${featured.id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${featured.id}&start=0&end=3&playsinline=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0`}
+                className={styles.bgIframe}
+                title={featuredTitle ? featuredTitle.main : "Featured film preview"}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                tabIndex={-1}
+              />
+            </div>
+
+            <div className={styles.screenShade} />
+            <span className={styles.play}>
+              <span className={styles.playRing} />
+              <span className={`meta-sm ${styles.playLabel}`}>
+                {cta.playFilm} <Arrow />
+              </span>
             </span>
-          </span>
-          <span className={styles.caption}>
-            <span className="meta-sm">FEATURED FILM</span>
-            {featuredTitle ? (
-              <>
-                <span className={`serif ${styles.captionTitle}`}>{featuredTitle.main}</span>
-                {featuredTitle.sub && <span className="meta-sm champagne">{featuredTitle.sub}</span>}
-              </>
-            ) : (
-              <span className={`serif ${styles.captionTitle}`}>Film 01</span>
-            )}
-          </span>
-        </button>
+            <span className={styles.caption}>
+              <span className="meta-sm">FEATURED FILM</span>
+              {featuredTitle ? (
+                <>
+                  <span className={`serif ${styles.captionTitle}`}>{featuredTitle.main}</span>
+                  {featuredTitle.sub && <span className="meta-sm champagne">{featuredTitle.sub}</span>}
+                </>
+              ) : (
+                <span className={`serif ${styles.captionTitle}`}>Film 01</span>
+              )}
+            </span>
+          </button>
+        )}
       </div>
 
       {/* Film index — Cinema Cards & Editorial List with view toggle */}
@@ -331,68 +353,119 @@ export default function CinematicFilms({ films }: { films: Film[] }) {
                 const originalIndex = films.findIndex((orig) => orig.id === f.id);
                 const idx = originalIndex >= 0 ? originalIndex : i;
                 const { mainTitle, subTitle, badge, locationTag } = getFilmMeta(f, idx);
+                const isPlayingThis = activePlayingId === f.id;
 
                 return (
                   <li key={f.id} data-reveal style={{ ["--d" as string]: `${(i % 4) * 0.08}s` }}>
-                    <button
-                      type="button"
-                      className={styles.card}
-                      onClick={() => setPlaying(f.id)}
-                      data-cursor="PLAY"
-                      aria-label={`Play film: ${mainTitle}`}
-                    >
-                      <div className={styles.cardMedia}>
-                        <div className={styles.cardPoster}>
-                          <Image
-                            src={youtubePoster(f.id)}
-                            alt={`${mainTitle} — film still`}
-                            fill
-                            sizes="(max-width: 900px) 100vw, (max-width: 1400px) 50vw, 700px"
-                            quality={85}
-                            style={{ objectFit: "cover" }}
+                    {isPlayingThis ? (
+                      <div className={styles.card}>
+                        <div className={styles.cardActivePlayer}>
+                          <iframe
+                            src={`https://www.youtube-nocookie.com/embed/${f.id}?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1&playsinline=1`}
+                            title={mainTitle}
+                            className={styles.cardActiveIframe}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
                           />
+                          <button
+                            type="button"
+                            className={styles.cardCloseBtn}
+                            onClick={() => setActivePlayingId(null)}
+                            aria-label="Close video player"
+                          >
+                            <span aria-hidden="true">×</span> CLOSE
+                          </button>
                         </div>
-                        <div className={styles.cardShade} />
 
-                        <div className={styles.cardTop}>
-                          <span className={styles.cardNum}>FILM {String(idx + 1).padStart(2, "0")}</span>
-                          <span className={styles.cardQuality}>
-                            <span className={styles.recDot} />
-                            4K CINEMA
-                          </span>
-                        </div>
-
-                        <div className={styles.cardPlayWrap}>
-                          <div className={styles.cardPlay}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                              <polygon points="5,3 19,12 5,21" />
-                            </svg>
+                        <div className={styles.cardInfo}>
+                          <div className={styles.cardMetaRow}>
+                            <span className={styles.cardTag}>{badge}</span>
+                            <span className={styles.cardLocation}>{locationTag}</span>
                           </div>
-                          <span className={`meta-sm ${styles.cardPlayText}`}>WATCH FILM</span>
+                          <h3 className={`serif ${styles.cardTitle}`}>{mainTitle}</h3>
+                          {subTitle && <p className={styles.cardSubtitle}>{subTitle}</p>}
+
+                          <div className={styles.cardFooter}>
+                            <span className={styles.cardPlayingBadge}>
+                              <span className={styles.recDot} /> NOW PLAYING
+                            </span>
+                          </div>
                         </div>
                       </div>
-
-                      <div className={styles.cardInfo}>
-                        <div className={styles.cardMetaRow}>
-                          <span className={styles.cardTag}>{badge}</span>
-                          <span className={styles.cardLocation}>{locationTag}</span>
-                        </div>
-                        <h3 className={`serif ${styles.cardTitle}`}>{mainTitle}</h3>
-                        {subTitle && <p className={styles.cardSubtitle}>{subTitle}</p>}
-
-                        <div className={styles.cardFooter}>
-                          <div className={styles.cardSound} aria-hidden="true">
-                            <span className={styles.cardSoundBar} />
-                            <span className={styles.cardSoundBar} />
-                            <span className={styles.cardSoundBar} />
-                            <span className={styles.cardSoundBar} />
+                    ) : (
+                      <button
+                        type="button"
+                        className={styles.card}
+                        onClick={() => setActivePlayingId(f.id)}
+                        data-cursor="PLAY"
+                        aria-label={`Play film: ${mainTitle}`}
+                      >
+                        <div className={styles.cardMedia}>
+                          <div className={styles.cardPoster}>
+                            <Image
+                              src={youtubePoster(f.id)}
+                              alt={`${mainTitle} — film still`}
+                              fill
+                              sizes="(max-width: 900px) 100vw, (max-width: 1400px) 50vw, 700px"
+                              quality={85}
+                              style={{ objectFit: "cover" }}
+                            />
                           </div>
-                          <span className={styles.cardWatch}>
-                            <span>WATCH THE FILM</span> <Arrow />
-                          </span>
+
+                          {/* 2 to 3 second video preview loop */}
+                          <div className={styles.cardPreviewWrap} aria-hidden="true">
+                            <iframe
+                              src={`https://www.youtube-nocookie.com/embed/${f.id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${f.id}&start=0&end=3&playsinline=1&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0`}
+                              className={styles.cardPreviewIframe}
+                              title={`${mainTitle} preview`}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              tabIndex={-1}
+                              loading="lazy"
+                            />
+                          </div>
+
+                          <div className={styles.cardShade} />
+
+                          <div className={styles.cardTop}>
+                            <span className={styles.cardNum}>FILM {String(idx + 1).padStart(2, "0")}</span>
+                            <span className={styles.cardQuality}>
+                              <span className={styles.recDot} />
+                              4K CINEMA
+                            </span>
+                          </div>
+
+                          <div className={styles.cardPlayWrap}>
+                            <div className={styles.cardPlay}>
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <polygon points="5,3 19,12 5,21" />
+                              </svg>
+                            </div>
+                            <span className={`meta-sm ${styles.cardPlayText}`}>WATCH FILM</span>
+                          </div>
                         </div>
-                      </div>
-                    </button>
+
+                        <div className={styles.cardInfo}>
+                          <div className={styles.cardMetaRow}>
+                            <span className={styles.cardTag}>{badge}</span>
+                            <span className={styles.cardLocation}>{locationTag}</span>
+                          </div>
+                          <h3 className={`serif ${styles.cardTitle}`}>{mainTitle}</h3>
+                          {subTitle && <p className={styles.cardSubtitle}>{subTitle}</p>}
+
+                          <div className={styles.cardFooter}>
+                            <div className={styles.cardSound} aria-hidden="true">
+                              <span className={styles.cardSoundBar} />
+                              <span className={styles.cardSoundBar} />
+                              <span className={styles.cardSoundBar} />
+                              <span className={styles.cardSoundBar} />
+                            </div>
+                            <span className={styles.cardWatch}>
+                              <span>WATCH THE FILM</span> <Arrow />
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                    )}
                   </li>
                 );
               })}

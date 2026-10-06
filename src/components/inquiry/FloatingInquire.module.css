@@ -1,25 +1,28 @@
 .wrap {
   position: fixed;
-  right: var(--gutter);
-  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-  z-index: 70;
+  right: max(16px, env(safe-area-inset-right, 16px));
+  bottom: max(18px, env(safe-area-inset-bottom, 18px));
+  z-index: 999;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 12px;
-  opacity: 0;
-  visibility: hidden;
-  transform: translate3d(0, 16px, 0);
-  transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out), visibility 0s linear 0.8s;
-  pointer-events: none;
-}
-
-.shown {
+  gap: 10px;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
   opacity: 1;
   visibility: visible;
-  transform: none;
-  transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out), visibility 0s;
   pointer-events: auto;
+  transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out), visibility 0.3s;
+}
+
+.wrap[data-inquiry-open="true"] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate3d(0, 16px, 0);
 }
 
 /* Highlighted Primary CTA Button */
@@ -30,7 +33,7 @@
   justify-content: center;
   gap: 10px;
   height: 48px;
-  padding: 0 24px;
+  padding: 0 22px;
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 999px;
   background: linear-gradient(135deg, #ecd4b2 0%, var(--champagne) 50%, #b89f72 100%);
@@ -43,6 +46,8 @@
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
   overflow: hidden;
   transition: all 0.35s var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
 }
 
 .btn .arrow {
@@ -82,7 +87,7 @@
   }
 }
 
-/* WhatsApp companion — Solid filled green WhatsApp badge matching user image */
+/* WhatsApp companion — Solid filled green WhatsApp badge */
 .wa {
   display: inline-flex;
   align-items: center;
@@ -95,6 +100,8 @@
   border: none;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45), 0 0 16px rgba(37, 211, 102, 0.35);
   transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
 }
 
 .wa:hover {
@@ -110,28 +117,14 @@
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
 }
 
-/* Mobile View: Stretch across full width of the phone */
-@media (max-width: 900px) {
+/* Mobile / Phone View: Long enough to cover the entire width of the phone */
+@media (max-width: 768px) {
   .wrap {
-    left: calc(14px + env(safe-area-inset-left, 0px));
-    right: calc(14px + env(safe-area-inset-right, 0px));
-    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    left: max(12px, env(safe-area-inset-left, 12px));
+    right: max(12px, env(safe-area-inset-right, 12px));
+    bottom: max(14px, env(safe-area-inset-bottom, 14px));
     width: auto;
-    flex-direction: row;
-    align-items: center;
     gap: 10px;
-    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.65));
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: none !important;
-    pointer-events: auto !important;
-  }
-
-  .wrap[data-inquiry-open="true"] {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-    transform: translate3d(0, 16px, 0) !important;
   }
 
   .btn {
@@ -139,8 +132,8 @@
     min-width: 0;
     width: 100%;
     height: 48px;
-    padding: 0 18px;
-    font-size: clamp(0.66rem, 2.8vw, 0.72rem);
+    padding: 0 16px;
+    font-size: clamp(0.68rem, 2.9vw, 0.74rem);
     letter-spacing: 0.1em;
     justify-content: center;
     gap: 8px;
